@@ -196,9 +196,22 @@ function login(brandId) {
         }
     }
 
+    // Get gender from login form to set professional cartoon avatar
+    const genderSelect = document.getElementById('ownerGender');
+    const gender = genderSelect ? genderSelect.value : 'male';
+    
+    let avatarUrl = '';
+    if (gender === 'female') {
+        // High-quality Female Professional Cartoon Avatar
+        avatarUrl = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Liliana&backgroundColor=ffdfbf';
+    } else {
+        // High-quality Male Professional Cartoon Avatar
+        avatarUrl = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=c0aede';
+    }
+
     document.getElementById('currentBrandName').textContent = currentBrand.name;
     document.getElementById('currentBrandHandle').textContent = currentBrand.handle || `@${brandId}`;
-    document.getElementById('currentBrandLogo').src = currentBrand.logo;
+    document.getElementById('currentBrandLogo').src = avatarUrl;
     
     // Update Plan Badge
     const planBadge = document.getElementById('brandPlanBadge');
@@ -216,6 +229,19 @@ function login(brandId) {
         // Filter and keep only non-expired messages
         currentBrand.messages = currentBrand.messages.filter(msg => (now - msg.time) < expiry);
         
+        // Deduplicate messages by text to fix repeated identical alerts
+        const uniqueMessages = [];
+        const seenTexts = new Set();
+        currentBrand.messages.forEach(msg => {
+            if (!seenTexts.has(msg.text)) {
+                seenTexts.add(msg.text);
+                uniqueMessages.push(msg);
+            }
+        });
+        
+        // Use deduplicated messages for rendering, but update the source array
+        currentBrand.messages = uniqueMessages;
+        
         currentBrand.messages.forEach(msg => {
             const div = document.createElement('div');
             div.className = 'animate-slide';
@@ -228,6 +254,9 @@ function login(brandId) {
                     <p style="font-size: 0.9rem; font-weight: 500; margin: 0;">${msg.text}</p>
                     <p style="font-size: 0.7rem; color: var(--text-gray); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px;">Admin Broadcast • Expires in ${Math.round((expiry - (now - msg.time)) / 3600000)} hours</p>
                 </div>
+                <button onclick="dismissMessage('${msg.time}', event)" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.3s;" title="Dismiss Message">
+                    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                </button>
             `;
             alertContainer.appendChild(div);
         });
@@ -247,6 +276,22 @@ function login(brandId) {
         }, 800);
     }, 400);
 }
+
+window.dismissMessage = function(time, event) {
+    if (currentBrand && currentBrand.messages) {
+        currentBrand.messages = currentBrand.messages.filter(m => m.time.toString() !== time.toString());
+        localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
+        
+        // Visual removal
+        const alertDiv = event.currentTarget.closest('.animate-slide');
+        if (alertDiv) {
+            alertDiv.style.transition = '0.3s all ease';
+            alertDiv.style.opacity = '0';
+            alertDiv.style.transform = 'translateY(-10px)';
+            setTimeout(() => alertDiv.remove(), 300);
+        }
+    }
+};
 
 function showSkeletons() {
     calendarGrid.innerHTML = '';
