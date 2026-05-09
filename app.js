@@ -202,10 +202,10 @@ function login(brandId) {
     let avatarUrl = '';
     if (gender === 'female') {
         // High-quality Female Professional 3D Avatar (Premium Business Look)
-        avatarUrl = 'https://cdn3d.iconscout.com/3d/premium/thumb/businesswoman-avatar-4315126-3579071.png';
+        avatarUrl = 'https://img.freepik.com/free-psd/3d-illustration-business-woman-with-glasses_23-2149436193.jpg';
     } else {
         // High-quality Male Professional 3D Avatar (Premium Business Look)
-        avatarUrl = 'https://cdn3d.iconscout.com/3d/premium/thumb/businessman-avatar-4315124-3579069.png';
+        avatarUrl = 'https://img.freepik.com/free-psd/3d-illustration-business-man-with-glasses_23-2149436194.jpg';
     }
 
     document.getElementById('currentBrandName').textContent = currentBrand.name;
