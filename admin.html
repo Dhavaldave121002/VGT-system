@@ -870,6 +870,7 @@
         function deleteBrand(id) {
             if (confirm(`Delete brand ${id}?`)) {
                 delete storedBrands[id];
+                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
                 renderBrands();
             }
         }
