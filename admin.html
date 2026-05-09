@@ -272,6 +272,12 @@
     </div>
 
     <script>
+        // SHA-256 Security Engine
+        async function hashPassword(str) {
+            const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         // ==========================================
         // SHEETDB DATABASE SYNC ENGINE - JSON BLOB
         // ==========================================
@@ -605,7 +611,21 @@
         }
 
         // Initialize Icons on Load
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadFromSheetDB(); // Pull latest to migrate if needed
+            
+            let stateChanged = false;
+            for (let key of Object.keys(storedBrands)) {
+                if (storedBrands[key].pass && storedBrands[key].pass.length !== 64) {
+                    storedBrands[key].pass = await hashPassword(storedBrands[key].pass);
+                    stateChanged = true;
+                }
+            }
+            if (stateChanged) {
+                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                syncToSheetDB();
+            }
+
             renderBrands();
             if (window.lucide) lucide.createIcons();
         });
@@ -650,10 +670,10 @@
             }
         }
 
-        function changePassword(id) {
+        async function changePassword(id) {
             const newPass = prompt(`Enter new Security Key for ${storedBrands[id].name}:`);
             if (newPass && newPass.trim().length > 0) {
-                storedBrands[id].pass = newPass.trim();
+                storedBrands[id].pass = await hashPassword(newPass.trim());
                 localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
                 renderBrands();
                 alert('Security Key updated successfully!');
@@ -693,11 +713,15 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        addBrandForm.addEventListener('submit', (e) => {
+        addBrandForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('newBrandId').value.toLowerCase().trim();
             const name = document.getElementById('newBrandName').value;
-            const pass = document.getElementById('newBrandPass').value;
+            const passRaw = document.getElementById('newBrandPass').value;
+            
+            // Hash the password if it isn't already a hash (from an edit)
+            const pass = passRaw.length === 64 ? passRaw : await hashPassword(passRaw);
+            
             const gender = document.getElementById('newBrandGender').value;
             const plan = document.getElementById('newBrandPlan').value;
             const trial = document.getElementById('newBrandTrial').value;

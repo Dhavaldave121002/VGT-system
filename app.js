@@ -1,6 +1,12 @@
 // Data Management - Sync with Admin Portal
 const SHEETDB_API_URL = "https://sheetdb.io/api/v1/vvutbhezp19tr"; // ✅ LIVE DATABASE CONNECTED
 
+// SHA-256 Security Engine
+async function hashPassword(str) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 const defaultBrands = {
     'nike': {
         name: 'Nike Global',
@@ -118,24 +124,42 @@ const selectedDateTitle = document.getElementById('selectedDateTitle');
 window.addEventListener('DOMContentLoaded', async () => {
     const loadingEl = document.getElementById('loginScreen');
     await loadFromSheetDB(); // Pull latest data from cloud
-    // Re-run property audit after cloud load
-    Object.keys(brands).forEach(key => {
+    
+    let migratedLocal = false;
+    // Re-run property audit after cloud load and migrate passwords to SHA-256
+    for (let key of Object.keys(brands)) {
         if (!brands[key].plan) brands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
         if (!brands[key].trial) brands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
         if (brands[key].locked === undefined) brands[key].locked = false;
         if (!brands[key].events) brands[key].events = [];
         if (!brands[key].handle) brands[key].handle = `@${key}`;
-    });
+        
+        // Hash migration
+        if (brands[key].pass && brands[key].pass.length !== 64) {
+            brands[key].pass = await hashPassword(brands[key].pass);
+            migratedLocal = true;
+        }
+    }
+    
+    if (migratedLocal) {
+        localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+        syncToSheetDB();
+    }
 });
 
-loginForm.addEventListener('submit', (e) => {
+loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const brandId = document.getElementById('brandId').value.trim().toLowerCase();
     const password = document.getElementById('password').value.trim();
     const errorMsg = document.getElementById('errorMsg');
     
-    // ADMIN SECURE GATEWAY
-    if (brandId === 'admin' && (password === 'admin123' || password === 'admin@123')) {
+    const inputHash = await hashPassword(password);
+    
+    // ADMIN SECURE GATEWAY (Hashes for admin123 and admin@123)
+    const adminHash1 = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+    const adminHash2 = '331c26f0f5b12dafc039bbf1b71d9d9ab6601b1df4cd19565f1ef1d07c0a9697';
+    
+    if (brandId === 'admin' && (inputHash === adminHash1 || inputHash === adminHash2 || password === 'admin123' || password === 'admin@123')) {
         const loginBtn = loginForm.querySelector('button');
         loginBtn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Elevating Access...`;
         if (window.lucide) lucide.createIcons();
@@ -162,7 +186,7 @@ loginForm.addEventListener('submit', (e) => {
         }
 
         // Check if password matches
-        if (brand.pass === password || brandId === 'nike' || brandId === 'starbucks' || brandId === 'apple') {
+        if (brand.pass === inputHash || brand.pass === password || brandId === 'nike' || brandId === 'starbucks' || brandId === 'apple') {
             errorMsg.style.display = 'none';
             loginBtn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Authenticating...`;
             if (window.lucide) lucide.createIcons();
@@ -327,12 +351,12 @@ function logout() {
     loginForm.reset();
 }
 
-function changeOwnPassword() {
+async function changeOwnPassword() {
     if (!currentBrand || !currentBrandId) return;
     const newPass = prompt(`Update Security Key for ${currentBrand.name}:`);
     if (newPass && newPass.trim().length > 0) {
         if (brands[currentBrandId]) {
-            brands[currentBrandId].pass = newPass.trim();
+            brands[currentBrandId].pass = await hashPassword(newPass.trim());
             localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
             alert('Security Key updated successfully! Please use this new key for your next login.');
         }
