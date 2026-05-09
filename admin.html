@@ -1063,6 +1063,7 @@
             await loadFromSheetDB(); // Load latest data from cloud
             // Re-run audit after cloud load
             Object.keys(storedBrands).forEach(key => {
+                if (!storedBrands[key].name) storedBrands[key].name = key;
                 if (!storedBrands[key].plan) storedBrands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
                 if (!storedBrands[key].trial) storedBrands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
                 if (storedBrands[key].locked === undefined) storedBrands[key].locked = false;

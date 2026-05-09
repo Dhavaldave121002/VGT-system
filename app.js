@@ -92,6 +92,7 @@ async function loadFromSheetDB() {
 
 // PERFECTION AUDIT: Ensure all brands (new and legacy) have necessary properties
 Object.keys(brands).forEach(key => {
+    if (!brands[key].name) brands[key].name = key;
     if (!brands[key].plan) brands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
     if (!brands[key].trial) brands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
     if (brands[key].locked === undefined) brands[key].locked = false;
@@ -100,6 +101,7 @@ Object.keys(brands).forEach(key => {
 });
 
 let currentBrand = null;
+let currentBrandId = null;
 let currentDate = new Date();
 let selectedDay = null;
 
@@ -180,6 +182,7 @@ loginForm.addEventListener('submit', (e) => {
 
 function login(brandId) {
     currentBrand = brands[brandId];
+    currentBrandId = brandId;
 
     // LEGACY DATA FIX (Client-Side Audit)
     if (currentBrand.events) {
@@ -281,13 +284,11 @@ function logout() {
 }
 
 function changeOwnPassword() {
-    if (!currentBrand) return;
+    if (!currentBrand || !currentBrandId) return;
     const newPass = prompt(`Update Security Key for ${currentBrand.name}:`);
     if (newPass && newPass.trim().length > 0) {
-        // Find the brand ID in the local storage object
-        const brandId = Object.keys(brands).find(key => brands[key].name === currentBrand.name);
-        if (brandId) {
-            brands[brandId].pass = newPass.trim();
+        if (brands[currentBrandId]) {
+            brands[currentBrandId].pass = newPass.trim();
             localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
             alert('Security Key updated successfully! Please use this new key for your next login.');
         }
