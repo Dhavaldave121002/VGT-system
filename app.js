@@ -196,9 +196,8 @@ function login(brandId) {
         }
     }
 
-    // Get gender from login form to set professional cartoon avatar
-    const genderSelect = document.getElementById('ownerGender');
-    const gender = genderSelect ? genderSelect.value : 'male';
+    // Get gender from brand data to set professional cartoon avatar
+    const gender = currentBrand.gender || 'male';
     
     let avatarUrl = '';
     if (gender === 'female') {

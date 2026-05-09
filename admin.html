@@ -49,6 +49,13 @@
                         <input type="password" id="newBrandPass" placeholder="••••••••" required>
                     </div>
                     <div class="input-group">
+                        <label>Owner Profile Type</label>
+                        <select id="newBrandGender">
+                            <option value="male">👔 Male Owner</option>
+                            <option value="female">👗 Female Owner</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
                         <label>Service Plan</label>
                         <select id="newBrandPlan">
                             <option value="Plan 1: 3 Posts, 2 Videos">Plan 1: 3P + 2V</option>
@@ -659,6 +666,7 @@
             
             document.getElementById('newBrandName').value = brand.name;
             document.getElementById('newBrandPass').value = brand.pass;
+            document.getElementById('newBrandGender').value = brand.gender || 'male';
             document.getElementById('newBrandPlan').value = brand.plan || 'Plan 1: 3 Posts, 2 Videos';
             document.getElementById('newBrandCoverage').value = brand.coverage || 'all';
             
@@ -684,6 +692,7 @@
             const id = document.getElementById('newBrandId').value.toLowerCase().trim();
             const name = document.getElementById('newBrandName').value;
             const pass = document.getElementById('newBrandPass').value;
+            const gender = document.getElementById('newBrandGender').value;
             const plan = document.getElementById('newBrandPlan').value;
             const trial = document.getElementById('newBrandTrial').value;
             const coverage = document.getElementById('newBrandCoverage').value;
@@ -694,6 +703,7 @@
                 // UPDATE
                 storedBrands[editingBrandId].name = name;
                 storedBrands[editingBrandId].pass = pass;
+                storedBrands[editingBrandId].gender = gender;
                 storedBrands[editingBrandId].plan = plan;
                 storedBrands[editingBrandId].coverage = coverage;
                 storedBrands[editingBrandId].trial = `Phase 1: ${trial}`;
@@ -719,6 +729,7 @@
                 storedBrands[id] = {
                     name: name,
                     pass: pass,
+                    gender: gender,
                     plan: plan,
                     coverage: coverage,
                     trial: `Phase 1: ${trial}`,
