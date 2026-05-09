@@ -439,12 +439,18 @@
             Object.keys(storedBrands).forEach(id => {
                 const brand = storedBrands[id];
                 const isLocked = brand.locked === true;
+                const avatarUrl = brand.gender === 'female' ? './female_owner.png' : './male_owner.png';
 
                 // Table
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = '1px solid var(--border-glass)';
                 tr.innerHTML = `
-                    <td style="padding: 16px; font-weight: 600;">${brand.name}</td>
+                    <td style="padding: 16px; font-weight: 600;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <img src="${avatarUrl}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-light); background: rgba(0,0,0,0.2);">
+                            ${brand.name}
+                        </div>
+                    </td>
                     <td style="padding: 16px; color: var(--text-gray); font-size: 0.85rem;">${id}</td>
                     <td style="padding: 16px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
