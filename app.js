@@ -201,11 +201,11 @@ function login(brandId) {
     
     let avatarUrl = '';
     if (gender === 'female') {
-        // High-quality Female Professional Cartoon Avatar
-        avatarUrl = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Liliana&backgroundColor=ffdfbf';
+        // High-quality Female Professional 3D Avatar (Premium Business Look)
+        avatarUrl = 'https://cdn3d.iconscout.com/3d/premium/thumb/businesswoman-avatar-4315126-3579071.png';
     } else {
-        // High-quality Male Professional Cartoon Avatar
-        avatarUrl = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=c0aede';
+        // High-quality Male Professional 3D Avatar (Premium Business Look)
+        avatarUrl = 'https://cdn3d.iconscout.com/3d/premium/thumb/businessman-avatar-4315124-3579069.png';
     }
 
     document.getElementById('currentBrandName').textContent = currentBrand.name;
