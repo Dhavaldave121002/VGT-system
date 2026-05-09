@@ -44,25 +44,37 @@ const defaultBrands = {
 // Global brands object that merges defaults with localStorage
 let brands = JSON.parse(localStorage.getItem('socialSphere_brands')) || defaultBrands;
 
-// SheetDB Sync Engine (Client-Side)
+// SheetDB Sync Engine (Client-Side) - Tabular Architecture
 async function syncToSheetDB() {
     if (!SHEETDB_API_URL) return;
     try {
-        const payload = { data: [{ id: 1, database_json: JSON.stringify(brands) }] };
-        // Try PATCH first (update existing row), fallback to POST
-        const patchRes = await fetch(SHEETDB_API_URL + '/id/1', {
-            method: 'PATCH',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: { database_json: JSON.stringify(brands) } })
+        const rows = Object.keys(brands).map(id => {
+            const b = brands[id];
+            return {
+                id: id,
+                name: b.name || "",
+                pass: b.pass || "",
+                plan: b.plan || "",
+                coverage: b.coverage || "all",
+                trial: b.trial || "",
+                startDate: b.startDate || "",
+                endDate: b.endDate || "",
+                locked: b.locked ? "true" : "false",
+                logo: b.logo || "",
+                events: JSON.stringify(b.events || []),
+                messages: JSON.stringify(b.messages || []),
+                chat: JSON.stringify(b.chat || []),
+                videoTasks: JSON.stringify(b.videoTasks || [])
+            };
         });
-        if (!patchRes.ok) {
-            // Row doesn't exist yet, create it
-            await fetch(SHEETDB_API_URL, {
-                method: 'POST',
-                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-        }
+
+        // Bulk replace logic: clear sheet and repopulate with current state
+        await fetch(SHEETDB_API_URL + '/all', { method: 'DELETE' });
+        await fetch(SHEETDB_API_URL, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: rows })
+        });
     } catch (error) {
         console.warn("SheetDB Sync Failed. Using local storage.", error);
     }
@@ -71,16 +83,34 @@ async function syncToSheetDB() {
 async function loadFromSheetDB() {
     if (!SHEETDB_API_URL) return false;
     try {
-        const res = await fetch(SHEETDB_API_URL + '/id/1', {
-            headers: { 'Accept': 'application/json' }
-        });
+        const res = await fetch(SHEETDB_API_URL);
         if (!res.ok) return false;
         const rows = await res.json();
-        if (rows && rows.length > 0 && rows[0].database_json) {
-            const cloudData = JSON.parse(rows[0].database_json);
-            brands = cloudData;
+        
+        let newBrands = {};
+        if (rows && rows.length > 0 && !rows[0].database_json) {
+            // Tabular format detected
+            rows.forEach(row => {
+                if(!row.id) return;
+                newBrands[row.id] = {
+                    name: row.name || "",
+                    pass: row.pass || "",
+                    plan: row.plan || "",
+                    coverage: row.coverage || "all",
+                    trial: row.trial || "",
+                    startDate: row.startDate || "",
+                    endDate: row.endDate || "",
+                    locked: row.locked === "true",
+                    logo: row.logo || "",
+                    events: row.events ? JSON.parse(row.events) : [],
+                    messages: row.messages ? JSON.parse(row.messages) : [],
+                    chat: row.chat ? JSON.parse(row.chat) : [],
+                    videoTasks: row.videoTasks ? JSON.parse(row.videoTasks) : []
+                };
+            });
+            brands = newBrands;
             localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-            console.log("✅ Loaded from SheetDB cloud database.");
+            console.log("✅ Tabular data loaded from SheetDB.");
             return true;
         }
     } catch (error) {
