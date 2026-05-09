@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialSphere Admin | Control Center</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body style="overflow-y: auto; height: auto;">
+
+    <div class="dashboard" id="adminDashboard" style="display: block; max-width: 1000px; padding-top: 60px;">
+        <header>
+            <div class="brand-profile">
+                <div class="brand-logo-container"
+                    style="background: var(--primary); display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="shield-check" style="color: white; width: 24px; height: 24px;"></i>
+                </div>
+                <div>
+                    <h2 class="brand-name">System Administrator</h2>
+                    <p class="brand-handle">@admin_control</p>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <a href="index.html" class="btn-icon" title="Log Out"
+                    style="color: #F87171; border-color: rgba(248, 113, 113, 0.2);"><i data-lucide="log-out"></i></a>
+            </div>
+        </header>
+
+        <main class="animate-slide">
+            <div class="calendar-card" style="padding: 40px;">
+                <h3 style="font-size: 1.5rem; margin-bottom: 24px;">Brand Management</h3>
+
+                <!-- Add Brand Form -->
+                <form id="addBrandForm" class="admin-form"
+                    style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                    <div class="input-group">
+                        <label>Brand Name</label>
+                        <input type="text" id="newBrandName" placeholder="e.g. Adidas" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Login ID</label>
+                        <input type="text" id="newBrandId" placeholder="e.g. adidas_hq" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="newBrandPass" placeholder="••••••••" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Service Plan</label>
+                        <select id="newBrandPlan">
+                            <option value="Plan 1: 3 Posts, 2 Videos">Plan 1: 3P + 2V</option>
+                            <option value="Plan 2: 6 Posts Only">Plan 2: 6 Posts Only</option>
+                            <option value="Plan 3: 4 Videos Only">Plan 3: 4 Videos Only</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Service Phase</label>
+                        <select id="newBrandTrial">
+                            <option value="Buy 1, Get 1 Free">Phase 1: Buy 1, Get 1 Free</option>
+                            <option value="Standard Monthly">Phase 2: Monthly Subscription</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Social Coverage</label>
+                        <select id="newBrandCoverage">
+                            <option value="all">Full Ecosystem (All)</option>
+                            <option value="meta">Meta Only (IG + FB)</option>
+                            <option value="video">Video Focused (YT + Video)</option>
+                            <option value="pro">Professional (LinkedIn + Ads)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Contract Start</label>
+                        <input type="date" id="newBrandStart">
+                    </div>
+                    <div class="input-group">
+                        <label>Contract End</label>
+                        <input type="date" id="newBrandEnd">
+                    </div>
+                    <button type="submit" class="btn-primary" style="grid-column: span 2;">
+                        <i data-lucide="plus"></i> Add Brand
+                    </button>
+                </form>
+
+                <!-- Brands List -->
+                <div style="overflow-x: auto; margin-bottom: 60px;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr
+                                style="color: var(--text-gray); font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid var(--border-glass);">
+                                <th style="padding: 16px;">Brand</th>
+                                <th style="padding: 16px;">User ID</th>
+                                <th style="padding: 16px;">Security</th>
+                                <th style="padding: 16px;">Plan</th>
+                                <th style="padding: 16px;">Coverage</th>
+                                <th style="padding: 16px;">Contract</th>
+                                <th style="padding: 16px;">Access</th>
+                                <th style="padding: 16px; text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="brandListTable">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                    <!-- Broadcast Section -->
+                    <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 24px;">Broadcast & Announcements</h3>
+                        <form id="broadcastForm" class="admin-form" style="grid-template-columns: 1fr 1fr auto;">
+                            <div class="input-group">
+                                <label>Announcement Message</label>
+                                <input type="text" id="broadcastMsg" placeholder="e.g. System maintenance at 12 PM..."
+                                    required>
+                            </div>
+                            <div class="input-group">
+                                <label>Recipient</label>
+                                <select id="broadcastRecipient">
+                                    <option value="all">📢 All Brands (Global)</option>
+                                    <!-- Injected by JS -->
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i data-lucide="send"></i> Send Alert
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Global Support Inbox -->
+                <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                        <div>
+                            <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Global Support Inbox</h3>
+                            <p style="color: var(--text-gray); font-size: 0.9rem;">Real-time feed of all client inquiries and AI Assistant conversations.</p>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button onclick="downloadInboxCSV()" style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.9rem;">
+                                <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download List
+                            </button>
+                            <button onclick="clearAllInbox()" style="background: rgba(248, 113, 113, 0.1); color: #F87171; border: 1px solid rgba(248, 113, 113, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.9rem;">
+                                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Clear All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; max-height: 400px; overflow-y: auto;">
+                        <div id="globalSupportInbox" style="display: grid; gap: 16px;">
+                            <!-- Injected by JS -->
+                            <div style="text-align: center; color: var(--text-gray); padding: 40px 0;"><i data-lucide="check-circle" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><br>Inbox Zero. All client inquiries resolved.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Shoot Assignments -->
+                <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                        <div>
+                            <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Video Shoot Assignments</h3>
+                            <p style="color: var(--text-gray); font-size: 0.9rem;">Send scripts/notes to clients and review their submitted Google Drive links.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <!-- Send Assignment Form -->
+                        <form id="videoTaskForm" class="admin-form" style="display: flex; flex-direction: column; gap: 16px;">
+                            <div class="input-group" style="margin: 0;">
+                                <label>Assign To (Brand)</label>
+                                <select id="videoTaskRecipient" required>
+                                    <!-- Injected by JS -->
+                                </select>
+                            </div>
+                            <div class="input-group" style="margin: 0;">
+                                <label>Shoot Instructions / Script / Notes</label>
+                                <textarea id="videoTaskNote" rows="4" placeholder="e.g. Please shoot a 30s video explaining our new product using the following script..." required style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); border-radius: 8px; color: white; padding: 12px; font-family: inherit; resize: vertical;"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary" style="align-self: flex-start;">
+                                <i data-lucide="video"></i> Dispatch Assignment
+                            </button>
+                        </form>
+                        
+                        <!-- Review Submitted Links -->
+                        <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; max-height: 300px; overflow-y: auto;">
+                            <h4 style="margin-top: 0; margin-bottom: 16px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;"><i data-lucide="hard-drive" style="color: #60A5FA;"></i> Submitted Drive Links</h4>
+                            <div id="adminVideoTasksList" style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Injected by JS -->
+                                <div style="text-align: center; color: var(--text-gray); padding: 20px 0; font-size: 0.85rem;">No submissions pending review.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Manager -->
+                <h3 style="font-size: 1.5rem; margin-bottom: 24px;">Content & Ads Scheduler</h3>
+                <form id="scheduleForm" class="admin-form">
+                    <div class="input-group">
+                        <label>Select Brand</label>
+                        <select id="selectBrand">
+                            <!-- Options by JS -->
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Date</label>
+                        <input type="date" id="scheduleDate" required>
+                    </div>
+                    <div class="input-group" style="grid-column: span 2;">
+                        <label>Select Post Types (Click to select multiple)</label>
+                        <div id="typeChipContainer"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 10px;">
+                            <div class="type-chip" data-value="insta"><i data-lucide="camera"></i> Instagram</div>
+                            <div class="type-chip" data-value="fb"><i data-lucide="globe"></i> Facebook</div>
+                            <div class="type-chip" data-value="tw"><i data-lucide="send"></i> Twitter</div>
+                            <div class="type-chip" data-value="threads"><i data-lucide="at-sign"></i> Threads</div>
+                            <div class="type-chip" data-value="yt"><i data-lucide="play"></i> YouTube</div>
+                            <div class="type-chip" data-value="link"><i data-lucide="users"></i> LinkedIn</div>
+                            <div class="type-chip" data-value="video"><i data-lucide="video"></i> Video Content</div>
+                            <div class="type-chip" data-value="festival"><i data-lucide="gift"></i> Festival</div>
+                            <div class="type-chip" data-value="ad"><i data-lucide="megaphone"></i> Paid Ad</div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Post/Ad Time (Optional)</label>
+                        <input type="time" id="scheduleTime">
+                    </div>
+                    <div class="input-group" id="titleGroup" style="display: none;">
+                        <label>Campaign Title</label>
+                        <input type="text" id="scheduleTitle" placeholder="e.g. Summer Sale">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i data-lucide="calendar-plus"></i> Schedule
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Chat Modal -->
+    <div id="adminChatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <div class="admin-card" style="width: 100%; max-width: 500px; height: 80vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; background: #0f172a; border: 1px solid var(--border-glass);">
+            <!-- Header -->
+            <div style="padding: 20px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="message-square" style="color: #A855F7;"></i> Support Transcripts
+                    </h3>
+                    <p id="adminChatBrandName" style="margin: 4px 0 0 0; color: var(--text-gray); font-size: 0.85rem;">Brand Name</p>
+                </div>
+                <button onclick="closeAdminChat()" style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i data-lucide="x"></i></button>
+            </div>
+            
+            <!-- Chat Area -->
+            <div id="adminChatArea" style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
+                <!-- JS will inject messages here -->
+            </div>
+            
+            <!-- Input Area -->
+            <div style="padding: 16px; border-top: 1px solid var(--border-glass); background: rgba(0,0,0,0.2);">
+                <form id="adminChatForm" style="display: flex; gap: 12px;">
+                    <input type="text" id="adminChatInput" placeholder="Type response as Admin..." required style="flex-grow: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: white; padding: 12px 16px; border-radius: 20px; font-size: 0.9rem; outline: none;">
+                    <button type="submit" style="background: #10B981; color: white; border: none; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;"><i data-lucide="send" style="width: 18px; height: 18px;"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // SHEETDB DATABASE SYNC ENGINE
+        // ==========================================
+        const SHEETDB_API_URL = "https://sheetdb.io/api/v1/vvutbhezp19tr"; // ✅ LIVE DATABASE CONNECTED
+
+        async function syncToSheetDB() {
+            if (!SHEETDB_API_URL) return;
+            try {
+                const patchRes = await fetch(SHEETDB_API_URL + '/id/1', {
+                    method: 'PATCH',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: { database_json: JSON.stringify(storedBrands) } })
+                });
+                if (!patchRes.ok) {
+                    // Row doesn't exist yet — create it
+                    await fetch(SHEETDB_API_URL, {
+                        method: 'POST',
+                        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ data: [{ id: 1, database_json: JSON.stringify(storedBrands) }] })
+                    });
+                }
+            } catch (error) {
+                console.warn("SheetDB Sync Failed. Data saved locally.", error);
+            }
+        }
+
+        // ==========================================
+        // ADMIN SHEETDB READ ENGINE
+        // ==========================================
+        async function loadFromSheetDB() {
+            if (!SHEETDB_API_URL) return false;
+            try {
+                const res = await fetch(SHEETDB_API_URL + '/id/1', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!res.ok) return false;
+                const rows = await res.json();
+                if (rows && rows.length > 0 && rows[0].database_json) {
+                    storedBrands = JSON.parse(rows[0].database_json);
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                    console.log('✅ Admin: Loaded from SheetDB cloud database.');
+                    return true;
+                }
+            } catch (error) {
+                console.warn('Admin: Could not load from SheetDB. Using local data.', error);
+            }
+            return false;
+        }
+
+        const brandListTable = document.getElementById('brandListTable');
+        const addBrandForm = document.getElementById('addBrandForm');
+        const scheduleForm = document.getElementById('scheduleForm');
+        const selectBrand = document.getElementById('selectBrand');
+        const titleGroup = document.getElementById('titleGroup');
+
+        // Toggle Campaign Title visibility for Ads
+        document.querySelectorAll('.type-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const activeTypes = Array.from(document.querySelectorAll('.type-chip.active'))
+                    .map(c => c.getAttribute('data-value'));
+                if (activeTypes.includes('ad')) {
+                    titleGroup.style.display = 'block';
+                    document.getElementById('scheduleTitle').required = true;
+                } else {
+                    titleGroup.style.display = 'none';
+                    document.getElementById('scheduleTitle').required = false;
+                }
+            });
+        });
+
+        // Initial Mock Brands
+        const defaultBrands = {
+            'nike': { name: 'Nike Global', pass: 'nike123', logo: 'https://img.freepik.com/free-icon/nike_318-566072.jpg', events: [] },
+            'starbucks': { name: 'Starbucks Coffee', pass: 'sbux123', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png', events: [] },
+            'apple': { name: 'Apple Inc.', pass: 'apple123', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg', events: [] }
+        };
+
+        let storedBrands = JSON.parse(localStorage.getItem('socialSphere_brands')) || defaultBrands;
+
+        // PERFECTION AUDIT: Ensure all data is consistent
+        Object.keys(storedBrands).forEach(key => {
+            if (!storedBrands[key].plan) storedBrands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
+            if (!storedBrands[key].trial) storedBrands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
+            if (storedBrands[key].locked === undefined) storedBrands[key].locked = false;
+            if (!storedBrands[key].events) storedBrands[key].events = [];
+        });
+
+        const broadcastRecipient = document.getElementById('broadcastRecipient');
+        const broadcastForm = document.getElementById('broadcastForm');
+
+        function renderBrands() {
+            brandListTable.innerHTML = '';
+            selectBrand.innerHTML = '';
+            broadcastRecipient.innerHTML = '<option value="all">📢 All Brands (Global)</option>';
+
+            // AUTOMATED CONTRACT LIFECYCLE ENGINE
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const now = Date.now();
+            let stateChanged = false;
+
+            Object.keys(storedBrands).forEach(id => {
+                const brand = storedBrands[id];
+                if (!brand.messages) brand.messages = [];
+                
+                // LEGACY DATA FIX: Bind old repeating events to May 2026
+                if (brand.events) {
+                    let eventsChanged = false;
+                    brand.events.forEach(ev => {
+                        if (ev.month === undefined) { ev.month = 4; eventsChanged = true; } // May (0-indexed)
+                        if (ev.year === undefined) { ev.year = 2026; eventsChanged = true; }
+                    });
+                    if (eventsChanged) stateChanged = true;
+                }
+                
+                // 1. Future Start Date Logic (Pre-Locking / Auto-Activating)
+                if (brand.startDate) {
+                    const start = new Date(brand.startDate);
+                    start.setHours(0,0,0,0);
+                    if (today < start && !brand.locked && !brand.manualUnlockOverride) {
+                        brand.locked = true;
+                        brand.messages.push({ text: "SYSTEM ALERT: Contract has not started yet. Account will automatically activate on " + brand.startDate, time: now });
+                        stateChanged = true;
+                    } else if (today >= start && brand.locked && !brand.manualUnlockOverride) {
+                        // If it's locked but the start date has arrived (and it's not past the end date)
+                        let pastEnd = false;
+                        if (brand.endDate) {
+                            const end = new Date(brand.endDate);
+                            end.setHours(0,0,0,0);
+                            if (today > end) pastEnd = true;
+                        }
+                        if (!pastEnd) {
+                            brand.locked = false;
+                            brand.messages.push({ text: "SYSTEM ALERT: Your contract period has officially begun. Welcome!", time: now });
+                            stateChanged = true;
+                        }
+                    }
+                }
+
+                // 2. End Date Expiration Logic
+                if (brand.endDate) {
+                    const end = new Date(brand.endDate);
+                    end.setHours(0,0,0,0);
+                    const timeDiff = end.getTime() - today.getTime();
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    
+                    if (daysDiff < 0 && !brand.locked && !brand.manualUnlockOverride) {
+                        brand.locked = true;
+                        brand.messages.push({ text: "SYSTEM ALERT: Contract expired. Your account has been automatically locked.", time: now });
+                        stateChanged = true;
+                    }
+                    
+                    if (daysDiff >= 0 && daysDiff <= 3 && !brand.locked) {
+                        const warningMsg = `REMINDER: Your contract expires in ${daysDiff} day(s). Please renew.`;
+                        const hasRecentWarning = brand.messages.some(m => m.text === warningMsg && (now - m.time) < 86400000); // 24hr debounce
+                        if (!hasRecentWarning) {
+                            brand.messages.push({ text: warningMsg, time: now });
+                            stateChanged = true;
+                        }
+                    }
+                }
+            });
+            if(stateChanged) localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+
+            Object.keys(storedBrands).forEach(id => {
+                const brand = storedBrands[id];
+                const isLocked = brand.locked === true;
+
+                // Table
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid var(--border-glass)';
+                tr.innerHTML = `
+                    <td style="padding: 16px; font-weight: 600;">${brand.name}</td>
+                    <td style="padding: 16px; color: var(--text-gray); font-size: 0.85rem;">${id}</td>
+                    <td style="padding: 16px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-family: monospace; color: var(--text-gray); font-size: 0.8rem;">••••••••</span>
+                            <button onclick="changePassword('${id}')" style="background: none; border: none; color: var(--primary-light); cursor: pointer; padding: 0;"><i data-lucide="key" style="width: 14px; height: 14px;"></i></button>
+                        </div>
+                    </td>
+                    <td style="padding: 16px; font-size: 0.85rem; color: var(--primary-light);">${brand.plan || 'Standard'}</td>
+                    <td style="padding: 16px; font-size: 0.85rem; color: #818CF8; font-weight: 600;">${brand.coverage?.toUpperCase() || 'ALL'}</td>
+                    <td style="padding: 16px; font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">
+                        <div style="color: white; margin-bottom: 4px;">${brand.trial || 'Standard'}</div>
+                        ${brand.startDate ? `<span style="color: #10B981;">${brand.startDate}</span><br>to ` : ''}
+                        ${brand.endDate ? `<span style="color: #F87171;">${brand.endDate}</span>` : 'Ongoing'}
+                    </td>
+                    <td style="padding: 16px;">
+                        <span class="status-badge" style="background: ${isLocked ? 'rgba(248, 113, 113, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; color: ${isLocked ? '#F87171' : '#10B981'}; border: 1px solid ${isLocked ? 'rgba(248, 113, 113, 0.2)' : 'rgba(16, 185, 129, 0.2)'}; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem;">
+                            ${isLocked ? 'Locked' : 'Unlocked'}
+                        </span>
+                    </td>
+                    <td style="padding: 16px; text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
+                        <button onclick="openAdminChat('${id}')" title="View Support Chats" style="background: none; border: none; color: #A855F7; cursor: pointer;">
+                            <i data-lucide="message-square"></i>
+                        </button>
+                        <button onclick="editBrand('${id}')" title="Edit Brand Details" style="background: none; border: none; color: #60A5FA; cursor: pointer;">
+                            <i data-lucide="edit-2"></i>
+                        </button>
+                        <button onclick="toggleLock('${id}')" title="${isLocked ? 'Unlock' : 'Lock'}" style="background: none; border: none; color: ${isLocked ? '#10B981' : '#F59E0B'}; cursor: pointer;">
+                            <i data-lucide="${isLocked ? 'unlock' : 'lock'}"></i>
+                        </button>
+                        <button onclick="deleteBrand('${id}')" title="Delete" style="background: none; border: none; color: #F87171; cursor: pointer;">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </td>
+                `;
+                brandListTable.appendChild(tr);
+
+                // Select Dropdown
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.textContent = brand.name;
+                selectBrand.appendChild(opt);
+
+                // Broadcast Dropdown
+                const opt2 = document.createElement('option');
+                opt2.value = id;
+                opt2.textContent = `🎯 ${brand.name}`;
+                broadcastRecipient.appendChild(opt2);
+
+                // Video Task Dropdown
+                const opt3 = document.createElement('option');
+                opt3.value = id;
+                opt3.textContent = `🎬 ${brand.name}`;
+                document.getElementById('videoTaskRecipient').appendChild(opt3);
+            });
+
+            // Render Video Tasks List
+            renderAdminVideoTasks();
+            
+            // Render Global Support Inbox
+            renderGlobalSupportInbox();
+
+            // CRITICAL: Restore all icons
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+            
+            // Trigger dynamic filtering for the first loaded brand
+            if (selectBrand.options.length > 0) {
+                selectBrand.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // ==========================================
+        // ADMIN VIDEO TASK ENGINE
+        // ==========================================
+        document.getElementById('videoTaskForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const recipientId = document.getElementById('videoTaskRecipient').value;
+            const note = document.getElementById('videoTaskNote').value.trim();
+            if (!note) return;
+
+            const brand = storedBrands[recipientId];
+            if (!brand) return;
+
+            if (!brand.videoTasks) brand.videoTasks = [];
+            
+            const task = {
+                id: 'vt_' + Date.now(),
+                note: note,
+                status: 'pending',
+                driveLink: '',
+                assignedAt: Date.now()
+            };
+            
+            brand.videoTasks.push(task);
+            
+            // Also send a notification
+            if (!brand.messages) brand.messages = [];
+            brand.messages.push({ text: `🎬 New Video Assignment Received. Please check your Video Tasks.`, time: Date.now() });
+
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+            document.getElementById('videoTaskForm').reset();
+            alert(`Video Assignment successfully sent to ${brand.name}!`);
+            renderAdminVideoTasks();
+        });
+
+        function renderAdminVideoTasks() {
+            const list = document.getElementById('adminVideoTasksList');
+            list.innerHTML = '';
+            let hasSubmitted = false;
+
+            Object.keys(storedBrands).forEach(id => {
+                const brand = storedBrands[id];
+                if (brand.videoTasks) {
+                    brand.videoTasks.forEach((task, index) => {
+                        if (task.status === 'submitted') {
+                            hasSubmitted = true;
+                            const div = document.createElement('div');
+                            div.style.cssText = "background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #10B981;";
+                            div.innerHTML = `
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <strong>${brand.name}</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-gray);">${new Date(task.assignedAt).toLocaleDateString()}</span>
+                                </div>
+                                <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 8px; font-style: italic;">Note: ${task.note}</p>
+                                <a href="${task.driveLink}" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #60A5FA; text-decoration: none; background: rgba(96, 165, 250, 0.1); padding: 6px 12px; border-radius: 12px;">
+                                    <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> View Drive Link
+                                </a>
+                                <div style="margin-top: 8px; text-align: right;">
+                                    <button onclick="clearVideoTask('${id}', ${index})" style="background: none; border: none; color: var(--text-gray); cursor: pointer; font-size: 0.75rem; text-decoration: underline;">Dismiss</button>
+                                </div>
+                            `;
+                            list.appendChild(div);
+                        }
+                    });
+                }
+            });
+
+            if (!hasSubmitted) {
+                list.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 20px 0; font-size: 0.85rem;">No submissions pending review.</div>`;
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function clearVideoTask(brandId, taskIndex) {
+            if(confirm('Dismiss this submitted link from your view?')) {
+                storedBrands[brandId].videoTasks.splice(taskIndex, 1);
+                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                renderAdminVideoTasks();
+            }
+        }
+
+        // Initialize Icons on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderBrands();
+            if (window.lucide) lucide.createIcons();
+        });
+
+        broadcastForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('broadcastMsg').value;
+            const target = broadcastRecipient.value;
+            const now = Date.now();
+
+            if (target === 'all') {
+                Object.keys(storedBrands).forEach(id => {
+                    if (!storedBrands[id].messages) storedBrands[id].messages = [];
+                    storedBrands[id].messages.push({ text: msg, time: now });
+                });
+                alert('Global Announcement Broadcasted!');
+            } else {
+                if (!storedBrands[target].messages) storedBrands[target].messages = [];
+                storedBrands[target].messages.push({ text: msg, time: now });
+                alert(`Direct Message sent to ${storedBrands[target].name}`);
+            }
+            broadcastForm.reset();
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+        });
+
+        function toggleLock(id) {
+            if (storedBrands[id]) {
+                const wasLocked = storedBrands[id].locked;
+                storedBrands[id].locked = !wasLocked;
+                
+                if (wasLocked && !storedBrands[id].locked) {
+                    // Manual Unlock Event (Renewal/Reactivation)
+                    storedBrands[id].manualUnlockOverride = true;
+                    if (!storedBrands[id].messages) storedBrands[id].messages = [];
+                    storedBrands[id].messages.push({ text: "SUCCESS: Contract Renewed and Profile Reactivated. Welcome back!", time: Date.now() });
+                } else if (!wasLocked && storedBrands[id].locked) {
+                    storedBrands[id].manualUnlockOverride = false;
+                }
+                
+                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                renderBrands();
+            }
+        }
+
+        function changePassword(id) {
+            const newPass = prompt(`Enter new Security Key for ${storedBrands[id].name}:`);
+            if (newPass && newPass.trim().length > 0) {
+                storedBrands[id].pass = newPass.trim();
+                renderBrands();
+                alert('Security Key updated successfully!');
+            }
+        }
+
+        let editingBrandId = null;
+
+        function editBrand(id) {
+            const brand = storedBrands[id];
+            if (!brand) return;
+
+            document.getElementById('newBrandId').value = id;
+            document.getElementById('newBrandId').readOnly = true; // Cannot change ID
+            document.getElementById('newBrandId').style.opacity = '0.5';
+            
+            document.getElementById('newBrandName').value = brand.name;
+            document.getElementById('newBrandPass').value = brand.pass;
+            document.getElementById('newBrandPlan').value = brand.plan || 'Plan 1: 3 Posts, 2 Videos';
+            document.getElementById('newBrandCoverage').value = brand.coverage || 'all';
+            
+            document.getElementById('newBrandStart').value = brand.startDate || '';
+            document.getElementById('newBrandEnd').value = brand.endDate || '';
+            
+            // Extract trial phase for dropdown
+            const rawTrial = brand.trial || 'Phase 1: Buy 1, Get 1 Free';
+            if (rawTrial.includes('Buy 1')) document.getElementById('newBrandTrial').value = 'Buy 1, Get 1 Free';
+            else document.getElementById('newBrandTrial').value = 'Standard Monthly';
+
+            editingBrandId = id;
+            const submitBtn = addBrandForm.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i data-lucide="save"></i> Update Details';
+            submitBtn.style.background = '#10B981'; // Green for update
+            if (window.lucide) lucide.createIcons();
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        addBrandForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('newBrandId').value.toLowerCase().trim();
+            const name = document.getElementById('newBrandName').value;
+            const pass = document.getElementById('newBrandPass').value;
+            const plan = document.getElementById('newBrandPlan').value;
+            const trial = document.getElementById('newBrandTrial').value;
+            const coverage = document.getElementById('newBrandCoverage').value;
+            const startDate = document.getElementById('newBrandStart').value;
+            const endDate = document.getElementById('newBrandEnd').value;
+
+            if (editingBrandId) {
+                // UPDATE
+                storedBrands[editingBrandId].name = name;
+                storedBrands[editingBrandId].pass = pass;
+                storedBrands[editingBrandId].plan = plan;
+                storedBrands[editingBrandId].coverage = coverage;
+                storedBrands[editingBrandId].trial = `Phase 1: ${trial}`;
+                storedBrands[editingBrandId].startDate = startDate;
+                
+                // If end date is extended, reset manual override and unlock so it can auto-lock in future
+                if (storedBrands[editingBrandId].endDate !== endDate) {
+                    storedBrands[editingBrandId].manualUnlockOverride = false;
+                    if (storedBrands[editingBrandId].locked) {
+                        storedBrands[editingBrandId].locked = false;
+                        if (!storedBrands[editingBrandId].messages) storedBrands[editingBrandId].messages = [];
+                        storedBrands[editingBrandId].messages.push({ text: "SUCCESS: Contract Extended and Profile Reactivated. Welcome back!", time: Date.now() });
+                    }
+                }
+                storedBrands[editingBrandId].endDate = endDate;
+                alert('Brand updated successfully!');
+            } else {
+                // CREATE NEW
+                if (storedBrands[id]) {
+                    alert('ID already exists!');
+                    return;
+                }
+                storedBrands[id] = {
+                    name: name,
+                    pass: pass,
+                    plan: plan,
+                    coverage: coverage,
+                    trial: `Phase 1: ${trial}`,
+                    startDate: startDate,
+                    endDate: endDate,
+                    locked: false,
+                    manualUnlockOverride: false,
+                    logo: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+                    events: [],
+                    messages: []
+                };
+            }
+
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+            
+            // Reset Form State
+            editingBrandId = null;
+            document.getElementById('newBrandId').readOnly = false;
+            document.getElementById('newBrandId').style.opacity = '1';
+            const submitBtn = addBrandForm.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i data-lucide="plus"></i> Add Brand';
+            submitBtn.style.background = 'var(--primary)';
+            addBrandForm.reset();
+            
+            renderBrands();
+            if (window.lucide) lucide.createIcons();
+        });
+
+        // Chip Selection Logic
+        document.querySelectorAll('.type-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('active');
+            });
+        });
+
+        // Dynamic Coverage Filtering
+        selectBrand.addEventListener('change', () => {
+            const brandId = selectBrand.value;
+            const brand = storedBrands[brandId];
+            if (!brand) return;
+
+            const coverage = brand.coverage || 'all';
+            const allChips = document.querySelectorAll('.type-chip');
+            
+            allChips.forEach(chip => {
+                const val = chip.getAttribute('data-value');
+                chip.style.display = 'flex'; // Default show
+                chip.classList.remove('active'); // Reset selection
+                
+                if (coverage === 'meta' && ['tw', 'threads', 'yt', 'link'].includes(val)) {
+                    chip.style.display = 'none';
+                } else if (coverage === 'video' && ['insta', 'fb', 'tw', 'link'].includes(val)) {
+                    chip.style.display = 'none';
+                } else if (coverage === 'pro' && ['insta', 'fb', 'yt', 'threads'].includes(val)) {
+                    chip.style.display = 'none';
+                }
+            });
+        });
+
+        scheduleForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const brandId = selectBrand.value;
+            const dateStr = document.getElementById('scheduleDate').value;
+
+            // Get selected types from active chips
+            const selectedTypes = Array.from(document.querySelectorAll('.type-chip.active'))
+                .map(chip => chip.getAttribute('data-value'));
+
+            const titleInput = document.getElementById('scheduleTitle').value;
+            const timeInput = document.getElementById('scheduleTime').value;
+            const brand = storedBrands[brandId];
+
+            if (!brand) return;
+            if (selectedTypes.length === 0) {
+                alert('Please select at least one post type.');
+                return;
+            }
+
+            const dateObj = new Date(dateStr);
+            const m = dateObj.getMonth();
+            const y = dateObj.getFullYear();
+
+            let displayTime = 'Standard Schedule';
+            if (timeInput) {
+                const [h, min] = timeInput.split(':');
+                const hour = parseInt(h);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const h12 = hour % 12 || 12;
+                displayTime = `${h12}:${min} ${ampm}`;
+            }
+
+            const limits = {
+                'Plan 1: 3 Posts, 2 Videos': { posts: 3, videos: 2, ads: 3 },
+                'Plan 2: 6 Posts Only': { posts: 6, videos: 0, ads: 3 },
+                'Plan 3: 4 Videos Only': { posts: 0, videos: 4, ads: 3 }
+            };
+
+            const currentPlan = brand.plan || 'Plan 1: 3 Posts, 2 Videos';
+            const planLimit = limits[currentPlan] || limits['Plan 1: 3 Posts, 2 Videos'];
+
+            if (!brand.events) brand.events = [];
+
+            // Process Each Selected Type
+            let addedCount = 0;
+            selectedTypes.forEach(type => {
+                const monthEvents = brand.events.filter(ev => ev.month === m && ev.year === y);
+                const postCount = monthEvents.filter(ev => ['insta', 'fb', 'tw'].includes(ev.type)).length;
+                const videoCount = monthEvents.filter(ev => ev.type === 'video').length;
+                const adCount = monthEvents.filter(ev => ev.type === 'ad').length;
+
+                let canAdd = true;
+                if (type !== 'festival') {
+                    if (['insta', 'fb', 'tw'].includes(type) && postCount >= planLimit.posts) {
+                        alert(`Limit Exceeded for ${type.toUpperCase()}! ${currentPlan} only allows ${planLimit.posts} posts per month.`);
+                        canAdd = false;
+                    } else if (type === 'video' && videoCount >= planLimit.videos) {
+                        alert(`Limit Exceeded for VIDEO! ${currentPlan} only allows ${planLimit.videos} videos per month.`);
+                        canAdd = false;
+                    } else if (type === 'ad' && adCount >= planLimit.ads) {
+                        alert(`Limit Exceeded for ADS! 3 runs limit reached.`);
+                        canAdd = false;
+                    }
+                }
+
+                if (canAdd) {
+                    const title = titleInput || `${type.charAt(0).toUpperCase() + type.slice(1)} Content`;
+                    brand.events.push({
+                        day: dateObj.getDate(),
+                        month: m,
+                        year: y,
+                        type: type,
+                        title: title,
+                        time: displayTime,
+                        desc: `Campaign: ${title}. Scheduled via Admin Control.`
+                    });
+                    addedCount++;
+                }
+            });
+
+            if (addedCount > 0) {
+                alert(`Successfully scheduled ${addedCount} item(s)!`);
+                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                renderBrands();
+                scheduleForm.reset();
+                document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('active'));
+                titleGroup.style.display = 'none';
+            }
+        });
+
+        function deleteBrand(id) {
+            if (confirm(`Delete brand ${id}?`)) {
+                delete storedBrands[id];
+                renderBrands();
+            }
+        }
+
+        // ==========================================
+        // ADMIN CHAT ENGINE
+        // ==========================================
+        let currentAdminChatId = null;
+
+        function openAdminChat(id) {
+            currentAdminChatId = id;
+            const brand = storedBrands[id];
+            if (!brand) return;
+            
+            document.getElementById('adminChatBrandName').textContent = brand.name;
+            document.getElementById('adminChatModal').style.display = 'flex';
+            renderAdminChat();
+        }
+
+        function closeAdminChat() {
+            document.getElementById('adminChatModal').style.display = 'none';
+            currentAdminChatId = null;
+        }
+
+        function renderAdminChat() {
+            const area = document.getElementById('adminChatArea');
+            area.innerHTML = '';
+            const brand = storedBrands[currentAdminChatId];
+            if (!brand || !brand.chat || brand.chat.length === 0) {
+                area.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px 0;">No chat history available for this brand.</div>`;
+                return;
+            }
+
+            brand.chat.forEach(msg => {
+                const div = document.createElement('div');
+                const isUser = msg.sender === 'user';
+                const isAdmin = msg.sender === 'admin';
+                
+                div.style.cssText = `display: flex; flex-direction: column; max-width: 85%; ${!isUser ? 'align-self: flex-end; align-items: flex-end;' : 'align-self: flex-start; align-items: flex-start;'}`;
+                
+                let bubbleCss = '';
+                let title = '';
+                if (isUser) {
+                    bubbleCss = `background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff; border-bottom-left-radius: 4px;`;
+                    title = 'Client (User)';
+                } else if (isAdmin) {
+                    bubbleCss = `background: #10B981; color: white; border-bottom-right-radius: 4px;`;
+                    title = 'You (Admin)';
+                } else {
+                    bubbleCss = `background: linear-gradient(135deg, var(--primary), #A855F7); color: white; border-bottom-right-radius: 4px;`;
+                    title = 'AI Assistant';
+                }
+                    
+                div.innerHTML = `
+                    <span style="font-size: 0.65rem; color: var(--text-gray); margin-bottom: 4px; padding: 0 4px;">
+                        ${title}
+                    </span>
+                    <div style="padding: 12px 16px; border-radius: 16px; font-size: 0.9rem; line-height: 1.4; ${bubbleCss}">
+                        ${msg.text}
+                    </div>
+                `;
+                area.appendChild(div);
+            });
+            setTimeout(() => { area.scrollTop = area.scrollHeight; }, 10);
+        }
+
+        document.getElementById('adminChatForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('adminChatInput');
+            const text = input.value.trim();
+            if (!text || !currentAdminChatId) return;
+
+            const brand = storedBrands[currentAdminChatId];
+            if (!brand.chat) brand.chat = [];
+            brand.chat.push({ sender: 'admin', text: text, time: Date.now() });
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+            
+            input.value = '';
+            renderAdminChat();
+        });
+
+        // ==========================================
+        // GLOBAL SUPPORT INBOX ENGINE
+        // ==========================================
+        function renderGlobalSupportInbox() {
+            const inbox = document.getElementById('globalSupportInbox');
+            inbox.innerHTML = '';
+            
+            let allMessages = [];
+            
+            Object.keys(storedBrands).forEach(id => {
+                const brand = storedBrands[id];
+                if(brand.chat && brand.chat.length > 0) {
+                    // Extract user messages for the global feed
+                    const userMsgs = brand.chat.filter(m => m.sender === 'user').map(m => ({ ...m, brandId: id, brandName: brand.name }));
+                    allMessages = allMessages.concat(userMsgs);
+                }
+            });
+            
+            if(allMessages.length === 0) {
+                inbox.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px 0;"><i data-lucide="check-circle" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><br>Inbox Zero. All client inquiries resolved.</div>`;
+                if(window.lucide) lucide.createIcons();
+                return;
+            }
+            
+            // Sort by newest first
+            allMessages.sort((a, b) => b.time - a.time);
+            
+            allMessages.forEach(msg => {
+                const dateStr = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }).format(new Date(msg.time));
+                const div = document.createElement('div');
+                div.style.cssText = "background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;";
+                div.innerHTML = `
+                    <div style="flex-grow: 1;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <strong style="color: #60A5FA;">${msg.brandName}</strong>
+                            <span style="font-size: 0.75rem; color: var(--text-gray);">${dateStr}</span>
+                        </div>
+                        <p style="margin: 0; color: #fff; font-size: 0.95rem; line-height: 1.4;">"${msg.text}"</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button onclick="openAdminChat('${msg.brandId}')" style="background: linear-gradient(135deg, var(--primary), #A855F7); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; white-space: nowrap; transition: 0.3s; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
+                            <i data-lucide="reply" style="width: 14px; height: 14px;"></i> Reply
+                        </button>
+                        <button onclick="deleteSingleMessage('${msg.brandId}', ${msg.time})" style="background: rgba(248, 113, 113, 0.1); color: #F87171; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.8rem; transition: 0.3s;">
+                            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Delete
+                        </button>
+                    </div>
+                `;
+                inbox.appendChild(div);
+            });
+            
+            if(window.lucide) lucide.createIcons();
+        }
+
+        function deleteSingleMessage(brandId, msgTime) {
+            if(confirm("Delete this specific question permanently?")) {
+                const brand = storedBrands[brandId];
+                if(brand && brand.chat) {
+                    brand.chat = brand.chat.filter(m => m.time !== msgTime);
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                    renderGlobalSupportInbox();
+                }
+            }
+        }
+
+        function clearAllInbox() {
+            if(confirm("CRITICAL WARNING: This will permanently delete ALL user questions from the global inbox across all brands. Are you absolutely sure?")) {
+                Object.keys(storedBrands).forEach(id => {
+                    if(storedBrands[id].chat) {
+                        // Keep bot/admin replies if needed? The user requested to clear the global inbox of questions.
+                        // We will wipe the entire chat array to be clean, or just user messages. Let's wipe all chat for a clean slate.
+                        storedBrands[id].chat = []; 
+                    }
+                });
+                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                renderGlobalSupportInbox();
+                alert("All questions and chat histories have been cleared.");
+            }
+        }
+
+        function downloadInboxCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Brand,Date,Question\n";
+            Object.keys(storedBrands).forEach(id => {
+                const brand = storedBrands[id];
+                if(brand.chat) {
+                    brand.chat.filter(m => m.sender === 'user').forEach(msg => {
+                        const dateStr = new Date(msg.time).toLocaleString().replace(/,/g, '');
+                        // Escape quotes in text
+                        const safeText = msg.text.replace(/"/g, '""');
+                        csvContent += `"${brand.name}","${dateStr}","${safeText}"\n`;
+                    });
+                }
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `global_support_inbox_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ==========================================
+        // CLOUD-FIRST INITIALIZATION
+        // ==========================================
+        async function initAdmin() {
+            await loadFromSheetDB(); // Load latest data from cloud
+            // Re-run audit after cloud load
+            Object.keys(storedBrands).forEach(key => {
+                if (!storedBrands[key].plan) storedBrands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
+                if (!storedBrands[key].trial) storedBrands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
+                if (storedBrands[key].locked === undefined) storedBrands[key].locked = false;
+                if (!storedBrands[key].events) storedBrands[key].events = [];
+            });
+            renderBrands();
+            setTimeout(() => {
+                if (window.lucide) lucide.createIcons();
+            }, 100);
+        }
+
+        initAdmin();
+    </script>
+</body>
+
+</html>

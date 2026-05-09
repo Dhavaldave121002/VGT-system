@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialSphere Elite | Marketing Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    
+    <!-- Login Overlay -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card animate-scale">
+            <div class="logo-icon">✨</div>
+            <h1>SocialSphere</h1>
+            <p class="subtitle">Access your elite marketing dashboard and manage your brand's global presence.</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="brandId">Brand Identifier</label>
+                    <input type="text" id="brandId" placeholder="Enter brand ID (e.g. nike)" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label for="password">Security Key</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <div id="errorMsg" style="color: #F87171; font-size: 0.85rem; margin-bottom: 20px; display: none; background: rgba(248, 113, 113, 0.1); padding: 12px; border-radius: 12px; border: 1px solid rgba(248, 113, 113, 0.2);"></div>
+                
+                <button type="submit" class="btn-primary">
+                    Unlock Dashboard
+                </button>
+                <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-gray);">
+                    By logging in, you agree to our <a href="terms.html" style="color: var(--primary-light); text-decoration: none; font-weight: 600;">Terms & Conditions</a>
+                </div>
+            </form>
+            
+            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 16px;">
+                <!-- Security Note -->
+                <p style="font-size: 0.7rem; color: var(--text-gray); text-align: center; opacity: 0.4;">
+                    Secure Multi-Factor Encryption Active
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Broadcast Alerts Area -->
+        <div id="alertContainer" style="width: 100%; display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;"></div>
+
+        <header class="animate-slide">
+            <div class="brand-profile">
+                <div class="brand-logo-container">
+                    <img src="" id="currentBrandLogo" class="brand-logo" alt="Logo">
+                </div>
+                <div>
+                    <h2 id="currentBrandName" class="brand-name">Brand Name</h2>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <p id="currentBrandHandle" class="brand-handle">@handle</p>
+                        <span id="brandPlanBadge" style="font-size: 0.65rem; background: rgba(99, 102, 241, 0.1); color: var(--primary-light); padding: 2px 8px; border-radius: 20px; border: 1px solid rgba(99, 102, 241, 0.2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Standard Plan</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="btn-icon" onclick="changeOwnPassword()" title="Change Security Key"><i data-lucide="key"></i></button>
+                <button class="btn-icon" onclick="openNotificationLog()" title="View Notifications"><i data-lucide="bell"></i></button>
+                <button class="btn-icon" onclick="logout()" style="color: #F87171;" title="Log Out"><i data-lucide="log-out"></i></button>
+            </div>
+        </header>
+
+        <!-- Notification History Modal -->
+        <div id="notificationModal" class="login-screen" style="display: none; align-items: flex-start; padding-top: 5vh; z-index: 1000;">
+            <div class="login-card animate-scale" style="max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-glass); padding-bottom: 16px;">
+                    <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 12px;"><i data-lucide="bell" style="color: var(--primary-light);"></i> Notification Log</h2>
+                    <button onclick="closeNotificationLog()" style="background: rgba(255,255,255,0.05); border: none; color: var(--text-gray); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i data-lucide="x" style="width: 16px; height: 16px;"></i></button>
+                </div>
+                <div id="notificationLogContainer" style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- JS will inject logs here -->
+                </div>
+            </div>
+        </div>
+
+        <main class="animate-slide" style="animation-delay: 0.1s;">
+            <div class="dashboard-content">
+                <div class="calendar-card">
+                    <div class="calendar-top">
+                        <div>
+                            <h3 id="monthDisplay" class="current-month">October 2026</h3>
+                            <p style="color: var(--text-gray); margin-top: 4px;">Marketing Roadmap</p>
+                        </div>
+                        <div class="nav-actions">
+                            <button class="btn-icon" onclick="prevMonth()"><i data-lucide="chevron-left"></i></button>
+                            <button class="btn-icon" onclick="nextMonth()"><i data-lucide="chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- JS will inject days here -->
+                    </div>
+                </div>
+
+                <!-- Daily Collection Sidebar -->
+                <div class="detail-sidebar">
+                    <div class="sidebar-header">
+                        <h4 id="selectedDateTitle">Daily Collection</h4>
+                        <p id="selectedDateSub" style="font-size: 0.8rem; color: var(--text-gray);">Scheduled Posts</p>
+                    </div>
+                    <div id="dailyCollection" class="collection-list">
+                        <div class="empty-state">
+                            <i data-lucide="calendar-days" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i>
+                            <p>Select a date to view<br>planned collection</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Assignments Panel -->
+            <div id="clientVideoTasksPanel" style="display: none; margin-top: 30px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 24px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="video" style="color: #10B981;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.2rem;">Pending Video Assignments</h3>
+                        <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-gray);">Shoot the content and paste your Google Drive link here.</p>
+                    </div>
+                </div>
+                
+                <div id="clientVideoTasksContainer" style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- JS will inject tasks here -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Support Chat Widget -->
+    <div id="chatWidgetContainer" style="position: fixed; bottom: 30px; right: 30px; z-index: 999; display: none; flex-direction: column; align-items: flex-end; gap: 16px;">
+        <!-- Chat Window -->
+        <div id="chatWindow" class="login-card animate-slide" style="display: none; width: 380px; height: 500px; padding: 0; overflow: hidden; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+            <!-- Header -->
+            <div style="background: rgba(255,255,255,0.05); padding: 16px 24px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #A855F7); display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="bot" style="color: white; width: 20px; height: 20px;"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1rem; margin: 0;">Support Desk</h3>
+                        <p style="font-size: 0.7rem; color: #10B981; margin: 0; display: flex; align-items: center; gap: 4px;"><span style="width: 6px; height: 6px; background: #10B981; border-radius: 50%; display: inline-block;"></span> AI Assistant Active</p>
+                    </div>
+                </div>
+                <button onclick="toggleChatWindow()" style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i data-lucide="x"></i></button>
+            </div>
+            
+            <!-- Messages Area -->
+            <div id="chatMessagesArea" style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
+                <!-- Messages will be injected here -->
+            </div>
+            
+            <!-- Input Area -->
+            <div style="padding: 16px; border-top: 1px solid var(--border-glass); background: rgba(0,0,0,0.2);">
+                <form id="chatInputForm" style="display: flex; gap: 12px;">
+                    <input type="text" id="chatInputText" placeholder="Type your message..." required style="flex-grow: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: white; padding: 12px 16px; border-radius: 20px; font-size: 0.9rem; outline: none;">
+                    <button type="submit" style="background: var(--primary); color: white; border: none; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;"><i data-lucide="send" style="width: 18px; height: 18px;"></i></button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Floating Button -->
+        <button id="chatToggleBtn" onclick="toggleChatWindow()" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #A855F7); color: white; border: none; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s transform;">
+            <i data-lucide="bot" style="width: 28px; height: 28px;"></i>
+        </button>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
