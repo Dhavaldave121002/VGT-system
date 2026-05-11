@@ -315,8 +315,8 @@
             </div>
     
     <!-- Admin Settings Modal -->
-    <div id="adminSettingsModal" class="admin-chat-modal-overlay">
-        <div class="login-card animate-scale" style="max-width: 400px; padding: 40px;">
+    <div id="adminSettingsModal" class="admin-chat-modal-overlay" style="z-index: 9999;">
+        <div class="login-card animate-scale" style="max-width: 400px; width: 90%; padding: 32px; margin: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <h3 style="margin: 0; font-size: 1.3rem; display: flex; align-items: center; gap: 10px;">
                     <i data-lucide="shield-check" style="color: var(--primary-light);"></i> Security Settings
@@ -357,6 +357,7 @@
 
         function openAdminSettings() {
             document.getElementById('adminSettingsModal').style.display = 'flex';
+            if (window.lucide) lucide.createIcons();
         }
 
         function closeAdminSettings() {

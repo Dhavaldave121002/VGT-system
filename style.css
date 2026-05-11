@@ -738,8 +738,16 @@ main {
 
     .admin-header {
         flex-direction: column;
-        gap: 20px;
+        gap: 24px;
         text-align: center;
+        padding: 0 16px;
+    }
+
+    .nav-actions {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
     }
     
     .admin-chat-panel {
