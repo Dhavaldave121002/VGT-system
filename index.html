@@ -73,7 +73,8 @@
 
         <!-- Notification History Modal -->
         <div id="notificationModal" class="login-screen" style="display: none; align-items: flex-start; padding-top: 5vh; z-index: 1000;">
-            <div class="login-card animate-scale" style="max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 30px;">
+            <div class="login-card animate-scale notification-modal-card" style="max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto;">
+
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-glass); padding-bottom: 16px;">
                     <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 12px;"><i data-lucide="bell" style="color: var(--primary-light);"></i> Notification Log</h2>
                     <button onclick="closeNotificationLog()" style="background: rgba(255,255,255,0.05); border: none; color: var(--text-gray); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i data-lucide="x" style="width: 16px; height: 16px;"></i></button>
@@ -139,9 +140,11 @@
     </div>
 
     <!-- Support Chat Widget -->
-    <div id="chatWidgetContainer" style="position: fixed; bottom: 30px; right: 30px; z-index: 999; display: none; flex-direction: column; align-items: flex-end; gap: 16px;">
+    <div id="chatWidgetContainer" class="chat-widget-container">
+
         <!-- Chat Window -->
-        <div id="chatWindow" class="login-card animate-slide" style="display: none; width: 380px; height: 500px; padding: 0; overflow: hidden; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+        <div id="chatWindow" class="login-card animate-slide chat-window-panel">
+
             <!-- Header -->
             <div style="background: rgba(255,255,255,0.05); padding: 16px 24px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 12px;">

@@ -11,8 +11,10 @@
 
 <body style="overflow-y: auto; height: auto;">
 
-    <div class="dashboard" id="adminDashboard" style="display: block; max-width: 1000px; padding-top: 60px;">
-        <header>
+    <div class="dashboard admin-dashboard-container" id="adminDashboard" style="display: block;">
+
+        <header class="admin-header">
+
             <div class="brand-profile">
                 <div class="brand-logo-container"
                     style="background: var(--primary); display: flex; align-items: center; justify-content: center;">
@@ -30,12 +32,13 @@
         </header>
 
         <main class="animate-slide">
-            <div class="calendar-card" style="padding: 40px;">
+            <div class="calendar-card admin-card-main">
+
                 <h3 style="font-size: 1.5rem; margin-bottom: 24px;">Brand Management</h3>
 
                 <!-- Add Brand Form -->
-                <form id="addBrandForm" class="admin-form"
-                    style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <form id="addBrandForm" class="admin-form">
+
                     <div class="input-group">
                         <label>Brand Name</label>
                         <input type="text" id="newBrandName" placeholder="e.g. Adidas" required>
@@ -87,14 +90,16 @@
                         <label>Contract End</label>
                         <input type="date" id="newBrandEnd">
                     </div>
-                    <button type="submit" class="btn-primary" style="grid-column: span 2;">
+                    <button type="submit" class="btn-primary" id="addBrandSubmit">
                         <i data-lucide="plus"></i> Add Brand
                     </button>
+
                 </form>
 
                 <!-- Brands List -->
-                <div style="overflow-x: auto; margin-bottom: 60px;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <div class="admin-table-container">
+                    <table class="admin-table">
+
                         <thead>
                             <tr
                                 style="color: var(--text-gray); font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid var(--border-glass);">
@@ -115,7 +120,8 @@
                     <!-- Broadcast Section -->
                     <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
                         <h3 style="font-size: 1.5rem; margin-bottom: 24px;">Broadcast & Announcements</h3>
-                        <form id="broadcastForm" class="admin-form" style="grid-template-columns: 1fr 1fr auto;">
+                        <form id="broadcastForm" class="admin-form">
+
                             <div class="input-group">
                                 <label>Announcement Message</label>
                                 <input type="text" id="broadcastMsg" placeholder="e.g. System maintenance at 12 PM..."
@@ -169,7 +175,8 @@
                         </div>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div class="video-assignments-grid">
+
                         <!-- Send Assignment Form -->
                         <form id="videoTaskForm" class="admin-form" style="display: flex; flex-direction: column; gap: 16px;">
                             <div class="input-group" style="margin: 0;">
@@ -182,9 +189,10 @@
                                 <label>Shoot Instructions / Script / Notes</label>
                                 <textarea id="videoTaskNote" rows="4" placeholder="e.g. Please shoot a 30s video explaining our new product using the following script..." required style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); border-radius: 8px; color: white; padding: 12px; font-family: inherit; resize: vertical;"></textarea>
                             </div>
-                            <button type="submit" class="btn-primary" style="align-self: flex-start;">
+                            <button type="submit" class="btn-primary" id="videoDispatchBtn">
                                 <i data-lucide="video"></i> Dispatch Assignment
                             </button>
+
                         </form>
                         
                         <!-- Review Submitted Links -->
@@ -211,7 +219,8 @@
                         <label>Date</label>
                         <input type="date" id="scheduleDate" required>
                     </div>
-                    <div class="input-group" style="grid-column: span 2;">
+                    <div class="input-group full-width-group">
+
                         <label>Select Post Types (Click to select multiple)</label>
                         <div id="typeChipContainer"
                             style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 10px;">
@@ -243,8 +252,10 @@
     </div>
 
     <!-- Admin Chat Modal -->
-    <div id="adminChatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
-        <div class="admin-card" style="width: 100%; max-width: 500px; height: 80vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; background: #0f172a; border: 1px solid var(--border-glass);">
+    <div id="adminChatModal" class="admin-chat-modal-overlay">
+
+        <div class="admin-card admin-chat-panel">
+
             <!-- Header -->
             <div style="padding: 20px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);">
                 <div>

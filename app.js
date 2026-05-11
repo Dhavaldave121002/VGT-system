@@ -565,102 +565,75 @@ function renderChatMessages() {
 
 function getBotResponse(input) {
     const text = input.toLowerCase().trim();
+    const brandName = currentBrand.name || "your brand";
     
     // 🛑 STRICT SECURITY PROTOCOL (Highest Priority)
     if (text.includes('password') || text.includes('key') || text.includes('username') || text.includes('login detail') || text.includes('credential') || text.includes('secret')) {
-        return "🛡️ SECURITY PROTOCOL ACTIVE: I am strictly prohibited from sharing, verifying, or discussing any security credentials, passwords, or personal account details. Please contact your Elite Administrator directly for security concerns.";
+        return `🛡️ <strong>Security Protocol Active:</strong> To protect <strong>${brandName}</strong>, I am strictly prohibited from discussing or sharing security credentials. For any access issues, please coordinate directly with our Elite Administration via secure channels.`;
     }
 
-    // Pre-trained Greetings (Expanded matching)
-    if (text.match(/^(hi|hello|hey|hy|hii|helo|hola|greetings)/)) {
-        return "Hello! I'm your AI Marketing Assistant. How can I help you elevate your brand today?";
-    } else if (text.includes('how are you') || text.includes('how r u')) {
-        return "I'm functioning perfectly and ready to assist you with your marketing goals! What's on your mind?";
+    // 🌟 ADVANCED CONVERSATIONAL ENGINE (Greetings & Empathy)
+    if (text.match(/^(hi|hello|hey|hy|hii|helo|hola|greetings|yo)/)) {
+        return `Hello! It's a pleasure to assist you. I'm your dedicated AI Strategist at <strong>Vertex Global Tech</strong>. How can I help you elevate <strong>${brandName}</strong> and drive more growth today?`;
+    } else if (text.includes('how are you') || text.includes('how r u') || text.includes('u good')) {
+        return `I'm functioning at peak performance and feeling highly productive! Thank you for asking. More importantly, how is the marketing momentum for <strong>${brandName}</strong> looking today?`;
     } else if (text.includes('good morning') || text.includes('good afternoon') || text.includes('good evening')) {
-        return "Greetings! I hope you're having an excellent day. How can I assist with your dashboard or Vertex Global Tech campaigns today?";
-    } else if (text.includes('who are you') || text.includes('what are you') || text.includes('company name')) {
-        return "I am the proprietary AI Support Assistant for Vertex Global Tech. I'm engineered to provide instant support, manage your digital ecosystem, and seamlessly connect you with our human administrators.";
-    } else if (text.includes('name') && text.includes('your')) {
-        return "I am the Vertex Global Tech AI Assistant. You can think of me as your 24/7 digital concierge.";
-    } else if (text.includes('human') || text.includes('robot') || text.includes('bot') || text.includes('ai')) {
-        return "I am a highly advanced AI system designed specifically for Vertex Global Tech clients. However, I am directly connected to our human Elite Administrators. If you ever need a human, just say 'Call me' or 'Human'.";
+        const timeOfDay = text.includes('morning') ? 'morning' : (text.includes('afternoon') ? 'afternoon' : 'evening');
+        return `Good ${timeOfDay}! I hope your day is off to a powerful start. Ready to look into some marketing strategies for <strong>${brandName}</strong>?`;
+    } else if (text.includes('who are you') || text.includes('what are you')) {
+        return "I am the proprietary <strong>Elite AI Assistant</strong> for Vertex Global Tech. My mission is to provide 24/7 strategic support, manage your digital roadmap, and bridge the gap between your brand and our expert human administrators.";
     }
-    
-    // Core Services & Vertex Global Tech Offerings
-    else if (text.includes('service') || text.includes('what do you do') || text.includes('what do u do')) {
-        return "Vertex Global Tech is an elite digital agency. We specialize in Custom Website Development, Mobile App Creation, Verified Marketing (Blue Tick verification), Product Listing & Boosting (E-commerce), and comprehensive Social Media Marketing.";
-    } else if (text.includes('website') || text.includes('web dev') || text.includes('web design')) {
-        return "Our Website Development division at Vertex Global Tech builds ultra-responsive, high-conversion websites tailored to your brand. From landing pages to full e-commerce platforms, we handle UI/UX design and backend engineering. Would you like me to connect you with our web team?";
-    } else if (text.includes('app') || text.includes('mobile') || text.includes('application')) {
-        return "Vertex Global Tech engineers premium Mobile Applications for both iOS and Android. We focus on seamless user experiences and robust performance. Shall I notify a project manager to discuss your app idea?";
+
+    // 📈 ADVANCED MARKETING & BUSINESS STRATEGY (The "Training")
+    else if (text.includes('seo') || text.includes('search engine') || text.includes('ranking') || text.includes('google')) {
+        return `SEO is the backbone of organic growth for <strong>${brandName}</strong>. At Vertex Global Tech, we focus on technical SEO, high-authority backlinking, and semantic content optimization to ensure you dominate search results. Would you like a fresh SEO audit for your website?`;
+    } else if (text.includes('roi') || text.includes('return on investment') || text.includes('profit') || text.includes('sales')) {
+        return `Maximizing ROI for <strong>${brandName}</strong> is our top priority. We achieve this by tightening your ad spend, improving landing page conversion rates, and leveraging high-retention video content. Shall I request a performance breakdown from the analytics team?`;
+    } else if (text.includes('strategy') || text.includes('roadmap') || text.includes('plan for the month')) {
+        return `Your current roadmap for <strong>${brandName}</strong> is designed for consistent brand authority. We've balanced high-impact posts with strategic video content. If you'd like to pivot or accelerate the current strategy, I can alert our Chief Strategist immediately.`;
+    } else if (text.includes('content') && (text.includes('idea') || text.includes('viral') || text.includes('trend'))) {
+        return `To make <strong>${brandName}</strong> go viral, we should focus on short-form 'reels-style' video content with high hooks. Vertex Global Tech stays ahead of social algorithms. Should we brainstorm some trending concepts for your next shoot?`;
+    }
+
+    // 🛠️ VERTEX GLOBAL TECH - CORE SERVICES
+    else if (text.includes('service') || text.includes('what do you do')) {
+        return "Vertex Global Tech is an elite 360-degree digital agency. Our core pillars are: <strong>1. Premium Web/App Development</strong>, <strong>2. Verified Marketing (Blue Tick)</strong>, <strong>3. E-commerce Boosting</strong>, and <strong>4. Viral Social Media Management</strong>. Which area should we focus on for your growth?";
+    } else if (text.includes('website') || text.includes('web dev') || text.includes('ux') || text.includes('ui')) {
+        return `We build high-performance, ultra-responsive digital homes for brands like <strong>${brandName}</strong>. Our designs aren't just beautiful—they are engineered to convert visitors into loyal customers. Do you have a new project in mind?`;
+    } else if (text.includes('app') || text.includes('mobile')) {
+        return "Mobile dominance is non-negotiable. Vertex Global Tech develops premium iOS and Android applications that provide seamless user experiences. I can arrange a technical consultation to discuss your app requirements.";
     } else if (text.includes('verif') || text.includes('blue tick') || text.includes('badge')) {
-        return "We offer Elite Verified Marketing services. We help position your brand strategically to secure official verification badges across major social platforms, elevating your brand authority and trust.";
-    } else if (text.includes('product') || text.includes('listing') || text.includes('boosting') || text.includes('e-commerce') || text.includes('ecommerce')) {
-        return "Our Product Listing & Boosting services ensure your products dominate search results. We optimize listings with high-converting copy, professional creatives, and algorithmic boosting strategies to maximize your ROI.";
+        return "Securing an official verification badge is a major milestone for brand authority. We manage the strategic positioning and documentation required to maximize your chances of approval on Instagram, Facebook, and Twitter.";
     }
     
-    // Plans, Packages, Cost & Portfolio
-    else if (text.includes('plan') || text.includes('pricing') || text.includes('upgrade') || text.includes('package')) {
-        return `You are currently assigned to the "${currentBrand.plan || 'Standard'}". If you are looking to scale your marketing efforts with Vertex Global Tech, I can notify an Elite Administrator to discuss premium upgrades. Would you like me to do that?`;
-    } else if (text.includes('cost') || text.includes('how much') || text.includes('fee') || text.includes('price')) {
-        return "Because our solutions at Vertex Global Tech are bespoke and tailored to your specific goals (Website, Apps, Marketing), pricing varies. I can arrange a free consultation with our Elite Administration to provide a precise quote. Should I initiate that?";
-    } else if (text.includes('portfolio') || text.includes('client') || text.includes('proof') || text.includes('review')) {
-        return "Vertex Global Tech has partnered with elite brands globally to drive massive digital growth. Our administrators would be happy to share our private portfolio and case studies tailored to your industry.";
-    }
-    
-    // Location & Hours
-    else if (text.includes('where') || text.includes('location') || text.includes('address')) {
-        return "Vertex Global Tech operates globally as a premium digital agency. You can coordinate directly with our Elite Administration at any time via this dashboard.";
-    } else if (text.includes('hour') || text.includes('open') || text.includes('time')) {
-        return "I am available 24/7. Our human Elite Administrators typically review urgent requests immediately and standard requests within normal business hours.";
-    }
-    
-    // Platform Coverage & Social Networks
-    else if (text.includes('platform') || text.includes('coverage') || text.includes('social media') || text.includes('tiktok') || text.includes('instagram')) {
-        return `Your current Social Coverage is set to "${currentBrand.coverage?.toUpperCase() || 'ALL'}". We specialize in Meta (IG/FB), LinkedIn, Twitter, and high-retention Video content. If you need a platform added to your roster, let me know!`;
+    // 💼 BUSINESS LOGISTICS (Contracts, Pricing, Support)
+    else if (text.includes('cost') || text.includes('price') || text.includes('how much') || text.includes('budget')) {
+        return "Our solutions are bespoke, meaning we tailor the pricing to your specific goals and scale. This ensures you never overpay for services you don't need. I can request a customized quote for <strong>${brandName}</strong> from our billing department. Should I proceed?";
+    } else if (text.includes('contract') || text.includes('renew') || text.includes('expire')) {
+        const end = currentBrand.endDate || "Ongoing";
+        return `Your active partnership for <strong>${brandName}</strong> is scheduled through ${end}. For renewal discussions or contract extensions, our administrators are available right here in this chat to assist.`;
     }
 
-    // Analytics, Reports & Performance
-    else if (text.includes('report') || text.includes('analytic') || text.includes('performance') || text.includes('growth') || text.includes('result')) {
-        return "Your detailed performance analytics and growth reports are compiled at the end of your billing cycle. If you require an immediate mid-cycle audit, I can request one from your account manager.";
-    }
-
-    // Contract, Billing & Renewals
-    else if (text.includes('contract') || text.includes('renew') || text.includes('expire') || text.includes('billing')) {
-        const start = currentBrand.startDate || 'Ongoing';
-        const end = currentBrand.endDate || 'Ongoing';
-        return `Your current contract period is set from ${start} to ${end}. For billing inquiries or to initiate an early renewal, please message your administrator directly in this chat.`;
-    }
-
-    // Content & Scheduling
-    else if (text.includes('post') || text.includes('content') || text.includes('schedule') || text.includes('calendar')) {
-        return "You can view all your scheduled content in the Calendar Roadmap on your dashboard. If you need immediate revisions or new content ideation, please specify the details here.";
-    } 
-    
-    // Escalation & Official Contact Details
-    else if (text.includes('call') || text.includes('phone') || text.includes('human') || text.includes('agent') || text.includes('speak') || text.includes('contact') || text.includes('email') || text.includes('mobile') || text.includes('whatsapp') || text.includes('number')) {
-        return `You can reach our Elite Administration directly via Email at <strong>connectvertexglobal2209@gmail.com</strong> or via Mobile/WhatsApp at <strong>+91 96645 23986</strong>. I have also flagged this chat for immediate human review.`;
+    // 📞 HUMAN ESCALATION & CONTACT (Professional & Direct)
+    else if (text.includes('human') || text.includes('call') || text.includes('speak') || text.includes('agent') || text.includes('number') || text.includes('contact') || text.includes('whatsapp')) {
+        return `I understand you'd like to speak with a human expert. You can reach our <strong>Elite Administration</strong> directly via WhatsApp or Phone at <strong>+91 96645 23986</strong>, or Email us at <strong>connectvertexglobal2209@gmail.com</strong>. I have also flagged this conversation for their immediate review.`;
     }
     
-    // Troubleshooting & Frustration Handling
-    else if (text.includes('bad') || text.includes('terrible') || text.includes('worst') || text.includes('unhappy') || text.includes('angry')) {
-        return "I am incredibly sorry that you are having a negative experience. I have immediately escalated this chat to the highest priority tier. An Elite Administrator will contact you at +91 96645 23986 shortly to resolve this perfectly.";
-    } else if (text.includes('problem') || text.includes('issue') || text.includes('help') || text.includes('error') || text.includes('stuck')) {
-        return "I'm sorry you're experiencing an issue. I've logged this as a high-priority technical alert. An Elite Administrator will review our chat and deploy a solution immediately.";
-    } 
-    
-    // Conversational Fillers & Farewells
-    else if (text.includes('thank') || text === 'ok' || text === 'okay' || text === 'cool' || text === 'great' || text === 'awesome') {
-        return "You're very welcome! Let me know if you need anything else to optimize your digital presence.";
-    } else if (text.includes('bye') || text.includes('goodbye') || text.includes('see ya')) {
-        return "Goodbye! It was a pleasure assisting you. Have a highly productive day!";
+    // 🌪️ EMOTIONAL INTELLIGENCE & FEEDBACK
+    else if (text.includes('bad') || text.includes('unhappy') || text.includes('error') || text.includes('problem') || text.includes('issue')) {
+        return `I'm sincerely sorry to hear you're experiencing a challenge. At Vertex Global Tech, we pride ourselves on perfection. I have escalated this as a <strong>High Priority Incident</strong>. An Elite Administrator will contact you at <strong>+91 96645 23986</strong> shortly to ensure <strong>${brandName}</strong> is back on track.`;
+    } else if (text.includes('thank') || text === 'ok' || text === 'great' || text === 'awesome') {
+        return `You're very welcome! It's an honor to support <strong>${brandName}</strong>. Is there any other marketing objective we can tackle today?`;
+    } else if (text.includes('bye') || text.includes('goodbye')) {
+        return `Goodbye for now! I'll be right here if you need any more strategic assistance. Have a highly productive and successful day with <strong>${brandName}</strong>!`;
     }
     
-    // Fallback Logging
+    // 🧠 INTELLIGENT FALLBACK (The Learning Edge)
     else {
-        return "I understand. I have recorded your inquiry into our secure logs. An Elite Administrator will review this context and follow up with you. Is there any additional information you'd like to provide?";
+        return `I've noted your inquiry regarding "${input}". While I'm constantly learning, I want to ensure you get the most professional advice. I've logged this context for our <strong>Elite Administration</strong> to review and provide you with a detailed follow-up. Would you like to add any more details?`;
     }
 }
+
 
 // ==========================================
 // CLIENT VIDEO TASKS ENGINE
