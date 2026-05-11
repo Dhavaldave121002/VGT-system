@@ -82,7 +82,7 @@ async function loadFromSheetDB() {
         });
         if (!res.ok) return false;
         const rows = await res.json();
-        
+
         if (rows && rows.length > 0 && rows[0].database_json) {
             const cloudData = JSON.parse(rows[0].database_json);
             brands = cloudData;
@@ -125,26 +125,39 @@ const selectedDateTitle = document.getElementById('selectedDateTitle');
 window.addEventListener('DOMContentLoaded', async () => {
     const loadingEl = document.getElementById('loginScreen');
     await loadFromSheetDB(); // Pull latest data from cloud
-    
+
     let migratedLocal = false;
     // Re-run property audit after cloud load and migrate passwords to SHA-256
     for (let key of Object.keys(brands)) {
+        if (!brands[key].name) brands[key].name = key;
         if (!brands[key].plan) brands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
         if (!brands[key].trial) brands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
         if (brands[key].locked === undefined) brands[key].locked = false;
         if (!brands[key].events) brands[key].events = [];
         if (!brands[key].handle) brands[key].handle = `@${key}`;
-        
+
         // Hash migration
         if (brands[key].pass && brands[key].pass.length !== 64) {
             brands[key].pass = await hashPassword(brands[key].pass);
             migratedLocal = true;
         }
     }
-    
+
     if (migratedLocal) {
         localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
         syncToSheetDB();
+    }
+
+    // ✅ PERSISTENT LOGIN CHECK
+    const savedAdmin = localStorage.getItem('socialSphere_admin');
+    if (savedAdmin === 'true') {
+        window.location.href = 'admin.html';
+        return;
+    }
+
+    const savedBrandId = localStorage.getItem('socialSphere_currentBrandId');
+    if (savedBrandId && brands[savedBrandId]) {
+        login(savedBrandId, true); // ✅ Pass true for auto-login (skip animations)
     }
 });
 
@@ -153,31 +166,36 @@ loginForm.addEventListener('submit', async (e) => {
     const brandId = document.getElementById('brandId').value.trim().toLowerCase();
     const password = document.getElementById('password').value.trim();
     const errorMsg = document.getElementById('errorMsg');
-    
+
     const inputHash = await hashPassword(password);
-    
+
     // ADMIN SECURE GATEWAY (Hashes for admin123 and admin@123)
     const adminHash1 = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
     const adminHash2 = '331c26f0f5b12dafc039bbf1b71d9d9ab6601b1df4cd19565f1ef1d07c0a9697';
-    
+
     if (brandId === 'admin' && (inputHash === adminHash1 || inputHash === adminHash2 || password === 'admin123' || password === 'admin@123')) {
         const loginBtn = loginForm.querySelector('button');
         loginBtn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Elevating Access...`;
         if (window.lucide) lucide.createIcons();
+        
+        // ✅ Save Admin Session
+        localStorage.setItem('socialSphere_admin', 'true');
+        localStorage.removeItem('socialSphere_currentBrandId'); // Clear any user session
+
         setTimeout(() => {
             window.location.href = 'admin.html';
         }, 800);
         return;
     }
-    
+
     // Check if brand exists and password matches (or if it's a default brand with any pass for demo)
     if (brands[brandId]) {
         const brand = brands[brandId];
-        
+
         // Visual Feedback
         const loginBtn = loginForm.querySelector('button');
         const originalBtnText = loginBtn.innerHTML;
-        
+
         // Check if account is locked
         if (brand.locked) {
             errorMsg.innerHTML = `<i data-lucide="lock" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 6px;"></i> Account Locked. Please contact your administrator.`;
@@ -191,7 +209,7 @@ loginForm.addEventListener('submit', async (e) => {
             errorMsg.style.display = 'none';
             loginBtn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Authenticating...`;
             if (window.lucide) lucide.createIcons();
-            
+
             setTimeout(() => {
                 login(brandId);
             }, 800);
@@ -205,9 +223,13 @@ loginForm.addEventListener('submit', async (e) => {
     }
 });
 
-function login(brandId) {
+function login(brandId, isAutoLogin = false) {
     currentBrand = brands[brandId];
     currentBrandId = brandId;
+
+    // ✅ Save User Session
+    localStorage.setItem('socialSphere_currentBrandId', brandId);
+    localStorage.removeItem('socialSphere_admin'); // Clear any admin session
 
     // LEGACY DATA FIX (Client-Side Audit)
     if (currentBrand.events) {
@@ -223,20 +245,12 @@ function login(brandId) {
 
     // Get gender from brand data to set professional cartoon avatar
     const gender = currentBrand.gender || 'male';
-    
-    let avatarUrl = '';
-    if (gender === 'female') {
-        // Ultra Realistic 3D Professional Avatar (Local Image)
-        avatarUrl = './female_owner.png';
-    } else {
-        // Ultra Realistic 3D Professional Avatar (Local Image)
-        avatarUrl = './male_owner.png';
-    }
+    const avatarUrl = gender === 'female' ? './female_owner.png' : './male_owner.png';
 
     document.getElementById('currentBrandName').textContent = currentBrand.name;
     document.getElementById('currentBrandHandle').textContent = currentBrand.handle || `@${brandId}`;
     document.getElementById('currentBrandLogo').src = avatarUrl;
-    
+
     // Update Plan Badge
     const planBadge = document.getElementById('brandPlanBadge');
     if (planBadge) {
@@ -252,7 +266,7 @@ function login(brandId) {
     if (currentBrand.messages) {
         // Filter and keep only non-expired messages
         currentBrand.messages = currentBrand.messages.filter(msg => (now - msg.time) < expiry);
-        
+
         // Deduplicate messages by text to fix repeated identical alerts
         const uniqueMessages = [];
         const seenTexts = new Set();
@@ -262,10 +276,10 @@ function login(brandId) {
                 uniqueMessages.push(msg);
             }
         });
-        
+
         // Use deduplicated messages for rendering, but update the source array
         currentBrand.messages = uniqueMessages;
-        
+
         currentBrand.messages.forEach(msg => {
             const div = document.createElement('div');
             div.className = 'animate-slide';
@@ -286,26 +300,37 @@ function login(brandId) {
         });
         localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
     }
-    
-    loginScreen.style.opacity = '0';
-    setTimeout(() => {
+
+    if (isAutoLogin) {
+        // Immediate Transition for Auto-Login
         loginScreen.style.display = 'none';
         dashboard.style.display = 'flex';
         document.getElementById('chatWidgetContainer').style.display = 'flex'; // Show Chat UI
-        showSkeletons();
+        renderCalendar();
+        renderClientVideoTasks();
+        if (window.lucide) lucide.createIcons();
+    } else {
+        // Animated Transition for Manual Login
+        loginScreen.style.opacity = '0';
         setTimeout(() => {
-            renderCalendar();
-            renderClientVideoTasks();
-            if (window.lucide) lucide.createIcons();
-        }, 800);
-    }, 400);
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'flex';
+            document.getElementById('chatWidgetContainer').style.display = 'flex'; // Show Chat UI
+            showSkeletons();
+            setTimeout(() => {
+                renderCalendar();
+                renderClientVideoTasks();
+                if (window.lucide) lucide.createIcons();
+            }, 800);
+        }, 400);
+    }
 }
 
-window.dismissMessage = function(time, event) {
+window.dismissMessage = function (time, event) {
     if (currentBrand && currentBrand.messages) {
         currentBrand.messages = currentBrand.messages.filter(m => m.time.toString() !== time.toString());
         localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
-        
+
         // Visual removal
         const alertDiv = event.currentTarget.closest('.animate-slide');
         if (alertDiv) {
@@ -345,6 +370,12 @@ function showSkeletons() {
 
 function logout() {
     currentBrand = null;
+    currentBrandId = null;
+    
+    // ✅ Clear Session
+    localStorage.removeItem('socialSphere_currentBrandId');
+    localStorage.removeItem('socialSphere_admin');
+
     dashboard.style.display = 'none';
     document.getElementById('chatWidgetContainer').style.display = 'none';
     loginScreen.style.display = 'flex';
@@ -392,20 +423,20 @@ function createDay(num, className, isCurrentMonth = false) {
     const dayDiv = document.createElement('div');
     dayDiv.className = `calendar-day ${className}`;
     if (isCurrentMonth) dayDiv.addEventListener('click', () => selectDay(num, dayDiv));
-    
+
     dayDiv.innerHTML = `<span class="day-num">${num}</span>`;
-    
+
     if (isCurrentMonth && currentBrand && currentBrand.events) {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-        
+
         // Match day, month, and year (handle legacy data that only had day)
-        const dayEvents = currentBrand.events.filter(e => 
-            e.day === num && 
-            (e.month === undefined || e.month === month) && 
+        const dayEvents = currentBrand.events.filter(e =>
+            e.day === num &&
+            (e.month === undefined || e.month === month) &&
             (e.year === undefined || e.year === year)
         );
-        
+
         dayEvents.forEach(event => {
             const eventDiv = document.createElement('div');
             eventDiv.className = `event-tag ${event.type}`;
@@ -419,19 +450,19 @@ function createDay(num, className, isCurrentMonth = false) {
 function selectDay(num, element) {
     const year = currentDate.getFullYear();
     const monthNum = currentDate.getMonth();
-    
+
     document.querySelectorAll('.calendar-day').forEach(d => d.style.borderColor = 'transparent');
     element.style.borderColor = 'var(--primary)';
-    
+
     const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate);
     selectedDateTitle.textContent = `${month} ${num}, ${year}`;
-    
-    const dayEvents = (currentBrand.events || []).filter(e => 
-        e.day === num && 
-        (e.month === undefined || e.month === monthNum) && 
+
+    const dayEvents = (currentBrand.events || []).filter(e =>
+        e.day === num &&
+        (e.month === undefined || e.month === monthNum) &&
         (e.year === undefined || e.year === year)
     );
-    
+
     dailyCollection.innerHTML = '';
     if (dayEvents.length === 0) {
         dailyCollection.innerHTML = `<div class="empty-state"><i data-lucide="coffee" style="width: 32px; height: 32px; opacity: 0.2; margin-bottom: 12px;"></i><p>No collection scheduled for this day.</p></div>`;
@@ -447,7 +478,7 @@ function selectDay(num, element) {
 }
 
 function getIconName(type) {
-    switch(type) {
+    switch (type) {
         case 'insta': return 'camera';
         case 'fb': return 'globe';
         case 'tw': return 'send';
@@ -475,18 +506,18 @@ function openNotificationLog() {
     if (!currentBrand) return;
     const modal = document.getElementById('notificationModal');
     const container = document.getElementById('notificationLogContainer');
-    
+
     container.innerHTML = '';
-    
+
     // Get ALL messages, clone to sort without modifying original
     let allMsgs = [...(currentBrand.messages || [])];
-    
+
     if (allMsgs.length === 0) {
         container.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px 0;"><i data-lucide="bell-off" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><p>No notifications found in your history log.</p></div>`;
     } else {
         // Sort newest first
         allMsgs.sort((a, b) => b.time - a.time);
-        
+
         allMsgs.forEach(msg => {
             const dateStr = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' }).format(new Date(msg.time));
             const div = document.createElement('div');
@@ -503,7 +534,7 @@ function openNotificationLog() {
             container.appendChild(div);
         });
     }
-    
+
     modal.style.display = 'flex';
     if (window.lucide) lucide.createIcons();
 }
@@ -531,24 +562,24 @@ function renderChatMessages() {
     if (!currentBrand) return;
     const area = document.getElementById('chatMessagesArea');
     area.innerHTML = '';
-    
+
     if (!currentBrand.chat) {
         currentBrand.chat = [
             { sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: Date.now() }
         ];
         localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
     }
-    
+
     currentBrand.chat.forEach(msg => {
         const div = document.createElement('div');
         const isUser = msg.sender === 'user';
-        
+
         div.style.cssText = `display: flex; flex-direction: column; max-width: 85%; ${isUser ? 'align-self: flex-end; align-items: flex-end;' : 'align-self: flex-start; align-items: flex-start;'}`;
-        
-        let bubbleCss = isUser 
+
+        let bubbleCss = isUser
             ? `background: linear-gradient(135deg, var(--primary), #A855F7); color: white; border-bottom-right-radius: 4px;`
             : `background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff; border-bottom-left-radius: 4px;`;
-            
+
         div.innerHTML = `
             <span style="font-size: 0.65rem; color: var(--text-gray); margin-bottom: 4px; padding: 0 4px;">
                 ${isUser ? 'You' : (msg.sender === 'admin' ? 'Admin Support' : 'Elite AI Strategist')}
@@ -560,7 +591,7 @@ function renderChatMessages() {
         `;
         area.appendChild(div);
     });
-    
+
     // Scroll to bottom
     setTimeout(() => { area.scrollTop = area.scrollHeight; }, 10);
 }
@@ -568,7 +599,7 @@ function renderChatMessages() {
 function getBotResponse(input) {
     const text = input.toLowerCase().trim();
     const brandName = currentBrand.name || "your brand";
-    
+
     // 🛑 STRICT SECURITY PROTOCOL (Highest Priority)
     if (text.includes('password') || text.includes('key') || text.includes('username') || text.includes('login detail') || text.includes('credential') || text.includes('secret')) {
         return `🛡️ <strong>Security Protocol Active:</strong> To protect <strong>${brandName}</strong>, I am strictly prohibited from discussing or sharing security credentials. For any access issues, please coordinate directly with our Elite Administration via secure channels.`;
@@ -613,7 +644,7 @@ function getBotResponse(input) {
     } else if (text.includes('verif') || text.includes('blue tick') || text.includes('badge')) {
         return "Securing an official verification badge is a major milestone for brand authority. We manage the strategic positioning and documentation required to maximize your chances of approval on Instagram, Facebook, and Twitter.";
     }
-    
+
     // 💼 BUSINESS LOGISTICS (Contracts, Pricing, Support)
     else if (text.includes('cost') || text.includes('price') || text.includes('how much') || text.includes('budget')) {
         return "Our solutions are bespoke, meaning we tailor the pricing to your specific goals and scale. This ensures you never overpay for services you don't need. I can request a customized quote for <strong>${brandName}</strong> from our billing department. Should I proceed?";
@@ -626,7 +657,7 @@ function getBotResponse(input) {
     else if (text.includes('human') || text.includes('call') || text.includes('speak') || text.includes('agent') || text.includes('number') || text.includes('contact') || text.includes('whatsapp')) {
         return `I understand you'd like to speak with a human expert. You can reach our <strong>Elite Administration</strong> directly via WhatsApp or Phone at <strong>+91 96645 23986</strong>, or Email us at <strong>connectvertexglobal2209@gmail.com</strong>. I have also flagged this conversation for their immediate review.`;
     }
-    
+
     // 🌪️ EMOTIONAL INTELLIGENCE & FEEDBACK
     else if (text.includes('bad') || text.includes('unhappy') || text.includes('error') || text.includes('problem') || text.includes('issue')) {
         return `I'm sincerely sorry to hear you're experiencing a challenge. At Vertex Global Tech, we pride ourselves on perfection. I have escalated this as a <strong>High Priority Incident</strong>. An Elite Administrator will contact you at <strong>+91 96645 23986</strong> shortly to ensure <strong>${brandName}</strong> is back on track.`;
@@ -635,7 +666,7 @@ function getBotResponse(input) {
     } else if (text.includes('bye') || text.includes('goodbye')) {
         return `Goodbye for now! I'll be right here if you need any more strategic assistance. Have a highly productive and successful day with <strong>${brandName}</strong>!`;
     }
-    
+
     // 🧠 INTELLIGENT FALLBACK (The Learning Edge)
     else {
         return `I've noted your inquiry regarding "${input}". While I'm constantly learning, I want to ensure you get the most professional advice. I've logged this context for our <strong>Elite Administration</strong> to review and provide you with a detailed follow-up. Would you like to add any more details?`;
@@ -651,22 +682,22 @@ function renderClientVideoTasks() {
     if (!currentBrand) return;
     const panel = document.getElementById('clientVideoTasksPanel');
     const container = document.getElementById('clientVideoTasksContainer');
-    
+
     // Check if there are pending tasks
     const pendingTasks = (currentBrand.videoTasks || []).filter(t => t.status === 'pending');
-    
+
     if (pendingTasks.length === 0) {
         panel.style.display = 'none';
         return;
     }
-    
+
     panel.style.display = 'block';
     container.innerHTML = '';
-    
+
     pendingTasks.forEach((task, index) => {
         // Find exact index in original array for updating
         const realIndex = currentBrand.videoTasks.findIndex(t => t.id === task.id);
-        
+
         const div = document.createElement('div');
         div.style.cssText = "background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px;";
         div.innerHTML = `
@@ -684,7 +715,7 @@ function renderClientVideoTasks() {
         container.appendChild(div);
     });
 
-    
+
     if (window.lucide) lucide.createIcons();
 }
 
@@ -693,12 +724,12 @@ function submitVideoLink(e, index) {
     const task = currentBrand.videoTasks[index];
     const input = document.getElementById(`driveLink_${task.id}`);
     const link = input.value.trim();
-    
+
     if (!link) return;
-    
+
     task.driveLink = link;
     task.status = 'submitted';
-    
+
     // Alert Admin via chat log
     if (!currentBrand.chat) currentBrand.chat = [];
     currentBrand.chat.push({ sender: 'bot', text: `Automated System Alert: Client has submitted a Video Drive Link for review.`, time: Date.now() });
@@ -716,13 +747,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const inputEl = document.getElementById('chatInputText');
             const text = inputEl.value.trim();
             if (!text) return;
-            
+
             if (!currentBrand.chat) currentBrand.chat = [];
             currentBrand.chat.push({ sender: 'user', text: text, time: Date.now() });
-            
+
             inputEl.value = '';
             renderChatMessages();
-            
+
             // SHOW TYPING INDICATOR (Human-Mixed Feel)
             const chatArea = document.getElementById('chatMessagesArea');
             const typingDiv = document.createElement('div');
@@ -731,17 +762,17 @@ document.addEventListener('DOMContentLoaded', () => {
             typingDiv.innerHTML = `<span class="animate-pulse">AI Strategist is thinking...</span>`;
             chatArea.appendChild(typingDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
-            
+
             setTimeout(() => {
                 const indicator = document.getElementById('aiTypingIndicator');
                 if (indicator) indicator.remove();
-                
+
                 const response = getBotResponse(text);
                 currentBrand.chat.push({ sender: 'bot', text: response, time: Date.now() });
                 renderChatMessages();
                 localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
                 syncToSheetDB();
-            }, 1500); 
+            }, 1500);
         });
     }
 });

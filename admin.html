@@ -7,6 +7,11 @@
     <title>SocialSphere Admin | Control Center</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        if (localStorage.getItem('socialSphere_admin') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
 </head>
 
 <body style="overflow-y: auto; height: auto;">
@@ -26,8 +31,8 @@
                 </div>
             </div>
             <div class="nav-actions">
-                <a href="index.html" class="btn-icon" title="Log Out"
-                    style="color: #F87171; border-color: rgba(248, 113, 113, 0.2);"><i data-lucide="log-out"></i></a>
+                <button onclick="adminLogout()" class="btn-icon" title="Log Out"
+                    style="background: transparent; color: #F87171; border: 1px solid rgba(248, 113, 113, 0.2); cursor: pointer;"><i data-lucide="log-out"></i></button>
             </div>
         </header>
 
@@ -143,42 +148,53 @@
 
                 <!-- Global Support Inbox -->
                 <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
                         <div>
                             <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Global Support Inbox</h3>
-                            <p style="color: var(--text-gray); font-size: 0.9rem;">Real-time feed of all client inquiries and AI Assistant conversations.</p>
+                            <p style="color: var(--text-gray); font-size: 0.9rem;">Real-time feed of all client
+                                inquiries and AI Assistant conversations.</p>
                         </div>
                         <div style="display: flex; gap: 12px;">
-                            <button onclick="downloadInboxCSV()" style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.9rem;">
+                            <button onclick="downloadInboxCSV()"
+                                style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.9rem;">
                                 <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download List
                             </button>
-                            <button onclick="clearAllInbox()" style="background: rgba(248, 113, 113, 0.1); color: #F87171; border: 1px solid rgba(248, 113, 113, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.9rem;">
+                            <button onclick="clearAllInbox()"
+                                style="background: rgba(248, 113, 113, 0.1); color: #F87171; border: 1px solid rgba(248, 113, 113, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.9rem;">
                                 <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Clear All
                             </button>
                         </div>
                     </div>
-                    
-                    <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; max-height: 400px; overflow-y: auto;">
+
+                    <div
+                        style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; max-height: 400px; overflow-y: auto;">
                         <div id="globalSupportInbox" style="display: grid; gap: 16px;">
                             <!-- Injected by JS -->
-                            <div style="text-align: center; color: var(--text-gray); padding: 40px 0;"><i data-lucide="check-circle" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><br>Inbox Zero. All client inquiries resolved.</div>
+                            <div style="text-align: center; color: var(--text-gray); padding: 40px 0;"><i
+                                    data-lucide="check-circle"
+                                    style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><br>Inbox
+                                Zero. All client inquiries resolved.</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Video Shoot Assignments -->
                 <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
                         <div>
                             <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Video Shoot Assignments</h3>
-                            <p style="color: var(--text-gray); font-size: 0.9rem;">Send scripts/notes to clients and review their submitted Google Drive links.</p>
+                            <p style="color: var(--text-gray); font-size: 0.9rem;">Send scripts/notes to clients and
+                                review their submitted Google Drive links.</p>
                         </div>
                     </div>
-                    
+
                     <div class="video-assignments-grid">
 
                         <!-- Send Assignment Form -->
-                        <form id="videoTaskForm" class="admin-form" style="display: flex; flex-direction: column; gap: 16px;">
+                        <form id="videoTaskForm" class="admin-form"
+                            style="display: flex; flex-direction: column; gap: 16px;">
                             <div class="input-group" style="margin: 0;">
                                 <label>Assign To (Brand)</label>
                                 <select id="videoTaskRecipient" required>
@@ -187,20 +203,28 @@
                             </div>
                             <div class="input-group" style="margin: 0;">
                                 <label>Shoot Instructions / Script / Notes</label>
-                                <textarea id="videoTaskNote" rows="4" placeholder="e.g. Please shoot a 30s video explaining our new product using the following script..." required style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); border-radius: 8px; color: white; padding: 12px; font-family: inherit; resize: vertical;"></textarea>
+                                <textarea id="videoTaskNote" rows="4"
+                                    placeholder="e.g. Please shoot a 30s video explaining our new product using the following script..."
+                                    required
+                                    style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); border-radius: 8px; color: white; padding: 12px; font-family: inherit; resize: vertical;"></textarea>
                             </div>
                             <button type="submit" class="btn-primary" id="videoDispatchBtn">
                                 <i data-lucide="video"></i> Dispatch Assignment
                             </button>
 
                         </form>
-                        
+
                         <!-- Review Submitted Links -->
-                        <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; max-height: 300px; overflow-y: auto;">
-                            <h4 style="margin-top: 0; margin-bottom: 16px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;"><i data-lucide="hard-drive" style="color: #60A5FA;"></i> Submitted Drive Links</h4>
+                        <div
+                            style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; max-height: 300px; overflow-y: auto;">
+                            <h4
+                                style="margin-top: 0; margin-bottom: 16px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="hard-drive" style="color: #60A5FA;"></i> Submitted Drive Links</h4>
                             <div id="adminVideoTasksList" style="display: flex; flex-direction: column; gap: 12px;">
                                 <!-- Injected by JS -->
-                                <div style="text-align: center; color: var(--text-gray); padding: 20px 0; font-size: 0.85rem;">No submissions pending review.</div>
+                                <div
+                                    style="text-align: center; color: var(--text-gray); padding: 20px 0; font-size: 0.85rem;">
+                                    No submissions pending review.</div>
                             </div>
                         </div>
                     </div>
@@ -257,32 +281,50 @@
         <div class="admin-card admin-chat-panel">
 
             <!-- Header -->
-            <div style="padding: 20px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);">
+            <div
+                style="padding: 20px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);">
                 <div>
                     <h3 style="margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
                         <i data-lucide="message-square" style="color: #A855F7;"></i> Support Transcripts
                     </h3>
-                    <p id="adminChatBrandName" style="margin: 4px 0 0 0; color: var(--text-gray); font-size: 0.85rem;">Brand Name</p>
+                    <p id="adminChatBrandName" style="margin: 4px 0 0 0; color: var(--text-gray); font-size: 0.85rem;">
+                        Brand Name</p>
                 </div>
-                <button onclick="closeAdminChat()" style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i data-lucide="x"></i></button>
+                <button onclick="closeAdminChat()"
+                    style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i
+                        data-lucide="x"></i></button>
             </div>
-            
+
             <!-- Chat Area -->
-            <div id="adminChatArea" style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
+            <div id="adminChatArea"
+                style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
                 <!-- JS will inject messages here -->
             </div>
-            
+
             <!-- Input Area -->
             <div style="padding: 16px; border-top: 1px solid var(--border-glass); background: rgba(0,0,0,0.2);">
                 <form id="adminChatForm" style="display: flex; gap: 12px;">
-                    <input type="text" id="adminChatInput" placeholder="Type response as Admin..." required style="flex-grow: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: white; padding: 12px 16px; border-radius: 20px; font-size: 0.9rem; outline: none;">
-                    <button type="submit" style="background: #10B981; color: white; border: none; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;"><i data-lucide="send" style="width: 18px; height: 18px;"></i></button>
+                    <input type="text" id="adminChatInput" placeholder="Type response as Admin..." required
+                        style="flex-grow: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: white; padding: 12px 16px; border-radius: 20px; font-size: 0.9rem; outline: none;">
+                    <button type="submit"
+                        style="background: #10B981; color: white; border: none; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;"><i
+                            data-lucide="send" style="width: 18px; height: 18px;"></i></button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
+        // ✅ ADMIN SECURITY GUARD (Immediate Check)
+        if (localStorage.getItem('socialSphere_admin') !== 'true') {
+            window.location.href = 'index.html';
+        }
+
+        function adminLogout() {
+            localStorage.removeItem('socialSphere_admin');
+            window.location.href = 'index.html';
+        }
+
         // SHA-256 Security Engine
         async function hashPassword(str) {
             const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -388,14 +430,14 @@
 
             // AUTOMATED CONTRACT LIFECYCLE ENGINE
             const today = new Date();
-            today.setHours(0,0,0,0);
+            today.setHours(0, 0, 0, 0);
             const now = Date.now();
             let stateChanged = false;
 
             Object.keys(storedBrands).forEach(id => {
                 const brand = storedBrands[id];
                 if (!brand.messages) brand.messages = [];
-                
+
                 // LEGACY DATA FIX: Bind old repeating events to May 2026
                 if (brand.events) {
                     let eventsChanged = false;
@@ -405,11 +447,11 @@
                     });
                     if (eventsChanged) stateChanged = true;
                 }
-                
+
                 // 1. Future Start Date Logic (Pre-Locking / Auto-Activating)
                 if (brand.startDate) {
                     const start = new Date(brand.startDate);
-                    start.setHours(0,0,0,0);
+                    start.setHours(0, 0, 0, 0);
                     if (today < start && !brand.locked && !brand.manualUnlockOverride) {
                         brand.locked = true;
                         brand.messages.push({ text: "SYSTEM ALERT: Contract has not started yet. Account will automatically activate on " + brand.startDate, time: now });
@@ -419,7 +461,7 @@
                         let pastEnd = false;
                         if (brand.endDate) {
                             const end = new Date(brand.endDate);
-                            end.setHours(0,0,0,0);
+                            end.setHours(0, 0, 0, 0);
                             if (today > end) pastEnd = true;
                         }
                         if (!pastEnd) {
@@ -433,16 +475,16 @@
                 // 2. End Date Expiration Logic
                 if (brand.endDate) {
                     const end = new Date(brand.endDate);
-                    end.setHours(0,0,0,0);
+                    end.setHours(0, 0, 0, 0);
                     const timeDiff = end.getTime() - today.getTime();
                     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                    
+
                     if (daysDiff < 0 && !brand.locked && !brand.manualUnlockOverride) {
                         brand.locked = true;
                         brand.messages.push({ text: "SYSTEM ALERT: Contract expired. Your account has been automatically locked.", time: now });
                         stateChanged = true;
                     }
-                    
+
                     if (daysDiff >= 0 && daysDiff <= 3 && !brand.locked) {
                         const warningMsg = `REMINDER: Your contract expires in ${daysDiff} day(s). Please renew.`;
                         const hasRecentWarning = brand.messages.some(m => m.text === warningMsg && (now - m.time) < 86400000); // 24hr debounce
@@ -453,7 +495,7 @@
                     }
                 }
             });
-            if(stateChanged) localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+            if (stateChanged) localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
 
             Object.keys(storedBrands).forEach(id => {
                 const brand = storedBrands[id];
@@ -529,7 +571,7 @@
 
             // Render Video Tasks List
             renderAdminVideoTasks();
-            
+
             // Render Global Support Inbox
             renderGlobalSupportInbox();
 
@@ -538,7 +580,7 @@
                 lucide.createIcons();
             }
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
-            
+
             // Trigger dynamic filtering for the first loaded brand
             if (selectBrand.options.length > 0) {
                 selectBrand.dispatchEvent(new Event('change'));
@@ -558,7 +600,7 @@
             if (!brand) return;
 
             if (!brand.videoTasks) brand.videoTasks = [];
-            
+
             const task = {
                 id: 'vt_' + Date.now(),
                 note: note,
@@ -566,9 +608,9 @@
                 driveLink: '',
                 assignedAt: Date.now()
             };
-            
+
             brand.videoTasks.push(task);
-            
+
             // Also send a notification
             if (!brand.messages) brand.messages = [];
             brand.messages.push({ text: `🎬 New Video Assignment Received. Please check your Video Tasks.`, time: Date.now() });
@@ -619,7 +661,7 @@
         }
 
         function clearVideoTask(brandId, taskIndex) {
-            if(confirm('Dismiss this submitted link from your view?')) {
+            if (confirm('Dismiss this submitted link from your view?')) {
                 storedBrands[brandId].videoTasks.splice(taskIndex, 1);
                 localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
                 renderAdminVideoTasks();
@@ -629,7 +671,7 @@
         // Initialize Icons on Load
         window.addEventListener('DOMContentLoaded', async () => {
             await loadFromSheetDB(); // Pull latest to migrate if needed
-            
+
             let stateChanged = false;
             for (let key of Object.keys(storedBrands)) {
                 if (storedBrands[key].pass && storedBrands[key].pass.length !== 64) {
@@ -671,7 +713,7 @@
             if (storedBrands[id]) {
                 const wasLocked = storedBrands[id].locked;
                 storedBrands[id].locked = !wasLocked;
-                
+
                 if (wasLocked && !storedBrands[id].locked) {
                     // Manual Unlock Event (Renewal/Reactivation)
                     storedBrands[id].manualUnlockOverride = true;
@@ -680,7 +722,7 @@
                 } else if (!wasLocked && storedBrands[id].locked) {
                     storedBrands[id].manualUnlockOverride = false;
                 }
-                
+
                 localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
                 renderBrands();
             }
@@ -705,16 +747,16 @@
             document.getElementById('newBrandId').value = id;
             document.getElementById('newBrandId').readOnly = true; // Cannot change ID
             document.getElementById('newBrandId').style.opacity = '0.5';
-            
+
             document.getElementById('newBrandName').value = brand.name;
             document.getElementById('newBrandPass').value = brand.pass;
             document.getElementById('newBrandGender').value = brand.gender || 'male';
             document.getElementById('newBrandPlan').value = brand.plan || 'Plan 1: 3 Posts, 2 Videos';
             document.getElementById('newBrandCoverage').value = brand.coverage || 'all';
-            
+
             document.getElementById('newBrandStart').value = brand.startDate || '';
             document.getElementById('newBrandEnd').value = brand.endDate || '';
-            
+
             // Extract trial phase for dropdown
             const rawTrial = brand.trial || 'Phase 1: Buy 1, Get 1 Free';
             if (rawTrial.includes('Buy 1')) document.getElementById('newBrandTrial').value = 'Buy 1, Get 1 Free';
@@ -725,7 +767,7 @@
             submitBtn.innerHTML = '<i data-lucide="save"></i> Update Details';
             submitBtn.style.background = '#10B981'; // Green for update
             if (window.lucide) lucide.createIcons();
-            
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -734,10 +776,10 @@
             const id = document.getElementById('newBrandId').value.toLowerCase().trim();
             const name = document.getElementById('newBrandName').value;
             const passRaw = document.getElementById('newBrandPass').value;
-            
+
             // Hash the password if it isn't already a hash (from an edit)
             const pass = passRaw.length === 64 ? passRaw : await hashPassword(passRaw);
-            
+
             const gender = document.getElementById('newBrandGender').value;
             const plan = document.getElementById('newBrandPlan').value;
             const trial = document.getElementById('newBrandTrial').value;
@@ -754,7 +796,7 @@
                 storedBrands[editingBrandId].coverage = coverage;
                 storedBrands[editingBrandId].trial = `Phase 1: ${trial}`;
                 storedBrands[editingBrandId].startDate = startDate;
-                
+
                 // If end date is extended, reset manual override and unlock so it can auto-lock in future
                 if (storedBrands[editingBrandId].endDate !== endDate) {
                     storedBrands[editingBrandId].manualUnlockOverride = false;
@@ -790,7 +832,7 @@
             }
 
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
-            
+
             // Reset Form State
             editingBrandId = null;
             document.getElementById('newBrandId').readOnly = false;
@@ -799,7 +841,7 @@
             submitBtn.innerHTML = '<i data-lucide="plus"></i> Add Brand';
             submitBtn.style.background = 'var(--primary)';
             addBrandForm.reset();
-            
+
             renderBrands();
             if (window.lucide) lucide.createIcons();
         });
@@ -819,12 +861,12 @@
 
             const coverage = brand.coverage || 'all';
             const allChips = document.querySelectorAll('.type-chip');
-            
+
             allChips.forEach(chip => {
                 const val = chip.getAttribute('data-value');
                 chip.style.display = 'flex'; // Default show
                 chip.classList.remove('active'); // Reset selection
-                
+
                 if (coverage === 'meta' && ['tw', 'threads', 'yt', 'link'].includes(val)) {
                     chip.style.display = 'none';
                 } else if (coverage === 'video' && ['insta', 'fb', 'tw', 'link'].includes(val)) {
@@ -942,7 +984,7 @@
             currentAdminChatId = id;
             const brand = storedBrands[id];
             if (!brand) return;
-            
+
             document.getElementById('adminChatBrandName').textContent = brand.name;
             document.getElementById('adminChatModal').style.display = 'flex';
             renderAdminChat();
@@ -966,9 +1008,9 @@
                 const div = document.createElement('div');
                 const isUser = msg.sender === 'user';
                 const isAdmin = msg.sender === 'admin';
-                
+
                 div.style.cssText = `display: flex; flex-direction: column; max-width: 85%; ${!isUser ? 'align-self: flex-end; align-items: flex-end;' : 'align-self: flex-start; align-items: flex-start;'}`;
-                
+
                 let bubbleCss = '';
                 let title = '';
                 if (isUser) {
@@ -982,7 +1024,7 @@
                     title = 'Elite AI Strategist';
                 }
 
-                    
+
                 div.innerHTML = `
                     <span style="font-size: 0.65rem; color: var(--text-gray); margin-bottom: 4px; padding: 0 4px;">
                         ${title}
@@ -1006,7 +1048,7 @@
             if (!brand.chat) brand.chat = [];
             brand.chat.push({ sender: 'admin', text: text, time: Date.now() });
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
-            
+
             input.value = '';
             renderAdminChat();
         });
@@ -1017,27 +1059,27 @@
         function renderGlobalSupportInbox() {
             const inbox = document.getElementById('globalSupportInbox');
             inbox.innerHTML = '';
-            
+
             let allMessages = [];
-            
+
             Object.keys(storedBrands).forEach(id => {
                 const brand = storedBrands[id];
-                if(brand.chat && brand.chat.length > 0) {
+                if (brand.chat && brand.chat.length > 0) {
                     // Extract user messages for the global feed
                     const userMsgs = brand.chat.filter(m => m.sender === 'user').map(m => ({ ...m, brandId: id, brandName: brand.name }));
                     allMessages = allMessages.concat(userMsgs);
                 }
             });
-            
-            if(allMessages.length === 0) {
+
+            if (allMessages.length === 0) {
                 inbox.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 40px 0;"><i data-lucide="check-circle" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><br>Inbox Zero. All client inquiries resolved.</div>`;
-                if(window.lucide) lucide.createIcons();
+                if (window.lucide) lucide.createIcons();
                 return;
             }
-            
+
             // Sort by newest first
             allMessages.sort((a, b) => b.time - a.time);
-            
+
             allMessages.forEach(msg => {
                 const dateStr = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }).format(new Date(msg.time));
                 const div = document.createElement('div');
@@ -1062,14 +1104,14 @@
 
                 inbox.appendChild(div);
             });
-            
-            if(window.lucide) lucide.createIcons();
+
+            if (window.lucide) lucide.createIcons();
         }
 
         function deleteSingleMessage(brandId, msgTime) {
-            if(confirm("Delete this specific question permanently?")) {
+            if (confirm("Delete this specific question permanently?")) {
                 const brand = storedBrands[brandId];
-                if(brand && brand.chat) {
+                if (brand && brand.chat) {
                     brand.chat = brand.chat.filter(m => m.time !== msgTime);
                     localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
                     renderGlobalSupportInbox();
@@ -1078,12 +1120,12 @@
         }
 
         function clearAllInbox() {
-            if(confirm("CRITICAL WARNING: This will permanently delete ALL user questions from the global inbox across all brands. Are you absolutely sure?")) {
+            if (confirm("CRITICAL WARNING: This will permanently delete ALL user questions from the global inbox across all brands. Are you absolutely sure?")) {
                 Object.keys(storedBrands).forEach(id => {
-                    if(storedBrands[id].chat) {
+                    if (storedBrands[id].chat) {
                         // Keep bot/admin replies if needed? The user requested to clear the global inbox of questions.
                         // We will wipe the entire chat array to be clean, or just user messages. Let's wipe all chat for a clean slate.
-                        storedBrands[id].chat = []; 
+                        storedBrands[id].chat = [];
                     }
                 });
                 localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
@@ -1096,7 +1138,7 @@
             let csvContent = "data:text/csv;charset=utf-8,Brand,Date,Question\n";
             Object.keys(storedBrands).forEach(id => {
                 const brand = storedBrands[id];
-                if(brand.chat) {
+                if (brand.chat) {
                     brand.chat.filter(m => m.sender === 'user').forEach(msg => {
                         const dateStr = new Date(msg.time).toLocaleString().replace(/,/g, '');
                         // Escape quotes in text

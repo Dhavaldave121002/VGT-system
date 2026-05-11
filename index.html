@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="style.css">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // ✅ Pre-render Session Check
+        if (localStorage.getItem('socialSphere_admin') === 'true') {
+            window.location.href = 'admin.html';
+        } else if (localStorage.getItem('socialSphere_currentBrandId')) {
+            document.write('<style>#loginScreen { display: none !important; }</style>');
+        }
+    </script>
 </head>
 <body>
     
