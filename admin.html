@@ -31,6 +31,8 @@
                 </div>
             </div>
             <div class="nav-actions">
+                <button onclick="openAdminSettings()" class="btn-icon" title="Change Admin Password"
+                    style="background: transparent; color: var(--primary-light); border: 1px solid rgba(129, 140, 248, 0.2); cursor: pointer; margin-right: 8px;"><i data-lucide="settings"></i></button>
                 <button onclick="adminLogout()" class="btn-icon" title="Log Out"
                     style="background: transparent; color: #F87171; border: 1px solid rgba(248, 113, 113, 0.2); cursor: pointer;"><i data-lucide="log-out"></i></button>
             </div>
@@ -311,6 +313,34 @@
                             data-lucide="send" style="width: 18px; height: 18px;"></i></button>
                 </form>
             </div>
+    
+    <!-- Admin Settings Modal -->
+    <div id="adminSettingsModal" class="admin-chat-modal-overlay">
+        <div class="login-card animate-scale" style="max-width: 400px; padding: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 style="margin: 0; font-size: 1.3rem; display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="shield-check" style="color: var(--primary-light);"></i> Security Settings
+                </h3>
+                <button onclick="closeAdminSettings()" style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i data-lucide="x"></i></button>
+            </div>
+            
+            <form id="changeAdminPassForm">
+                <div class="input-group">
+                    <label>New Master Password</label>
+                    <input type="password" id="newAdminPass" placeholder="Enter new password" required minlength="6">
+                </div>
+                <div class="input-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="confirmAdminPass" placeholder="Confirm new password" required minlength="6">
+                </div>
+                <div id="adminSettingsError" style="color: #F87171; font-size: 0.8rem; margin-bottom: 16px; display: none; background: rgba(248, 113, 113, 0.1); padding: 10px; border-radius: 8px;"></div>
+                
+                <button type="submit" class="btn-primary" style="background: var(--primary);">
+                    Update Credentials
+                </button>
+            </form>
+        </div>
+    </div>
         </div>
     </div>
 
@@ -324,6 +354,43 @@
             localStorage.removeItem('socialSphere_admin');
             window.location.href = 'index.html';
         }
+
+        function openAdminSettings() {
+            document.getElementById('adminSettingsModal').style.display = 'flex';
+        }
+
+        function closeAdminSettings() {
+            document.getElementById('adminSettingsModal').style.display = 'none';
+            document.getElementById('changeAdminPassForm').reset();
+            document.getElementById('adminSettingsError').style.display = 'none';
+        }
+
+        document.getElementById('changeAdminPassForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPass = document.getElementById('newAdminPass').value.trim();
+            const confirmPass = document.getElementById('confirmAdminPass').value.trim();
+            const errorEl = document.getElementById('adminSettingsError');
+
+            if (newPass !== confirmPass) {
+                errorEl.textContent = "Passwords do not match!";
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const hashed = await hashPassword(newPass);
+            localStorage.setItem('socialSphere_admin_hash', hashed);
+            
+            // Sync to Cloud for cross-device support
+            storedBrands.__system_admin_hash__ = hashed;
+            syncToSheetDB();
+
+            errorEl.textContent = "✅ Admin Password Updated & Synced!";
+            errorEl.style.cssText = "color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 16px; display: block;";
+            
+            setTimeout(() => {
+                closeAdminSettings();
+            }, 1500);
+        });
 
         // SHA-256 Security Engine
         async function hashPassword(str) {
@@ -434,7 +501,7 @@
             const now = Date.now();
             let stateChanged = false;
 
-            Object.keys(storedBrands).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
                 const brand = storedBrands[id];
                 if (!brand.messages) brand.messages = [];
 
@@ -497,7 +564,7 @@
             });
             if (stateChanged) localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
 
-            Object.keys(storedBrands).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
                 const brand = storedBrands[id];
                 const isLocked = brand.locked === true;
                 const avatarUrl = brand.gender === 'female' ? './female_owner.png' : './male_owner.png';
@@ -626,7 +693,7 @@
             list.innerHTML = '';
             let hasSubmitted = false;
 
-            Object.keys(storedBrands).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
                 const brand = storedBrands[id];
                 if (brand.videoTasks) {
                     brand.videoTasks.forEach((task, index) => {
@@ -695,7 +762,7 @@
             const now = Date.now();
 
             if (target === 'all') {
-                Object.keys(storedBrands).forEach(id => {
+                Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
                     if (!storedBrands[id].messages) storedBrands[id].messages = [];
                     storedBrands[id].messages.push({ text: msg, time: now });
                 });
@@ -1062,7 +1129,7 @@
 
             let allMessages = [];
 
-            Object.keys(storedBrands).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
                 const brand = storedBrands[id];
                 if (brand.chat && brand.chat.length > 0) {
                     // Extract user messages for the global feed
@@ -1121,7 +1188,7 @@
 
         function clearAllInbox() {
             if (confirm("CRITICAL WARNING: This will permanently delete ALL user questions from the global inbox across all brands. Are you absolutely sure?")) {
-                Object.keys(storedBrands).forEach(id => {
+                Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
                     if (storedBrands[id].chat) {
                         // Keep bot/admin replies if needed? The user requested to clear the global inbox of questions.
                         // We will wipe the entire chat array to be clean, or just user messages. Let's wipe all chat for a clean slate.
@@ -1136,7 +1203,7 @@
 
         function downloadInboxCSV() {
             let csvContent = "data:text/csv;charset=utf-8,Brand,Date,Question\n";
-            Object.keys(storedBrands).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
                 const brand = storedBrands[id];
                 if (brand.chat) {
                     brand.chat.filter(m => m.sender === 'user').forEach(msg => {

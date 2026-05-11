@@ -25,22 +25,28 @@
             <h1>SocialSphere</h1>
             <p class="subtitle">Access your elite marketing dashboard and manage your brand's global presence.</p>
             
-            <form id="loginForm">
+            <form id="loginForm" style="margin-top: 20px;">
                 <div class="input-group">
-                    <label for="brandId">Brand Identifier</label>
+                    <label for="brandId" style="display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="fingerprint" style="width: 14px; height: 14px; color: var(--primary-light);"></i> 
+                        Brand Identifier
+                    </label>
                     <input type="text" id="brandId" placeholder="Enter brand ID (e.g. nike)" required autocomplete="off">
                 </div>
                 <div class="input-group">
-                    <label for="password">Security Key</label>
+                    <label for="password" style="display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="key-round" style="width: 14px; height: 14px; color: var(--primary-light);"></i>
+                        Security Key
+                    </label>
                     <input type="password" id="password" placeholder="••••••••" required>
                 </div>
-                <div id="errorMsg" style="color: #F87171; font-size: 0.85rem; margin-bottom: 20px; display: none; background: rgba(248, 113, 113, 0.1); padding: 12px; border-radius: 12px; border: 1px solid rgba(248, 113, 113, 0.2);"></div>
+                <div id="errorMsg" style="color: #F87171; font-size: 0.85rem; margin-bottom: 24px; display: none; background: rgba(248, 113, 113, 0.1); padding: 14px; border-radius: 16px; border: 1px solid rgba(248, 113, 113, 0.2); text-align: left; animation: slideUp 0.3s ease;"></div>
                 
-                <button type="submit" class="btn-primary">
-                    Unlock Dashboard
+                <button type="submit" class="btn-primary" id="loginBtn">
+                    <i data-lucide="unlock" style="width: 18px; height: 18px;"></i> Unlock Dashboard
                 </button>
-                <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-gray);">
-                    By logging in, you agree to our <a href="terms.html" style="color: var(--primary-light); text-decoration: none; font-weight: 600;">Terms & Conditions</a>
+                <div style="margin-top: 24px; font-size: 0.75rem; color: var(--text-gray); line-height: 1.5;">
+                    By authenticating, you agree to our <a href="terms.html" style="color: var(--primary-light); text-decoration: none; font-weight: 700; border-bottom: 1px solid rgba(129, 140, 248, 0.3); padding-bottom: 1px;">Terms of Service</a>
                 </div>
             </form>
             

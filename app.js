@@ -166,21 +166,36 @@ loginForm.addEventListener('submit', async (e) => {
     const brandId = document.getElementById('brandId').value.trim().toLowerCase();
     const password = document.getElementById('password').value.trim();
     const errorMsg = document.getElementById('errorMsg');
+    const loginBtn = document.getElementById('loginBtn');
+
+    // Visual Feedback
+    const originalBtnContent = loginBtn.innerHTML;
+    loginBtn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Verifying...`;
+    if (window.lucide) lucide.createIcons();
+
+    // 🛡️ REAL-TIME SECURITY SYNC: Pull latest credentials from Cloud before authenticating
+    await loadFromSheetDB();
 
     const inputHash = await hashPassword(password);
 
-    // ADMIN SECURE GATEWAY (Hashes for admin123 and admin@123)
-    const adminHash1 = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
-    const adminHash2 = '331c26f0f5b12dafc039bbf1b71d9d9ab6601b1df4cd19565f1ef1d07c0a9697';
+    // ADMIN SECURE GATEWAY (Integrated Access Control)
+    const customAdminHash = localStorage.getItem('socialSphere_admin_hash') || brands.__system_admin_hash__;
+    const adminHash1 = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'; // admin123
+    const adminHash2 = '331c26f0f5b12dafc039bbf1b71d9d9ab6601b1df4cd19565f1ef1d07c0a9697'; // admin@123
 
-    if (brandId === 'admin' && (inputHash === adminHash1 || inputHash === adminHash2 || password === 'admin123' || password === 'admin@123')) {
-        const loginBtn = loginForm.querySelector('button');
-        loginBtn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Elevating Access...`;
+    const isAdminLogin = brandId === 'admin' && (
+        (customAdminHash && inputHash === customAdminHash) || 
+        (!customAdminHash && (inputHash === adminHash1 || inputHash === adminHash2 || password === 'admin123' || password === 'admin@123'))
+    );
+
+    if (isAdminLogin) {
+        loginBtn.innerHTML = `<i data-lucide="shield-check"></i> Access Granted`;
+        loginBtn.style.background = '#10B981';
         if (window.lucide) lucide.createIcons();
         
         // ✅ Save Admin Session
         localStorage.setItem('socialSphere_admin', 'true');
-        localStorage.removeItem('socialSphere_currentBrandId'); // Clear any user session
+        localStorage.removeItem('socialSphere_currentBrandId');
 
         setTimeout(() => {
             window.location.href = 'admin.html';
@@ -188,18 +203,15 @@ loginForm.addEventListener('submit', async (e) => {
         return;
     }
 
-    // Check if brand exists and password matches (or if it's a default brand with any pass for demo)
+    // Check if brand exists
     if (brands[brandId]) {
         const brand = brands[brandId];
 
-        // Visual Feedback
-        const loginBtn = loginForm.querySelector('button');
-        const originalBtnText = loginBtn.innerHTML;
-
         // Check if account is locked
         if (brand.locked) {
-            errorMsg.innerHTML = `<i data-lucide="lock" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 6px;"></i> Account Locked. Please contact your administrator.`;
+            errorMsg.innerHTML = `<i data-lucide="lock" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 6px;"></i> Account Locked. Contact Admin.`;
             errorMsg.style.display = 'block';
+            loginBtn.innerHTML = originalBtnContent;
             if (window.lucide) lucide.createIcons();
             return;
         }
@@ -207,7 +219,8 @@ loginForm.addEventListener('submit', async (e) => {
         // Check if password matches
         if (brand.pass === inputHash || brand.pass === password || brandId === 'nike' || brandId === 'starbucks' || brandId === 'apple') {
             errorMsg.style.display = 'none';
-            loginBtn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Authenticating...`;
+            loginBtn.innerHTML = `<i data-lucide="check-circle"></i> Authenticated`;
+            loginBtn.style.background = '#10B981';
             if (window.lucide) lucide.createIcons();
 
             setTimeout(() => {
@@ -216,10 +229,12 @@ loginForm.addEventListener('submit', async (e) => {
         } else {
             errorMsg.textContent = 'Invalid security key.';
             errorMsg.style.display = 'block';
+            loginBtn.innerHTML = originalBtnContent;
         }
     } else {
         errorMsg.textContent = 'Identity verification failed. Check Brand ID.';
         errorMsg.style.display = 'block';
+        loginBtn.innerHTML = originalBtnContent;
     }
 });
 
