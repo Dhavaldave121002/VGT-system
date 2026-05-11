@@ -90,6 +90,7 @@ async function loadFromSheetDB() {
             console.log("✅ Blob data loaded from SheetDB.");
             return true;
         }
+
     } catch (error) {
         console.warn("Could not load from SheetDB. Using local data.", error);
     }
@@ -550,8 +551,9 @@ function renderChatMessages() {
             
         div.innerHTML = `
             <span style="font-size: 0.65rem; color: var(--text-gray); margin-bottom: 4px; padding: 0 4px;">
-                ${isUser ? 'You' : (msg.sender === 'admin' ? 'Admin Support' : 'AI Assistant')}
+                ${isUser ? 'You' : (msg.sender === 'admin' ? 'Admin Support' : 'Elite AI Strategist')}
             </span>
+
             <div style="padding: 12px 16px; border-radius: 16px; font-size: 0.9rem; line-height: 1.4; ${bubbleCss}">
                 ${msg.text}
             </div>
@@ -574,15 +576,17 @@ function getBotResponse(input) {
 
     // 🌟 ADVANCED CONVERSATIONAL ENGINE (Greetings & Empathy)
     if (text.match(/^(hi|hello|hey|hy|hii|helo|hola|greetings|yo)/)) {
-        return `Hello! It's a pleasure to assist you. I'm your dedicated AI Strategist at <strong>Vertex Global Tech</strong>. How can I help you elevate <strong>${brandName}</strong> and drive more growth today?`;
+        return `Hello! It's a pleasure to assist you. I'm your dedicated <strong>Elite AI Strategist</strong> at Vertex Global Tech. How can I help you elevate <strong>${brandName}</strong> and drive more growth today?`;
+
     } else if (text.includes('how are you') || text.includes('how r u') || text.includes('u good')) {
         return `I'm functioning at peak performance and feeling highly productive! Thank you for asking. More importantly, how is the marketing momentum for <strong>${brandName}</strong> looking today?`;
     } else if (text.includes('good morning') || text.includes('good afternoon') || text.includes('good evening')) {
         const timeOfDay = text.includes('morning') ? 'morning' : (text.includes('afternoon') ? 'afternoon' : 'evening');
         return `Good ${timeOfDay}! I hope your day is off to a powerful start. Ready to look into some marketing strategies for <strong>${brandName}</strong>?`;
     } else if (text.includes('who are you') || text.includes('what are you')) {
-        return "I am the proprietary <strong>Elite AI Assistant</strong> for Vertex Global Tech. My mission is to provide 24/7 strategic support, manage your digital roadmap, and bridge the gap between your brand and our expert human administrators.";
+        return "I am the proprietary <strong>Elite AI Strategist</strong> for Vertex Global Tech. My mission is to provide 24/7 strategic support, manage your digital roadmap, and bridge the gap between your brand and our expert human administrators.";
     }
+
 
     // 📈 ADVANCED MARKETING & BUSINESS STRATEGY (The "Training")
     else if (text.includes('seo') || text.includes('search engine') || text.includes('ranking') || text.includes('google')) {
@@ -593,6 +597,10 @@ function getBotResponse(input) {
         return `Your current roadmap for <strong>${brandName}</strong> is designed for consistent brand authority. We've balanced high-impact posts with strategic video content. If you'd like to pivot or accelerate the current strategy, I can alert our Chief Strategist immediately.`;
     } else if (text.includes('content') && (text.includes('idea') || text.includes('viral') || text.includes('trend'))) {
         return `To make <strong>${brandName}</strong> go viral, we should focus on short-form 'reels-style' video content with high hooks. Vertex Global Tech stays ahead of social algorithms. Should we brainstorm some trending concepts for your next shoot?`;
+    } else if (text.includes('ads') || text.includes('meta') || text.includes('facebook ads') || text.includes('instagram ads')) {
+        return `Our Meta Ads strategy for <strong>${brandName}</strong> focuses on high-intent lookalike audiences and A/B testing creative hooks. We aim for the lowest possible Cost Per Acquisition (CPA). Would you like to increase your ad budget for the upcoming campaign?`;
+    } else if (text.includes('e-commerce') || text.includes('shopify') || text.includes('store') || text.includes('amazon')) {
+        return `E-commerce boosting is one of our specialties. We optimize product listings, implement abandoned cart recovery strategies, and run targeted conversion ads. How are the sales looking on the <strong>${brandName}</strong> store this week?`;
     }
 
     // 🛠️ VERTEX GLOBAL TECH - CORE SERVICES
@@ -635,6 +643,7 @@ function getBotResponse(input) {
 }
 
 
+
 // ==========================================
 // CLIENT VIDEO TASKS ENGINE
 // ==========================================
@@ -659,23 +668,22 @@ function renderClientVideoTasks() {
         const realIndex = currentBrand.videoTasks.findIndex(t => t.id === task.id);
         
         const div = document.createElement('div');
-        div.style.cssText = "background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); padding: 16px; border-radius: 12px;";
+        div.style.cssText = "background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px;";
         div.innerHTML = `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: flex-start;">
-                <div>
-                    <span style="font-size: 0.7rem; color: #10B981; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Action Required</span>
-                    <p style="margin: 4px 0; color: #fff; line-height: 1.5; font-size: 0.95rem;">${task.note}</p>
-                </div>
+            <div style="margin-bottom: 12px;">
+                <p style="margin: 0; color: #fff; line-height: 1.4; font-size: 0.85rem; font-style: italic; opacity: 0.9;">"${task.note}"</p>
             </div>
-            <form onsubmit="submitVideoLink(event, ${realIndex})" style="display: flex; gap: 12px;">
-                <input type="url" id="driveLink_${task.id}" placeholder="Paste Google Drive Link here..." required style="flex-grow: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: white; padding: 10px 16px; border-radius: 8px; font-size: 0.9rem; outline: none;">
-                <button type="submit" style="background: #10B981; color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
-                    <i data-lucide="upload-cloud" style="width: 16px; height: 16px;"></i> Submit
+            <form onsubmit="submitVideoLink(event, ${realIndex})" style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="url" id="driveLink_${task.id}" placeholder="Paste Drive Link..." required 
+                    style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: white; padding: 10px; border-radius: 8px; font-size: 0.8rem; outline: none;">
+                <button type="submit" style="width: 100%; background: #10B981; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> Submit for Review
                 </button>
             </form>
         `;
         container.appendChild(div);
     });
+
     
     if (window.lucide) lucide.createIcons();
 }
@@ -709,19 +717,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = inputEl.value.trim();
             if (!text) return;
             
-            // 1. Add User Message
+            if (!currentBrand.chat) currentBrand.chat = [];
             currentBrand.chat.push({ sender: 'user', text: text, time: Date.now() });
-            localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
-            renderChatMessages();
-            inputEl.value = '';
             
-            // 2. Simulate Bot Thinking & Responding
+            inputEl.value = '';
+            renderChatMessages();
+            
+            // SHOW TYPING INDICATOR (Human-Mixed Feel)
+            const chatArea = document.getElementById('chatMessagesArea');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'aiTypingIndicator';
+            typingDiv.style.cssText = "align-self: flex-start; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 12px; font-size: 0.8rem; color: var(--text-gray); margin-bottom: 12px; font-style: italic;";
+            typingDiv.innerHTML = `<span class="animate-pulse">AI Strategist is thinking...</span>`;
+            chatArea.appendChild(typingDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+            
             setTimeout(() => {
+                const indicator = document.getElementById('aiTypingIndicator');
+                if (indicator) indicator.remove();
+                
                 const response = getBotResponse(text);
                 currentBrand.chat.push({ sender: 'bot', text: response, time: Date.now() });
-                localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
                 renderChatMessages();
-            }, 800);
+                localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+                syncToSheetDB();
+            }, 1500); 
         });
     }
 });
+

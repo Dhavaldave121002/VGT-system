@@ -383,6 +383,8 @@
             brandListTable.innerHTML = '';
             selectBrand.innerHTML = '';
             broadcastRecipient.innerHTML = '<option value="all">📢 All Brands (Global)</option>';
+            document.getElementById('videoTaskRecipient').innerHTML = '';
+
 
             // AUTOMATED CONTRACT LIFECYCLE ENGINE
             const today = new Date();
@@ -460,48 +462,50 @@
 
                 // Table
                 const tr = document.createElement('tr');
-                tr.style.borderBottom = '1px solid var(--border-glass)';
                 tr.innerHTML = `
-                    <td style="padding: 16px; font-weight: 600;">
+                    <td data-label="Brand">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <img src="${avatarUrl}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-light); background: rgba(0,0,0,0.2);">
                             ${brand.name}
                         </div>
                     </td>
-                    <td style="padding: 16px; color: var(--text-gray); font-size: 0.85rem;">${id}</td>
-                    <td style="padding: 16px;">
+                    <td data-label="User ID">${id}</td>
+                    <td data-label="Security">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-family: monospace; color: var(--text-gray); font-size: 0.8rem;">••••••••</span>
-                            <button onclick="changePassword('${id}')" style="background: none; border: none; color: var(--primary-light); cursor: pointer; padding: 0;"><i data-lucide="key" style="width: 14px; height: 14px;"></i></button>
+                            <button onclick="changePassword('${id}')" class="btn-icon-small"><i data-lucide="key" style="width: 14px; height: 14px;"></i></button>
                         </div>
                     </td>
-                    <td style="padding: 16px; font-size: 0.85rem; color: var(--primary-light);">${brand.plan || 'Standard'}</td>
-                    <td style="padding: 16px; font-size: 0.85rem; color: #818CF8; font-weight: 600;">${brand.coverage?.toUpperCase() || 'ALL'}</td>
-                    <td style="padding: 16px; font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">
-                        <div style="color: white; margin-bottom: 4px;">${brand.trial || 'Standard'}</div>
-                        ${brand.startDate ? `<span style="color: #10B981;">${brand.startDate}</span><br>to ` : ''}
-                        ${brand.endDate ? `<span style="color: #F87171;">${brand.endDate}</span>` : 'Ongoing'}
+                    <td data-label="Plan" style="color: var(--primary-light);">${brand.plan || 'Standard'}</td>
+                    <td data-label="Coverage" style="color: #818CF8; font-weight: 600;">${brand.coverage?.toUpperCase() || 'ALL'}</td>
+                    <td data-label="Contract">
+                        <div style="text-align: right; line-height: 1.4;">
+                            <div style="color: white; margin-bottom: 4px;">${brand.trial || 'Standard'}</div>
+                            ${brand.startDate ? `<span style="color: #10B981;">${brand.startDate}</span><br>to ` : ''}
+                            ${brand.endDate ? `<span style="color: #F87171;">${brand.endDate}</span>` : 'Ongoing'}
+                        </div>
                     </td>
-                    <td style="padding: 16px;">
-                        <span class="status-badge" style="background: ${isLocked ? 'rgba(248, 113, 113, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; color: ${isLocked ? '#F87171' : '#10B981'}; border: 1px solid ${isLocked ? 'rgba(248, 113, 113, 0.2)' : 'rgba(16, 185, 129, 0.2)'}; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem;">
+                    <td data-label="Access">
+                        <span class="status-badge ${isLocked ? 'status-locked' : 'status-unlocked'}">
                             ${isLocked ? 'Locked' : 'Unlocked'}
                         </span>
                     </td>
-                    <td style="padding: 16px; text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
-                        <button onclick="openAdminChat('${id}')" title="View Support Chats" style="background: none; border: none; color: #A855F7; cursor: pointer;">
+                    <td data-label="Action" class="table-actions">
+                        <button onclick="openAdminChat('${id}')" title="View Support Chats" style="color: #A855F7;">
                             <i data-lucide="message-square"></i>
                         </button>
-                        <button onclick="editBrand('${id}')" title="Edit Brand Details" style="background: none; border: none; color: #60A5FA; cursor: pointer;">
+                        <button onclick="editBrand('${id}')" title="Edit Brand Details" style="color: #60A5FA;">
                             <i data-lucide="edit-2"></i>
                         </button>
-                        <button onclick="toggleLock('${id}')" title="${isLocked ? 'Unlock' : 'Lock'}" style="background: none; border: none; color: ${isLocked ? '#10B981' : '#F59E0B'}; cursor: pointer;">
+                        <button onclick="toggleLock('${id}')" title="${isLocked ? 'Unlock' : 'Lock'}" style="color: ${isLocked ? '#10B981' : '#F59E0B'};">
                             <i data-lucide="${isLocked ? 'unlock' : 'lock'}"></i>
                         </button>
-                        <button onclick="deleteBrand('${id}')" title="Delete" style="background: none; border: none; color: #F87171; cursor: pointer;">
+                        <button onclick="deleteBrand('${id}')" title="Delete" style="color: #F87171;">
                             <i data-lucide="trash-2"></i>
                         </button>
                     </td>
                 `;
+
                 brandListTable.appendChild(tr);
 
                 // Select Dropdown
@@ -587,7 +591,7 @@
                         if (task.status === 'submitted') {
                             hasSubmitted = true;
                             const div = document.createElement('div');
-                            div.style.cssText = "background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #10B981;";
+                            div.className = "assignment-card";
                             div.innerHTML = `
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                                     <strong>${brand.name}</strong>
@@ -598,6 +602,7 @@
                                     <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> View Drive Link
                                 </a>
                                 <div style="margin-top: 8px; text-align: right;">
+
                                     <button onclick="clearVideoTask('${id}', ${index})" style="background: none; border: none; color: var(--text-gray); cursor: pointer; font-size: 0.75rem; text-decoration: underline;">Dismiss</button>
                                 </div>
                             `;
@@ -974,8 +979,9 @@
                     title = 'You (Admin)';
                 } else {
                     bubbleCss = `background: linear-gradient(135deg, var(--primary), #A855F7); color: white; border-bottom-right-radius: 4px;`;
-                    title = 'AI Assistant';
+                    title = 'Elite AI Strategist';
                 }
+
                     
                 div.innerHTML = `
                     <span style="font-size: 0.65rem; color: var(--text-gray); margin-bottom: 4px; padding: 0 4px;">
@@ -1035,7 +1041,7 @@
             allMessages.forEach(msg => {
                 const dateStr = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }).format(new Date(msg.time));
                 const div = document.createElement('div');
-                div.style.cssText = "background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;";
+                div.className = "inbox-card";
                 div.innerHTML = `
                     <div style="flex-grow: 1;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
@@ -1044,7 +1050,7 @@
                         </div>
                         <p style="margin: 0; color: #fff; font-size: 0.95rem; line-height: 1.4;">"${msg.text}"</p>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="table-actions">
                         <button onclick="openAdminChat('${msg.brandId}')" style="background: linear-gradient(135deg, var(--primary), #A855F7); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; white-space: nowrap; transition: 0.3s; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
                             <i data-lucide="reply" style="width: 14px; height: 14px;"></i> Reply
                         </button>
@@ -1053,6 +1059,7 @@
                         </button>
                     </div>
                 `;
+
                 inbox.appendChild(div);
             });
             

@@ -106,6 +106,19 @@
 
                 <!-- Daily Collection Sidebar -->
                 <div class="detail-sidebar">
+                    <!-- Video Assignments Panel (Moved Here) -->
+                    <div id="clientVideoTasksPanel" style="display: none; margin-bottom: 32px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; padding: 20px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center;">
+                                <i data-lucide="video" style="color: #10B981; width: 16px; height: 16px;"></i>
+                            </div>
+                            <h4 style="margin: 0; font-size: 1rem; color: #10B981;">Shoot Assignment</h4>
+                        </div>
+                        <div id="clientVideoTasksContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- JS will inject tasks here -->
+                        </div>
+                    </div>
+
                     <div class="sidebar-header">
                         <h4 id="selectedDateTitle">Daily Collection</h4>
                         <p id="selectedDateSub" style="font-size: 0.8rem; color: var(--text-gray);">Scheduled Posts</p>
@@ -118,25 +131,8 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Video Assignments Panel -->
-            <div id="clientVideoTasksPanel" style="display: none; margin-top: 30px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 24px;">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-                    <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center;">
-                        <i data-lucide="video" style="color: #10B981;"></i>
-                    </div>
-                    <div>
-                        <h3 style="margin: 0; font-size: 1.2rem;">Pending Video Assignments</h3>
-                        <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-gray);">Shoot the content and paste your Google Drive link here.</p>
-                    </div>
-                </div>
-                
-                <div id="clientVideoTasksContainer" style="display: flex; flex-direction: column; gap: 16px;">
-                    <!-- JS will inject tasks here -->
-                </div>
-            </div>
-
         </main>
+
     </div>
 
     <!-- Support Chat Widget -->
@@ -152,7 +148,7 @@
                         <i data-lucide="bot" style="color: white; width: 20px; height: 20px;"></i>
                     </div>
                     <div>
-                        <h3 style="font-size: 1rem; margin: 0;">Support Desk</h3>
+                        <h3 style="font-size: 1rem; margin: 0;">Elite AI Strategist</h3>
                         <p style="font-size: 0.7rem; color: #10B981; margin: 0; display: flex; align-items: center; gap: 4px;"><span style="width: 6px; height: 6px; background: #10B981; border-radius: 50%; display: inline-block;"></span> AI Assistant Active</p>
                     </div>
                 </div>

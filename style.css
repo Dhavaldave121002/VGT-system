@@ -211,6 +211,93 @@ select:focus {
     }
 }
 
+.btn-icon-small {
+    background: none;
+    border: none;
+    color: var(--primary-light);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-locked {
+    background: rgba(248, 113, 113, 0.1);
+    color: #F87171;
+    border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.status-unlocked {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.table-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.table-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.3s;
+}
+
+.table-actions button:hover {
+    transform: scale(1.1);
+}
+
+.inbox-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass);
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.inbox-card .table-actions {
+    flex-direction: column;
+}
+
+.assignment-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 3px solid #10B981;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 600px) {
+    .inbox-card {
+        flex-direction: column;
+    }
+    .inbox-card > div {
+        width: 100%;
+    }
+    .inbox-card .table-actions {
+        width: 100%;
+        flex-direction: row !important;
+        justify-content: flex-start;
+        margin-top: 12px;
+    }
+}
+
+
+
 /* Chat Widget Styles */
 .chat-widget-container {
     position: fixed;
@@ -271,6 +358,20 @@ select:focus {
     background: #0f172a;
     border: 1px solid var(--border-glass);
 }
+
+.video-assignments-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 900px) {
+    .video-assignments-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
 
 
 
@@ -574,9 +675,10 @@ main {
 @media (max-width: 1024px) {
     .dashboard { height: auto; padding: 20px; }
     .dashboard-content { flex-direction: column; height: auto; overflow: visible; }
-    .detail-sidebar { width: 100%; height: auto; margin-top: 24px; }
-    .calendar-grid { min-height: 500px; }
+    .detail-sidebar { width: 100%; height: auto; margin-top: 24px; order: 1; }
+    .calendar-card { order: 2; }
 }
+
 
 @media (max-width: 768px) {
     .dashboard { padding: 16px; }
@@ -725,8 +827,68 @@ main {
 .admin-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
 }
+
+.admin-table th, .admin-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-glass);
+}
+
+@media (max-width: 900px) {
+    /* STACKABLE TABLE ENGINE */
+    .admin-table thead {
+        display: none;
+    }
+    
+    .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+        display: block;
+        width: 100%;
+    }
+    
+    .admin-table tr {
+        margin-bottom: 24px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 8px;
+    }
+    
+    .admin-table td {
+        text-align: right;
+        padding: 12px 16px !important;
+        position: relative;
+        border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    }
+    
+    .admin-table td:last-child {
+        border-bottom: none !important;
+    }
+    
+    .admin-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 16px;
+        width: 45%;
+        text-align: left;
+        font-weight: 700;
+        color: var(--text-gray);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    
+    .admin-table td > div {
+        display: inline-flex;
+        justify-content: flex-end;
+    }
+
+    .table-actions {
+        justify-content: flex-end;
+    }
+}
+
 
 .notification-modal-card {
     padding: 32px;
