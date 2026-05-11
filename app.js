@@ -123,6 +123,15 @@ const selectedDateTitle = document.getElementById('selectedDateTitle');
 
 // Initialize — Load from Cloud DB first, then init UI
 window.addEventListener('DOMContentLoaded', async () => {
+    // 🛡️ RESET UI STATE: Prevent 'Authenticated' artifacts
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+        loginBtn.innerHTML = `<i data-lucide="unlock" style="width: 18px; height: 18px;"></i> Unlock Dashboard`;
+        loginBtn.style.background = '';
+    }
+    if (loginForm) loginForm.reset();
+    if (window.lucide) lucide.createIcons();
+
     const loadingEl = document.getElementById('loginScreen');
     await loadFromSheetDB(); // Pull latest data from cloud
 
