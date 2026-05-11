@@ -69,11 +69,11 @@
                 <div class="brand-logo-container">
                     <img src="" id="currentBrandLogo" class="brand-logo" alt="Logo">
                 </div>
-                <div>
+                <div class="brand-info">
                     <h2 id="currentBrandName" class="brand-name">Brand Name</h2>
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                         <p id="currentBrandHandle" class="brand-handle">@handle</p>
-                        <span id="brandPlanBadge" style="font-size: 0.65rem; background: rgba(99, 102, 241, 0.1); color: var(--primary-light); padding: 2px 8px; border-radius: 20px; border: 1px solid rgba(99, 102, 241, 0.2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Standard Plan</span>
+                        <span id="brandPlanBadge" style="font-size: 0.6rem; background: rgba(99, 102, 241, 0.1); color: var(--primary-light); padding: 2px 8px; border-radius: 20px; border: 1px solid rgba(99, 102, 241, 0.2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Standard Plan</span>
                     </div>
                 </div>
             </div>
@@ -156,17 +156,17 @@
         <div id="chatWindow" class="login-card animate-slide chat-window-panel">
 
             <!-- Header -->
-            <div style="background: rgba(255,255,255,0.05); padding: 16px 24px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center;">
+            <div class="chat-header" style="background: rgba(255,255,255,0.05); padding: 16px 20px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #A855F7); display: flex; align-items: center; justify-content: center;">
-                        <i data-lucide="bot" style="color: white; width: 20px; height: 20px;"></i>
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #A855F7); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i data-lucide="bot" style="color: white; width: 18px; height: 18px;"></i>
                     </div>
                     <div>
-                        <h3 style="font-size: 1rem; margin: 0;">Elite AI Strategist</h3>
-                        <p style="font-size: 0.7rem; color: #10B981; margin: 0; display: flex; align-items: center; gap: 4px;"><span style="width: 6px; height: 6px; background: #10B981; border-radius: 50%; display: inline-block;"></span> AI Assistant Active</p>
+                        <h3 style="font-size: 0.95rem; margin: 0;">Elite AI Strategist</h3>
+                        <p style="font-size: 0.65rem; color: #10B981; margin: 0; display: flex; align-items: center; gap: 4px;"><span style="width: 6px; height: 6px; background: #10B981; border-radius: 50%; display: inline-block;"></span> Active</p>
                     </div>
                 </div>
-                <button onclick="toggleChatWindow()" style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i data-lucide="x"></i></button>
+                <button onclick="toggleChatWindow()" style="background: none; border: none; color: var(--text-gray); cursor: pointer; padding: 4px;"><i data-lucide="x" style="width: 20px; height: 20px;"></i></button>
             </div>
             
             <!-- Messages Area -->

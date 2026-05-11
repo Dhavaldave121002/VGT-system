@@ -25,16 +25,16 @@
                     style="background: var(--primary); display: flex; align-items: center; justify-content: center;">
                     <i data-lucide="shield-check" style="color: white; width: 24px; height: 24px;"></i>
                 </div>
-                <div>
+                <div class="brand-info">
                     <h2 class="brand-name">System Administrator</h2>
                     <p class="brand-handle">@admin_control</p>
                 </div>
             </div>
             <div class="nav-actions">
                 <button onclick="openAdminSettings()" class="btn-icon" title="Change Admin Password"
-                    style="background: transparent; color: var(--primary-light); border: 1px solid rgba(129, 140, 248, 0.2); cursor: pointer; margin-right: 8px;"><i data-lucide="settings"></i></button>
+                    style="color: var(--primary-light); border: 1px solid rgba(129, 140, 248, 0.2);"><i data-lucide="settings"></i></button>
                 <button onclick="adminLogout()" class="btn-icon" title="Log Out"
-                    style="background: transparent; color: #F87171; border: 1px solid rgba(248, 113, 113, 0.2); cursor: pointer;"><i data-lucide="log-out"></i></button>
+                    style="color: #F87171; border: 1px solid rgba(248, 113, 113, 0.2);"><i data-lucide="log-out"></i></button>
             </div>
         </header>
 
@@ -149,22 +149,21 @@
                 </div>
 
                 <!-- Global Support Inbox -->
-                <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                <div class="admin-section" style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
+                    <div class="section-header"
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
                         <div>
                             <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Global Support Inbox</h3>
-                            <p style="color: var(--text-gray); font-size: 0.9rem;">Real-time feed of all client
-                                inquiries and AI Assistant conversations.</p>
+                            <p style="color: var(--text-gray); font-size: 0.9rem;">Real-time feed of all client inquiries.</p>
                         </div>
-                        <div style="display: flex; gap: 12px;">
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                             <button onclick="downloadInboxCSV()"
-                                style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.9rem;">
-                                <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download List
+                                style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.85rem;">
+                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download
                             </button>
                             <button onclick="clearAllInbox()"
-                                style="background: rgba(248, 113, 113, 0.1); color: #F87171; border: 1px solid rgba(248, 113, 113, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.9rem;">
-                                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Clear All
+                                style="background: rgba(248, 113, 113, 0.1); color: #F87171; border: 1px solid rgba(248, 113, 113, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.85rem;">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Clear All
                             </button>
                         </div>
                     </div>
@@ -182,13 +181,12 @@
                 </div>
 
                 <!-- Video Shoot Assignments -->
-                <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
+                <div class="admin-section" style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-glass);">
                     <div
-                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
                         <div>
                             <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Video Shoot Assignments</h3>
-                            <p style="color: var(--text-gray); font-size: 0.9rem;">Send scripts/notes to clients and
-                                review their submitted Google Drive links.</p>
+                            <p style="color: var(--text-gray); font-size: 0.9rem;">Assign scripts and review submissions.</p>
                         </div>
                     </div>
 
