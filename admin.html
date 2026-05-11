@@ -600,16 +600,16 @@
                         </span>
                     </td>
                     <td data-label="Action" class="table-actions">
-                        <button onclick="openAdminChat('${id}')" title="View Support Chats" style="color: #A855F7;">
+                        <button onclick="openAdminChat('${id}')" title="View Support Chats" class="btn-chat">
                             <i data-lucide="message-square"></i>
                         </button>
-                        <button onclick="editBrand('${id}')" title="Edit Brand Details" style="color: #60A5FA;">
+                        <button onclick="editBrand('${id}')" title="Edit Brand Details" class="btn-edit">
                             <i data-lucide="edit-2"></i>
                         </button>
-                        <button onclick="toggleLock('${id}')" title="${isLocked ? 'Unlock' : 'Lock'}" style="color: ${isLocked ? '#10B981' : '#F59E0B'};">
+                        <button onclick="toggleLock('${id}')" title="${isLocked ? 'Unlock' : 'Lock'}" class="${isLocked ? 'btn-unlock' : 'btn-lock'}">
                             <i data-lucide="${isLocked ? 'unlock' : 'lock'}"></i>
                         </button>
-                        <button onclick="deleteBrand('${id}')" title="Delete" style="color: #F87171;">
+                        <button onclick="deleteBrand('${id}')" title="Delete" class="btn-delete">
                             <i data-lucide="trash-2"></i>
                         </button>
                     </td>
