@@ -398,28 +398,42 @@
         }
 
         // ==========================================
-        // SHEETDB DATABASE SYNC ENGINE - JSON BLOB
+        // SHEETDB DATABASE SYNC ENGINE - MULTI-API FAILOVER
         // ==========================================
-        const SHEETDB_API_URL = "https://sheetdb.io/api/v1/vvutbhezp19tr"; // ✅ LIVE DATABASE CONNECTED
+        const SHEETDB_API_URLS = [
+            "https://sheetdb.io/api/v1/vvutbhezp19tr", // Primary
+            "https://sheetdb.io/api/v1/bv1v9wrq0pziw" // ✅ Secondary Connected
+        ];
 
         async function syncToSheetDB() {
-            if (!SHEETDB_API_URL) return;
-            try {
-                const patchRes = await fetch(SHEETDB_API_URL + '/id/1', {
-                    method: 'PATCH',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: { database_json: JSON.stringify(storedBrands) } })
-                });
-                if (!patchRes.ok) {
-                    // Row doesn't exist yet — create it
-                    await fetch(SHEETDB_API_URL, {
-                        method: 'POST',
+            for (const url of SHEETDB_API_URLS) {
+                if (!url || url.includes('YOUR_NEW_API_ID')) continue;
+                try {
+                    const payload = { data: { database_json: JSON.stringify(storedBrands) } };
+                    const patchRes = await fetch(url + '/id/1', {
+                        method: 'PATCH',
                         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ data: [{ id: 1, database_json: JSON.stringify(storedBrands) }] })
+                        body: JSON.stringify(payload)
                     });
+                    
+                    if (patchRes.ok) {
+                        console.log(`✅ Admin: Synced to ${url}`);
+                        return;
+                    } else if (patchRes.status === 429) {
+                        console.warn(`⚠️ Admin: Limit reached for ${url}, trying next...`);
+                        continue;
+                    } else {
+                        // Row 1 doesn't exist, create it
+                        await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ data: [{ id: 1, database_json: JSON.stringify(storedBrands) }] })
+                        });
+                        return;
+                    }
+                } catch (error) {
+                    console.error(`❌ Admin: Sync failed for ${url}:`, error);
                 }
-            } catch (error) {
-                console.warn("SheetDB Sync Failed. Data saved locally.", error);
             }
         }
 
@@ -427,21 +441,30 @@
         // ADMIN SHEETDB READ ENGINE - JSON BLOB
         // ==========================================
         async function loadFromSheetDB() {
-            if (!SHEETDB_API_URL) return false;
-            try {
-                const res = await fetch(SHEETDB_API_URL, {
-                    headers: { 'Accept': 'application/json' }
-                });
-                if (!res.ok) return false;
-                const rows = await res.json();
-                if (rows && rows.length > 0 && rows[0].database_json) {
-                    storedBrands = JSON.parse(rows[0].database_json);
-                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-                    console.log('✅ Admin: Blob data loaded from SheetDB.');
-                    return true;
+            for (const url of SHEETDB_API_URLS) {
+                if (!url || url.includes('YOUR_NEW_API_ID')) continue;
+                try {
+                    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                    if (res.ok) {
+                        const rows = await res.json();
+                        if (rows && rows.length > 0 && rows[0].database_json) {
+                            storedBrands = JSON.parse(rows[0].database_json);
+                            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                            console.log(`✅ Admin: Loaded from ${url}`);
+                            return true;
+                        } else {
+                            // 📡 AUTO-MIGRATE: If sheet is empty, push current local data to it
+                            console.log(`📡 Admin: Initializing new sheet ${url}`);
+                            syncToSheetDB();
+                            return true;
+                        }
+                    } else if (res.status === 429) {
+                        console.warn(`⚠️ Admin: Load limit reached for ${url}, trying next...`);
+                        continue;
+                    }
+                } catch (error) {
+                    console.warn(`❌ Admin: Load error for ${url}:`, error);
                 }
-            } catch (error) {
-                console.warn('Admin: Could not load from SheetDB. Using local data.', error);
             }
             return false;
         }

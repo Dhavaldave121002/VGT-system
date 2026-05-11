@@ -1,5 +1,9 @@
 // Data Management - Sync with Admin Portal
-const SHEETDB_API_URL = "https://sheetdb.io/api/v1/vvutbhezp19tr"; // ✅ LIVE DATABASE CONNECTED
+// Multi-API Failover System (Automatic Fallback if limit reached)
+const SHEETDB_API_URLS = [
+    "https://sheetdb.io/api/v1/vvutbhezp19tr", // Primary API
+    "https://sheetdb.io/api/v1/bv1v9wrq0pziw" // ✅ Secondary API Connected
+];
 
 // SHA-256 Security Engine
 async function hashPassword(str) {
@@ -50,49 +54,65 @@ const defaultBrands = {
 // Global brands object that merges defaults with localStorage
 let brands = JSON.parse(localStorage.getItem('socialSphere_brands')) || defaultBrands;
 
-// SheetDB Sync Engine (Client-Side) - JSON Blob Architecture
+// SheetDB Sync Engine (Client-Side) - JSON Blob Architecture with Failover
 async function syncToSheetDB() {
-    if (!SHEETDB_API_URL) return;
-    try {
-        const payload = { data: [{ id: 1, database_json: JSON.stringify(brands) }] };
-        // Try PATCH first (update existing row), fallback to POST
-        const patchRes = await fetch(SHEETDB_API_URL + '/id/1', {
-            method: 'PATCH',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: { database_json: JSON.stringify(brands) } })
-        });
-        if (!patchRes.ok) {
-            // Row doesn't exist yet, create it
-            await fetch(SHEETDB_API_URL, {
-                method: 'POST',
+    for (const url of SHEETDB_API_URLS) {
+        if (!url || url.includes('YOUR_NEW_API_ID')) continue;
+        try {
+            const payload = { data: { database_json: JSON.stringify(brands) } };
+            // Try PATCH first
+            const patchRes = await fetch(url + '/id/1', {
+                method: 'PATCH',
                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
+            
+            if (patchRes.ok) {
+                console.log(`✅ Synced successfully to: ${url}`);
+                return; // Stop if success
+            } else if (patchRes.status === 429) {
+                console.warn(`⚠️ Limit reached for ${url}, trying next...`);
+                continue; // Try next API if limit reached
+            } else {
+                // If row 1 doesn't exist, try POST
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: [{ id: 1, database_json: JSON.stringify(brands) }] })
+                });
+                return;
+            }
+        } catch (error) {
+            console.error(`❌ Sync error with ${url}:`, error);
         }
-    } catch (error) {
-        console.warn("SheetDB Sync Failed. Using local storage.", error);
     }
 }
 
 async function loadFromSheetDB() {
-    if (!SHEETDB_API_URL) return false;
-    try {
-        const res = await fetch(SHEETDB_API_URL, {
-            headers: { 'Accept': 'application/json' }
-        });
-        if (!res.ok) return false;
-        const rows = await res.json();
-
-        if (rows && rows.length > 0 && rows[0].database_json) {
-            const cloudData = JSON.parse(rows[0].database_json);
-            brands = cloudData;
-            localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-            console.log("✅ Blob data loaded from SheetDB.");
-            return true;
+    for (const url of SHEETDB_API_URLS) {
+        if (!url || url.includes('YOUR_NEW_API_ID')) continue;
+        try {
+            const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+            if (res.ok) {
+                const rows = await res.json();
+                if (rows && rows.length > 0 && rows[0].database_json) {
+                    brands = JSON.parse(rows[0].database_json);
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+                    console.log(`✅ Loaded from: ${url}`);
+                    return true;
+                } else {
+                    // 🚨 NEW SHEET DETECTED: If sheet is empty but we have local data, populate the sheet
+                    console.log(`📡 Initializing new empty sheet: ${url}`);
+                    syncToSheetDB(); 
+                    return true;
+                }
+            } else if (res.status === 429) {
+                console.warn(`⚠️ Load limit reached for ${url}, trying next...`);
+                continue;
+            }
+        } catch (error) {
+            console.warn(`❌ Load error with ${url}:`, error);
         }
-
-    } catch (error) {
-        console.warn("Could not load from SheetDB. Using local data.", error);
     }
     return false;
 }
