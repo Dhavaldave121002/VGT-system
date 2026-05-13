@@ -202,6 +202,11 @@
                                 </select>
                             </div>
                             <div class="input-group" style="margin: 0;">
+                                <label>Scheduled Shoot Date</label>
+                                <input type="date" id="videoTaskDate" required 
+                                    style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); border-radius: 8px; color: white; padding: 12px; font-family: inherit;">
+                            </div>
+                            <div class="input-group" style="margin: 0;">
                                 <label>Shoot Instructions / Script / Notes</label>
                                 <textarea id="videoTaskNote" rows="4"
                                     placeholder="e.g. Please shoot a 30s video explaining our new product using the following script..."
@@ -260,6 +265,15 @@
                         </div>
                     </div>
                     <div class="input-group">
+                        <label>Content Format (Auto-Label)</label>
+                        <select id="scheduleFormat">
+                            <option value="auto">✨ Auto-Detect</option>
+                            <option value="post">📝 Standard Post</option>
+                            <option value="reel">🎬 Video / Reel</option>
+                            <option value="ad">📢 Paid Ad</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
                         <label>Post/Ad Time (Optional)</label>
                         <input type="time" id="scheduleTime">
                     </div>
@@ -312,6 +326,24 @@
                 </form>
             </div>
     
+    <!-- Brand Roadmap Management Modal -->
+    <div id="brandRoadmapModal" class="admin-chat-modal-overlay">
+        <div class="roadmap-modal-content animate-scale">
+            <div class="roadmap-header">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.4rem; display: flex; align-items: center; gap: 12px;">
+                        <i data-lucide="calendar" style="color: #F59E0B;"></i> Brand Marketing Roadmap
+                    </h3>
+                    <p id="roadmapBrandName" style="margin: 4px 0 0 0; color: var(--text-gray); font-size: 0.9rem;">Brand Name</p>
+                </div>
+                <button onclick="closeBrandCalendar()" style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i data-lucide="x"></i></button>
+            </div>
+            <div id="roadmapBody" class="roadmap-body">
+                <!-- JS will inject events here -->
+            </div>
+        </div>
+    </div>
+
     <!-- Admin Settings Modal -->
     <div id="adminSettingsModal" class="admin-chat-modal-overlay" style="z-index: 9999;">
         <div class="login-card animate-scale" style="max-width: 400px; width: 90%; padding: 32px; margin: 20px;">
@@ -622,6 +654,9 @@
                         </span>
                     </td>
                     <td data-label="Action" class="table-actions">
+                        <button onclick="openBrandCalendar('${id}')" title="Manage Roadmap" class="btn-calendar">
+                            <i data-lucide="calendar"></i>
+                        </button>
                         <button onclick="openAdminChat('${id}')" title="View Support Chats" class="btn-chat">
                             <i data-lucide="message-square"></i>
                         </button>
@@ -682,17 +717,25 @@
         document.getElementById('videoTaskForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const recipientId = document.getElementById('videoTaskRecipient').value;
+            const dateStr = document.getElementById('videoTaskDate').value;
             const note = document.getElementById('videoTaskNote').value.trim();
-            if (!note) return;
-
+            if (!note || !dateStr) return;
+            
             const brand = storedBrands[recipientId];
             if (!brand) return;
 
+            const dateObj = new Date(dateStr);
+            const m = dateObj.getMonth();
+            const y = dateObj.getFullYear();
+            const d = dateObj.getDate();
+
             if (!brand.videoTasks) brand.videoTasks = [];
+            if (!brand.events) brand.events = [];
 
             const task = {
                 id: 'vt_' + Date.now(),
                 note: note,
+                date: dateStr,
                 status: 'pending',
                 driveLink: '',
                 assignedAt: Date.now()
@@ -700,13 +743,24 @@
 
             brand.videoTasks.push(task);
 
+            // Also add to Calendar as a "Shoot" event
+            brand.events.push({
+                day: d,
+                month: m,
+                year: y,
+                type: 'shoot',
+                title: 'Video Shoot Assignment',
+                time: 'Scheduled Day',
+                desc: `Shoot Instructions: ${note}`
+            });
+
             // Also send a notification
             if (!brand.messages) brand.messages = [];
-            brand.messages.push({ text: `🎬 New Video Assignment Received. Please check your Video Tasks.`, time: Date.now() });
+            brand.messages.push({ text: `🎬 New Video Shoot Scheduled for ${dateStr}. Please check your roadmap.`, time: Date.now() });
 
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
             document.getElementById('videoTaskForm').reset();
-            alert(`Video Assignment successfully sent to ${brand.name}!`);
+            alert(`Video Assignment successfully scheduled for ${dateStr} for ${brand.name}!`);
             renderAdminVideoTasks();
         });
 
@@ -977,6 +1031,7 @@
 
             const titleInput = document.getElementById('scheduleTitle').value;
             const timeInput = document.getElementById('scheduleTime').value;
+            const formatInput = document.getElementById('scheduleFormat').value;
             const brand = storedBrands[brandId];
 
             if (!brand) return;
@@ -1071,6 +1126,7 @@
                         month: m,
                         year: y,
                         type: type,
+                        format: formatInput,
                         title: title,
                         time: displayTime,
                         desc: `Campaign: ${title}. Scheduled via Admin Control.`
@@ -1095,6 +1151,108 @@
                 localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
                 renderBrands();
             }
+        }
+
+        // ==========================================
+        // BRAND ROADMAP MANAGEMENT ENGINE
+        // ==========================================
+        let currentRoadmapBrandId = null;
+
+        function openBrandCalendar(id) {
+            currentRoadmapBrandId = id;
+            const brand = storedBrands[id];
+            if (!brand) return;
+
+            document.getElementById('roadmapBrandName').textContent = `${brand.name} | @${id}`;
+            document.getElementById('brandRoadmapModal').style.display = 'flex';
+            renderBrandRoadmap();
+        }
+
+        function closeBrandCalendar() {
+            document.getElementById('brandRoadmapModal').style.display = 'none';
+            currentRoadmapBrandId = null;
+        }
+
+        function renderBrandRoadmap() {
+            const body = document.getElementById('roadmapBody');
+            body.innerHTML = '';
+            const brand = storedBrands[currentRoadmapBrandId];
+            if (!brand) return;
+
+            if (!brand.events || brand.events.length === 0) {
+                body.innerHTML = `<div style="text-align: center; color: var(--text-gray); padding: 60px 0;"><i data-lucide="calendar-off" style="width: 64px; height: 64px; opacity: 0.2; margin-bottom: 20px;"></i><br>No items scheduled for this brand yet.</div>`;
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            // Sort events by date (approximate)
+            const sortedEvents = [...brand.events].sort((a, b) => {
+                const dateA = new Date(a.year || 2026, a.month || 0, a.day || 1);
+                const dateB = new Date(b.year || 2026, b.month || 0, b.day || 1);
+                return dateB - dateA;
+            });
+
+            sortedEvents.forEach((ev, index) => {
+                const monthName = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(new Date(ev.year || 2026, ev.month || 0, ev.day || 1));
+                const div = document.createElement('div');
+                div.className = "roadmap-item animate-slide";
+                
+                let icon = 'calendar';
+                if (['insta', 'fb'].includes(ev.type)) icon = 'camera';
+                else if (['video', 'yt'].includes(ev.type)) icon = 'video';
+                else if (ev.type === 'ad') icon = 'megaphone';
+                else if (ev.type === 'shoot') icon = 'camera-off';
+
+                div.innerHTML = `
+                    <div style="background: var(--bg-dark); padding: 12px; border-radius: 12px; text-align: center; min-width: 70px; border: 1px solid var(--border-glass);">
+                        <div style="font-size: 0.7rem; color: var(--primary-light); text-transform: uppercase; font-weight: 800;">${monthName}</div>
+                        <div style="font-size: 1.4rem; font-weight: 800; color: white;">${ev.day}</div>
+                    </div>
+                    <div class="roadmap-info">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="event-tag ${ev.type}" style="margin: 0; padding: 2px 8px; font-size: 0.6rem;">${ev.type.toUpperCase()}</span>
+                            <span style="font-size: 0.75rem; color: var(--text-gray); display: flex; align-items: center; gap: 4px;"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${ev.time}</span>
+                        </div>
+                        <h5 style="margin: 0; font-size: 1rem; color: white;">${ev.title}</h5>
+                        <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">${ev.desc}</p>
+                    </div>
+                    <div class="table-actions">
+                        <button onclick="editRoadmapEvent(${index})" title="Reschedule / Edit" style="color: #60A5FA;"><i data-lucide="edit-3" style="width: 16px; height: 16px;"></i></button>
+                        <button onclick="deleteRoadmapEvent(${index})" title="Delete Item" style="color: #F87171;"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
+                    </div>
+                `;
+                body.appendChild(div);
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function deleteRoadmapEvent(index) {
+            if (confirm("Permanently delete this scheduled item from the roadmap?")) {
+                const brand = storedBrands[currentRoadmapBrandId];
+                brand.events.splice(index, 1);
+                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                renderBrandRoadmap();
+            }
+        }
+
+        function editRoadmapEvent(index) {
+            const brand = storedBrands[currentRoadmapBrandId];
+            const ev = brand.events[index];
+            
+            const newDate = prompt("Enter new Date (DD):", ev.day);
+            if (newDate === null) return;
+            
+            const newTitle = prompt("Enter new Title:", ev.title);
+            if (newTitle === null) return;
+
+            ev.day = parseInt(newDate);
+            ev.title = newTitle;
+            ev.desc = `Campaign: ${newTitle}. Updated via Admin Roadmap Manager.`;
+
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+            renderBrandRoadmap();
+            alert("Item updated successfully!");
         }
 
         // ==========================================

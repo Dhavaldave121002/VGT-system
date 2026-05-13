@@ -485,14 +485,27 @@ function createDay(num, className, isCurrentMonth = false) {
             const eventDiv = document.createElement('div');
             eventDiv.className = `event-tag ${event.type}`;
             
-            // UI Enhancement: Show "1 Post" or "1 Reel" based on type as requested
+            // UI Enhancement: Show "1 Post" or "1 Reel" based on manual selection OR type inference
             let displayLabel = event.title;
-            if (['insta', 'fb', 'tw', 'threads', 'link'].includes(event.type)) {
+            const format = event.format || 'auto';
+
+            if (format === 'post') {
                 displayLabel = "1 Post";
-            } else if (['video', 'yt'].includes(event.type)) {
+            } else if (format === 'reel') {
                 displayLabel = "1 Reel";
-            } else if (event.type === 'ad') {
+            } else if (format === 'ad') {
                 displayLabel = "1 Paid Ad";
+            } else if (event.type === 'shoot') {
+                displayLabel = "1 Shoot Assignment";
+            } else {
+                // Auto-detection fallback for older events or "Auto-Detect" selection
+                if (['insta', 'fb', 'tw', 'threads', 'link'].includes(event.type)) {
+                    displayLabel = "1 Post";
+                } else if (['video', 'yt'].includes(event.type)) {
+                    displayLabel = "1 Reel";
+                } else if (event.type === 'ad') {
+                    displayLabel = "1 Paid Ad";
+                }
             }
             
             eventDiv.innerHTML = `<i data-lucide="${getIconName(event.type)}" style="width: 12px; height: 12px;"></i> ${displayLabel}`;
@@ -528,9 +541,18 @@ function selectDay(num, element) {
             
             // Sidebar also reflects the "1 Post/Reel" status
             let categoryLabel = event.type.toUpperCase();
-            if (['insta', 'fb', 'tw', 'threads', 'link'].includes(event.type)) categoryLabel = "1 POST";
-            else if (['video', 'yt'].includes(event.type)) categoryLabel = "1 REEL";
-            else if (event.type === 'ad') categoryLabel = "1 PAID AD";
+            const format = event.format || 'auto';
+
+            if (format === 'post') categoryLabel = "1 POST";
+            else if (format === 'reel') categoryLabel = "1 REEL";
+            else if (format === 'ad') categoryLabel = "1 PAID AD";
+            else if (event.type === 'shoot') categoryLabel = "SHOOT ASSIGNMENT";
+            else {
+                // Fallback
+                if (['insta', 'fb', 'tw', 'threads', 'link'].includes(event.type)) categoryLabel = "1 POST";
+                else if (['video', 'yt'].includes(event.type)) categoryLabel = "1 REEL";
+                else if (event.type === 'ad') categoryLabel = "1 PAID AD";
+            }
 
             item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom: 0;">${categoryLabel}</span><span class="time"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">${event.desc}</p>`;
             dailyCollection.appendChild(item);
@@ -548,6 +570,7 @@ function getIconName(type) {
         case 'yt': return 'play';
         case 'link': return 'users';
         case 'video': return 'video';
+        case 'shoot': return 'camera-off';
         case 'festival': return 'gift';
         case 'ad': return 'megaphone';
         default: return 'calendar';
