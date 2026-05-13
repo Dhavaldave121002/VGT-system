@@ -1060,8 +1060,8 @@
 
             const limits = {
                 'Plan 1: 3 Posts, 2 Videos': { posts: 3, videos: 2, ads: 3 },
-                'Plan 2: 6 Posts Only': { posts: 6, videos: 0, ads: 3 },
-                'Plan 3: 4 Videos Only': { posts: 0, videos: 4, ads: 3 }
+                'Plan 2: 6 Posts Only':       { posts: 6, videos: 0, ads: 3 },
+                'Plan 3: 4 Videos Only':      { posts: 0, videos: 4, ads: 3 }
             };
 
             const currentPlan = brand.plan || 'Plan 1: 3 Posts, 2 Videos';
@@ -1069,75 +1069,88 @@
 
             if (!brand.events) brand.events = [];
 
-            // Process Each Selected Type
+            // ============================================================
+            // PLAN COUNTING ENGINE
+            // Counts are calculated ONCE before the loop so selecting
+            // multiple platforms at once is correctly tallied as a group.
+            // FESTIVAL is always FREE and never counted.
+            // ============================================================
+            const monthEvents = brand.events.filter(ev => ev.month === m && ev.year === y && ev.type !== 'festival');
+
+            // A "video" counts if format=reel OR type is a dedicated video type
+            const isVideoEvent = (ev) => ev.format === 'reel' || ev.type === 'video' || ev.type === 'shoot';
+            // A "post" counts if format=post OR (format=auto AND it's a social platform type)
+            const isPostEvent  = (ev) => !isVideoEvent(ev) && ev.type !== 'ad' && ev.type !== 'festival';
+
+            const usedPosts  = monthEvents.filter(isPostEvent).length;
+            const usedVideos = monthEvents.filter(isVideoEvent).length;
+            const usedAds    = brand.events.filter(ev => ev.month === m && ev.year === y && ev.type === 'ad').length;
+
+            const remainPosts  = Math.max(0, planLimit.posts  - usedPosts);
+            const remainVideos = Math.max(0, planLimit.videos - usedVideos);
+            const remainAds    = Math.max(0, planLimit.ads    - usedAds);
+
+            // Split selected types into categories (excluding festivals which are free)
+            const nonFestivalTypes = selectedTypes.filter(t => t !== 'festival');
+            const festivalTypes    = selectedTypes.filter(t => t === 'festival');
+
+            const requestedVideos = nonFestivalTypes.filter(t => formatInput === 'reel' || t === 'video').length;
+            const requestedPosts  = nonFestivalTypes.filter(t => formatInput !== 'reel' && t !== 'video' && t !== 'ad').length;
+            const requestedAds    = nonFestivalTypes.filter(t => t === 'ad').length;
+
+            // Validate limits BEFORE adding anything
+            if (requestedPosts > 0 && planLimit.posts === 0) {
+                alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow static Posts.\nPlease upgrade your plan or schedule as a Reel/Video.`);
+                return;
+            }
+            if (requestedVideos > 0 && planLimit.videos === 0) {
+                alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow Videos/Reels.\nPlease upgrade your plan or schedule as a Post.`);
+                return;
+            }
+            if (requestedPosts > remainPosts) {
+                alert(`❌ Post Limit Reached!\n\nYou have used ${usedPosts}/${planLimit.posts} posts this month.\nOnly ${remainPosts} post(s) remaining.\n\nPlease choose fewer platforms or upgrade your plan.`);
+                return;
+            }
+            if (requestedVideos > remainVideos) {
+                alert(`❌ Video/Reel Limit Reached!\n\nYou have used ${usedVideos}/${planLimit.videos} videos this month.\nOnly ${remainVideos} video(s) remaining.\n\nPlease choose fewer platforms or upgrade your plan.`);
+                return;
+            }
+            if (requestedAds > remainAds) {
+                alert(`❌ Ad Limit Reached!\n\nOnly ${remainAds} ad run(s) remaining this month.`);
+                return;
+            }
+
+            // ============================================================
+            // ADD EVENTS (all validations passed)
+            // ============================================================
             let addedCount = 0;
             selectedTypes.forEach(type => {
-                const monthEvents = brand.events.filter(ev => ev.month === m && ev.year === y);
-                
-                // RESCHEDULE LOGIC: If an event of this type already exists on this day, update it.
-                // This allows changing time/title without hitting monthly limits.
                 const dayEvents = brand.events.filter(ev => ev.day === dateObj.getDate() && ev.month === m && ev.year === y);
                 const existingEvent = dayEvents.find(ev => ev.type === type);
 
                 if (existingEvent) {
+                    // RESCHEDULE: update existing event on same day
                     const title = titleInput || existingEvent.title;
                     existingEvent.title = title;
                     existingEvent.time = displayTime;
+                    existingEvent.format = formatInput;
                     existingEvent.desc = `Campaign: ${title}. Updated via Admin Control.`;
                     addedCount++;
-                    return; // Skip new event logic
+                    return;
                 }
 
-                // New event - check monthly limits
-                const postCount = monthEvents.filter(ev => ['insta', 'fb', 'tw', 'threads', 'yt', 'link'].includes(ev.type)).length;
-                const videoCount = monthEvents.filter(ev => ['video', 'yt'].includes(ev.type)).length;
-                const adCount = monthEvents.filter(ev => ev.type === 'ad').length;
-
-                let canAdd = true;
-                if (type !== 'festival') {
-                    const isVideoOnlyPlan = currentPlan.includes('Videos Only');
-
-                    if (isVideoOnlyPlan) {
-                        // For Videos Only plan, most social types count as videos (reels)
-                        const currentVideoCount = monthEvents.filter(ev => ['insta', 'fb', 'yt', 'video'].includes(ev.type)).length;
-                        if (['insta', 'fb', 'yt', 'video'].includes(type) && currentVideoCount >= planLimit.videos) {
-                            alert(`Limit Exceeded for VIDEO/REEL! ${currentPlan} only allows ${planLimit.videos} videos/reels per month.`);
-                            canAdd = false;
-                        } else if (['tw', 'threads', 'link'].includes(type)) {
-                             alert(`Plan Restriction! ${currentPlan} does not allow static posts. Please upgrade or schedule as Video.`);
-                             canAdd = false;
-                        }
-                    } else {
-                        // Standard Plan Logic
-                        if (['insta', 'fb', 'tw', 'threads', 'link', 'yt'].includes(type) && postCount >= planLimit.posts) {
-                            alert(`Limit Exceeded for ${type.toUpperCase()}! ${currentPlan} only allows ${planLimit.posts} posts per month.`);
-                            canAdd = false;
-                        } else if (type === 'video' && videoCount >= planLimit.videos) {
-                            alert(`Limit Exceeded for VIDEO! ${currentPlan} only allows ${planLimit.videos} videos per month.`);
-                            canAdd = false;
-                        }
-                    }
-
-                    if (canAdd && type === 'ad' && adCount >= planLimit.ads) {
-                        alert(`Limit Exceeded for ADS! 3 runs limit reached.`);
-                        canAdd = false;
-                    }
-                }
-
-                if (canAdd) {
-                    const title = titleInput || `${type.charAt(0).toUpperCase() + type.slice(1)} Content`;
-                    brand.events.push({
-                        day: dateObj.getDate(),
-                        month: m,
-                        year: y,
-                        type: type,
-                        format: formatInput,
-                        title: title,
-                        time: displayTime,
-                        desc: `Campaign: ${title}. Scheduled via Admin Control.`
-                    });
-                    addedCount++;
-                }
+                const title = titleInput || `${type.charAt(0).toUpperCase() + type.slice(1)} Content`;
+                brand.events.push({
+                    day: dateObj.getDate(),
+                    month: m,
+                    year: y,
+                    type: type,
+                    format: formatInput,
+                    title: title,
+                    time: displayTime,
+                    desc: `Campaign: ${title}. Scheduled via Admin Control.`
+                });
+                addedCount++;
             });
 
             if (addedCount > 0) {
