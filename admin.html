@@ -1158,20 +1158,19 @@
         // ==========================================
         let currentRoadmapBrandId = null;
 
-        function openBrandCalendar(id) {
+        window.openBrandCalendar = function(id) {
             currentRoadmapBrandId = id;
             const brand = storedBrands[id];
-            if (!brand) return;
-
+            if (!brand) { alert('Brand not found!'); return; }
             document.getElementById('roadmapBrandName').textContent = `${brand.name} | @${id}`;
             document.getElementById('brandRoadmapModal').style.display = 'flex';
             renderBrandRoadmap();
-        }
+        };
 
-        function closeBrandCalendar() {
+        window.closeBrandCalendar = function() {
             document.getElementById('brandRoadmapModal').style.display = 'none';
             currentRoadmapBrandId = null;
-        }
+        };
 
         function renderBrandRoadmap() {
             const body = document.getElementById('roadmapBody');
@@ -1227,33 +1226,33 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        function deleteRoadmapEvent(index) {
+        window.deleteRoadmapEvent = function(index) {
             if (confirm("Permanently delete this scheduled item from the roadmap?")) {
                 const brand = storedBrands[currentRoadmapBrandId];
                 brand.events.splice(index, 1);
                 localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
                 renderBrandRoadmap();
             }
-        }
+        };
 
-        function editRoadmapEvent(index) {
+        window.editRoadmapEvent = function(index) {
             const brand = storedBrands[currentRoadmapBrandId];
             const ev = brand.events[index];
-            
-            const newDate = prompt("Enter new Date (DD):", ev.day);
+
+            const newDate = prompt(`Reschedule Day (1-31):`, ev.day);
             if (newDate === null) return;
-            
-            const newTitle = prompt("Enter new Title:", ev.title);
+
+            const newTitle = prompt(`Edit Title:`, ev.title);
             if (newTitle === null) return;
 
-            ev.day = parseInt(newDate);
-            ev.title = newTitle;
-            ev.desc = `Campaign: ${newTitle}. Updated via Admin Roadmap Manager.`;
+            ev.day = parseInt(newDate) || ev.day;
+            ev.title = newTitle.trim() || ev.title;
+            ev.desc = `Campaign: ${ev.title}. Updated via Admin Roadmap Manager.`;
 
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
             renderBrandRoadmap();
-            alert("Item updated successfully!");
-        }
+            alert("✅ Item updated successfully!");
+        };
 
         // ==========================================
         // ADMIN CHAT ENGINE

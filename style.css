@@ -953,7 +953,8 @@ main {
     display: flex;
     gap: 8px;
     justify-content: flex-end;
-    min-width: 170px;
+    flex-wrap: wrap;
+    min-width: 0;
 }
 
 .table-actions button {
@@ -968,6 +969,7 @@ main {
     color: var(--text-white);
     transition: 0.2s;
     flex-shrink: 0;
+    cursor: pointer;
 }
 
 .table-actions button:hover {
