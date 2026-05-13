@@ -637,87 +637,101 @@ function renderChatMessages() {
     });
 
     // Scroll to bottom
-    setTimeout(() => { area.scrollTop = area.scrollHeight; }, 10);
+    setTimeout(() => {
+        area.scrollTop = area.scrollHeight;
+    }, 100);
 }
 
 function getBotResponse(input) {
-    const text = input.toLowerCase().trim();
+    const text = input.trim();
+    const lowerText = text.toLowerCase();
     const brandName = currentBrand.name || "your brand";
 
-    // 🛑 STRICT SECURITY PROTOCOL (Highest Priority)
-    if (text.includes('password') || text.includes('key') || text.includes('username') || text.includes('login detail') || text.includes('credential') || text.includes('secret')) {
-        return `🛡️ <strong>Security Protocol Active:</strong> To protect <strong>${brandName}</strong>, I am strictly prohibited from discussing or sharing security credentials. For any access issues, please coordinate directly with our Elite Administration via secure channels.`;
+    // 🔍 PRECISE SCRIPT DETECTION
+    const hasGujaratiScript = /[\u0A80-\u0AFF]/.test(text);
+    const hasHindiScript = /[\u0900-\u097F]/.test(text);
+    
+    // Check for Romanized Gujarati/Hindi (Hinglish/Gujlish)
+    const isRomanizedLocal = /(kem chho|majama|su chale|tame|kaise ho|kya hai|apka|kaam|karu|badhana)/i.test(lowerText);
+
+    // Helper to pick the right response based on script
+    const getLang = () => {
+        if (hasGujaratiScript) return 'guj';
+        if (hasHindiScript) return 'hin';
+        return 'eng';
+    };
+
+    const lang = getLang();
+
+    // 🛡️ SECURITY PROTOCOL
+    if (/(password|key|login|credential|secret|security|પાસવર્ડ|पासवर्ड)/i.test(lowerText)) {
+        const res = {
+            guj: `🛡️ <strong>સુરક્ષા પ્રોટોકોલ:</strong> હું ${brandName} ની સિક્યુરિટી ડિટેલ્સ શેર કરી શકતો નથી. કોઈ પણ સમસ્યા માટે એડમિનનો સંપર્ક કરો.`,
+            hin: `🛡️ <strong>सुरक्षा प्रोटोकॉल:</strong> मैं ${brandName} की सुरक्षा जानकारी साझा नहीं कर सकता। किसी भी समस्या के लिए एडमिन से संपर्क करें।`,
+            eng: `🛡️ <strong>Security Protocol:</strong> I cannot share credentials for ${brandName}. Please contact our Elite Administration for access issues.`
+        };
+        return res[lang];
     }
 
-    // 🌟 ADVANCED CONVERSATIONAL ENGINE (Greetings & Empathy)
-    if (text.match(/^(hi|hello|hey|hy|hii|helo|hola|greetings|yo)/)) {
-        return `Hello! It's a pleasure to assist you. I'm your dedicated <strong>Elite AI Strategist</strong> at Vertex Global Tech. How can I help you elevate <strong>${brandName}</strong> and drive more growth today?`;
-
-    } else if (text.includes('how are you') || text.includes('how r u') || text.includes('u good')) {
-        return `I'm functioning at peak performance and feeling highly productive! Thank you for asking. More importantly, how is the marketing momentum for <strong>${brandName}</strong> looking today?`;
-    } else if (text.includes('good morning') || text.includes('good afternoon') || text.includes('good evening')) {
-        const timeOfDay = text.includes('morning') ? 'morning' : (text.includes('afternoon') ? 'afternoon' : 'evening');
-        return `Good ${timeOfDay}! I hope your day is off to a powerful start. Ready to look into some marketing strategies for <strong>${brandName}</strong>?`;
-    } else if (text.includes('who are you') || text.includes('what are you')) {
-        return "I am the proprietary <strong>Elite AI Strategist</strong> for Vertex Global Tech. My mission is to provide 24/7 strategic support, manage your digital roadmap, and bridge the gap between your brand and our expert human administrators.";
+    // 🌟 GREETINGS
+    if (/^(hi|hello|hey|kem chho|kaise ho|namskar|namaste|નમસ્તે|नमस्ते)/i.test(lowerText)) {
+        const res = {
+            guj: `નમસ્તે! હું તમારો <strong>Elite AI Strategist</strong> છું. આજે આપણે <strong>${brandName}</strong> ને કેવી રીતે આગળ વધારીએ?`,
+            hin: `नमस्ते! मैं आपका <strong>Elite AI Strategist</strong> हूँ। आज हम <strong>${brandName}</strong> को और बेहतर कैसे बना सकते हैं?`,
+            eng: `Hello! I'm your dedicated <strong>Elite AI Strategist</strong>. How can I help you elevate <strong>${brandName}</strong> today?`
+        };
+        return res[lang];
     }
 
-
-    // 📈 ADVANCED MARKETING & BUSINESS STRATEGY (The "Training")
-    else if (text.includes('seo') || text.includes('search engine') || text.includes('ranking') || text.includes('google')) {
-        return `SEO is the backbone of organic growth for <strong>${brandName}</strong>. At Vertex Global Tech, we focus on technical SEO, high-authority backlinking, and semantic content optimization to ensure you dominate search results. Would you like a fresh SEO audit for your website?`;
-    } else if (text.includes('roi') || text.includes('return on investment') || text.includes('profit') || text.includes('sales')) {
-        return `Maximizing ROI for <strong>${brandName}</strong> is our top priority. We achieve this by tightening your ad spend, improving landing page conversion rates, and leveraging high-retention video content. Shall I request a performance breakdown from the analytics team?`;
-    } else if (text.includes('strategy') || text.includes('roadmap') || text.includes('plan for the month')) {
-        return `Your current roadmap for <strong>${brandName}</strong> is designed for consistent brand authority. We've balanced high-impact posts with strategic video content. If you'd like to pivot or accelerate the current strategy, I can alert our Chief Strategist immediately.`;
-    } else if (text.includes('content') && (text.includes('idea') || text.includes('viral') || text.includes('trend'))) {
-        return `To make <strong>${brandName}</strong> go viral, we should focus on short-form 'reels-style' video content with high hooks. Vertex Global Tech stays ahead of social algorithms. Should we brainstorm some trending concepts for your next shoot?`;
-    } else if (text.includes('ads') || text.includes('meta') || text.includes('facebook ads') || text.includes('instagram ads')) {
-        return `Our Meta Ads strategy for <strong>${brandName}</strong> focuses on high-intent lookalike audiences and A/B testing creative hooks. We aim for the lowest possible Cost Per Acquisition (CPA). Would you like to increase your ad budget for the upcoming campaign?`;
-    } else if (text.includes('e-commerce') || text.includes('shopify') || text.includes('store') || text.includes('amazon')) {
-        return `E-commerce boosting is one of our specialties. We optimize product listings, implement abandoned cart recovery strategies, and run targeted conversion ads. How are the sales looking on the <strong>${brandName}</strong> store this week?`;
+    // 📈 SEO & GOOGLE
+    if (/(seo|google|ranking|સર્ચ|सर्च)/i.test(lowerText)) {
+        const res = {
+            guj: `SEO એ <strong>${brandName}</strong> માટે ખૂબ મહત્વનું છે. અમે તમારી વેબસાઇટને Google ના પહેલા પેજ પર લાવવા માટે કામ કરીએ છીએ.`,
+            hin: `SEO <strong>${brandName}</strong> के लिए बहुत महत्वपूर्ण है। हम आपकी वेबसाइट को Google के पहले पेज पर लाने में मदद करते हैं।`,
+            eng: `SEO is the backbone of organic growth for <strong>${brandName}</strong>. We optimize your technical presence to dominate search results.`
+        };
+        return res[lang];
     }
 
-    // 🛠️ VERTEX GLOBAL TECH - CORE SERVICES
-    else if (text.includes('service') || text.includes('what do you do')) {
-        return "Vertex Global Tech is an elite 360-degree digital agency. Our core pillars are: <strong>1. Premium Web/App Development</strong>, <strong>2. Verified Marketing (Blue Tick)</strong>, <strong>3. E-commerce Boosting</strong>, and <strong>4. Viral Social Media Management</strong>. Which area should we focus on for your growth?";
-    } else if (text.includes('website') || text.includes('web dev') || text.includes('ux') || text.includes('ui')) {
-        return `We build high-performance, ultra-responsive digital homes for brands like <strong>${brandName}</strong>. Our designs aren't just beautiful—they are engineered to convert visitors into loyal customers. Do you have a new project in mind?`;
-    } else if (text.includes('app') || text.includes('mobile')) {
-        return "Mobile dominance is non-negotiable. Vertex Global Tech develops premium iOS and Android applications that provide seamless user experiences. I can arrange a technical consultation to discuss your app requirements.";
-    } else if (text.includes('verif') || text.includes('blue tick') || text.includes('badge')) {
-        return "Securing an official verification badge is a major milestone for brand authority. We manage the strategic positioning and documentation required to maximize your chances of approval on Instagram, Facebook, and Twitter.";
+    // 💰 ROI & GROWTH
+    if (/(roi|profit|sales|grow|business|vadharo|badhana|નફો|मुनाफा)/i.test(lowerText)) {
+        const res = {
+            guj: `<strong>${brandName}</strong> નો નફો વધારવા માટે અમે ટાર્ગેટેડ એડ્સ અને હાઈ-ક્વોલિટી વીડિયો કન્ટેન્ટ પર ફોકસ કરીએ છીએ.`,
+            hin: `<strong>${brandName}</strong> का मुनाफा बढ़ाने के लिए हम टारगेटेड एड्स और हाई-क्वालिटी वीडियो कंटेंट पर ध्यान देते हैं।`,
+            eng: `Maximizing ROI for <strong>${brandName}</strong> is our priority. We achieve this through strategic ad spending and conversion optimization.`
+        };
+        return res[lang];
     }
 
-    // 💼 BUSINESS LOGISTICS (Contracts, Pricing, Support)
-    else if (text.includes('cost') || text.includes('price') || text.includes('how much') || text.includes('budget')) {
-        return "Our solutions are bespoke, meaning we tailor the pricing to your specific goals and scale. This ensures you never overpay for services you don't need. I can request a customized quote for <strong>${brandName}</strong> from our billing department. Should I proceed?";
-    } else if (text.includes('contract') || text.includes('renew') || text.includes('expire')) {
-        const end = currentBrand.endDate || "Ongoing";
-        return `Your active partnership for <strong>${brandName}</strong> is scheduled through ${end}. For renewal discussions or contract extensions, our administrators are available right here in this chat to assist.`;
+    // 🛠️ SERVICES
+    if (/(service|kaam|kam|what do you do|su karo cho|કામ|काम)/i.test(lowerText)) {
+        const res = {
+            guj: `Vertex Global Tech એક પ્રીમિયમ એજન્સી છે. અમે <strong>Web Development</strong>, <strong>Marketing</strong>, અને <strong>Blue Tick Verification</strong> માં માસ્ટર છીએ.`,
+            hin: `Vertex Global Tech एक प्रीमियम एजेंसी है। हम <strong>Web Development</strong>, <strong>Marketing</strong>, और <strong>Blue Tick Verification</strong> में मास्टर हैं।`,
+            eng: `Vertex Global Tech is an elite agency specializing in <strong>Premium Web Dev</strong>, <strong>Verified Marketing</strong>, and <strong>Viral Social Management</strong>.`
+        };
+        return res[lang];
     }
 
-    // 📞 HUMAN ESCALATION & CONTACT (Professional & Direct)
-    else if (text.includes('human') || text.includes('call') || text.includes('speak') || text.includes('agent') || text.includes('number') || text.includes('contact') || text.includes('whatsapp')) {
-        return `I understand you'd like to speak with a human expert. You can reach our <strong>Elite Administration</strong> directly via WhatsApp or Phone at <strong>+91 96645 23986</strong>, or Email us at <strong>connectvertexglobal2209@gmail.com</strong>. I have also flagged this conversation for their immediate review.`;
+    // 📞 CONTACT
+    if (/(human|call|speak|contact|agent|number|whatsapp|phone|help|મદદ|मदद)/i.test(lowerText)) {
+        const contactInfo = `WhatsApp: <strong>+91 96645 23986</strong> | Email: <strong>connectvertexglobal2209@gmail.com</strong>`;
+        const res = {
+            guj: `ચોક્કસ, તમે અમારા એડમિન સાથે સીધી વાત કરી શકો છો: ${contactInfo}`,
+            hin: `जी हाँ, आप हमारे एडमिन से सीधे संपर्क कर सकते हैं: ${contactInfo}`,
+            eng: `I understand. You can reach our Elite Administration directly at: ${contactInfo}`
+        };
+        return res[lang];
     }
 
-    // 🌪️ EMOTIONAL INTELLIGENCE & FEEDBACK
-    else if (text.includes('bad') || text.includes('unhappy') || text.includes('error') || text.includes('problem') || text.includes('issue')) {
-        return `I'm sincerely sorry to hear you're experiencing a challenge. At Vertex Global Tech, we pride ourselves on perfection. I have escalated this as a <strong>High Priority Incident</strong>. An Elite Administrator will contact you at <strong>+91 96645 23986</strong> shortly to ensure <strong>${brandName}</strong> is back on track.`;
-    } else if (text.includes('thank') || text === 'ok' || text === 'great' || text === 'awesome') {
-        return `You're very welcome! It's an honor to support <strong>${brandName}</strong>. Is there any other marketing objective we can tackle today?`;
-    } else if (text.includes('bye') || text.includes('goodbye')) {
-        return `Goodbye for now! I'll be right here if you need any more strategic assistance. Have a highly productive and successful day with <strong>${brandName}</strong>!`;
-    }
-
-    // 🧠 INTELLIGENT FALLBACK (The Learning Edge)
-    else {
-        return `I've noted your inquiry regarding "${input}". While I'm constantly learning, I want to ensure you get the most professional advice. I've logged this context for our <strong>Elite Administration</strong> to review and provide you with a detailed follow-up. Would you like to add any more details?`;
-    }
+    // 🧠 FALLBACK (Smart learning response)
+    const fallback = {
+        guj: `મેં તમારી આ વાત "${text}" એડમિન માટે નોંધી લીધી છે. તેઓ ટૂંક સમયમાં <strong>${brandName}</strong> માટે તમારો સંપર્ક કરશે.`,
+        hin: `मैंने आपकी यह बात "${text}" एडमिन के लिए नोट कर ली है। वे जल्द ही <strong>${brandName}</strong> के लिए आपसे संपर्क करेंगे।`,
+        eng: `I've noted your inquiry regarding "${text}". I've logged this context for our <strong>Elite Administration</strong> to provide you with a detailed follow-up.`
+    };
+    return fallback[lang];
 }
-
-
 
 // ==========================================
 // CLIENT VIDEO TASKS ENGINE
@@ -820,4 +834,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
 

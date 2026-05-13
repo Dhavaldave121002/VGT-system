@@ -1013,13 +1013,29 @@
             let addedCount = 0;
             selectedTypes.forEach(type => {
                 const monthEvents = brand.events.filter(ev => ev.month === m && ev.year === y);
-                const postCount = monthEvents.filter(ev => ['insta', 'fb', 'tw'].includes(ev.type)).length;
+                
+                // RESCHEDULE LOGIC: If an event of this type already exists on this day, update it.
+                // This allows changing time/title without hitting monthly limits.
+                const dayEvents = brand.events.filter(ev => ev.day === dateObj.getDate() && ev.month === m && ev.year === y);
+                const existingEvent = dayEvents.find(ev => ev.type === type);
+
+                if (existingEvent) {
+                    const title = titleInput || existingEvent.title;
+                    existingEvent.title = title;
+                    existingEvent.time = displayTime;
+                    existingEvent.desc = `Campaign: ${title}. Updated via Admin Control.`;
+                    addedCount++;
+                    return; // Skip new event logic
+                }
+
+                // New event - check monthly limits
+                const postCount = monthEvents.filter(ev => ['insta', 'fb', 'tw', 'threads', 'yt'].includes(ev.type)).length;
                 const videoCount = monthEvents.filter(ev => ev.type === 'video').length;
                 const adCount = monthEvents.filter(ev => ev.type === 'ad').length;
 
                 let canAdd = true;
-                if (type !== 'festival') {
-                    if (['insta', 'fb', 'tw'].includes(type) && postCount >= planLimit.posts) {
+                if (type !== 'festival' && type !== 'link') {
+                    if (['insta', 'fb', 'tw', 'threads', 'yt'].includes(type) && postCount >= planLimit.posts) {
                         alert(`Limit Exceeded for ${type.toUpperCase()}! ${currentPlan} only allows ${planLimit.posts} posts per month.`);
                         canAdd = false;
                     } else if (type === 'video' && videoCount >= planLimit.videos) {
