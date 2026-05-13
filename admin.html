@@ -325,9 +325,12 @@
                             data-lucide="send" style="width: 18px; height: 18px;"></i></button>
                 </form>
             </div>
-    
+        </div>
+    </div>
+    <!-- END Admin Chat Modal -->
+
     <!-- Brand Roadmap Management Modal -->
-    <div id="brandRoadmapModal" class="admin-chat-modal-overlay">
+    <div id="brandRoadmapModal" class="admin-chat-modal-overlay" style="display:none;">
         <div class="roadmap-modal-content animate-scale">
             <div class="roadmap-header">
                 <div>
@@ -336,13 +339,14 @@
                     </h3>
                     <p id="roadmapBrandName" style="margin: 4px 0 0 0; color: var(--text-gray); font-size: 0.9rem;">Brand Name</p>
                 </div>
-                <button onclick="closeBrandCalendar()" style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i data-lucide="x"></i></button>
+                <button onclick="window.closeBrandCalendar()" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: var(--text-gray); cursor: pointer; border-radius: 8px; padding: 8px; display:flex; align-items:center;"><i data-lucide="x"></i></button>
             </div>
             <div id="roadmapBody" class="roadmap-body">
                 <!-- JS will inject events here -->
             </div>
         </div>
     </div>
+    <!-- END Brand Roadmap Modal -->
 
     <!-- Admin Settings Modal -->
     <div id="adminSettingsModal" class="admin-chat-modal-overlay" style="z-index: 9999;">
@@ -371,8 +375,9 @@
             </form>
         </div>
     </div>
-        </div>
-    </div>
+    <!-- END Admin Settings Modal -->
+
+
 
     <script>
         // ✅ ADMIN SECURITY GUARD (Immediate Check)
