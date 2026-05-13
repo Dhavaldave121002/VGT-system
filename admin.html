@@ -254,7 +254,7 @@
                             <div class="type-chip" data-value="threads"><i data-lucide="at-sign"></i> Threads</div>
                             <div class="type-chip" data-value="yt"><i data-lucide="play"></i> YouTube</div>
                             <div class="type-chip" data-value="link"><i data-lucide="users"></i> LinkedIn</div>
-                            <div class="type-chip" data-value="video"><i data-lucide="video"></i> Video Content</div>
+                            <div class="type-chip" data-value="video"><i data-lucide="video"></i> Reel / Video</div>
                             <div class="type-chip" data-value="festival"><i data-lucide="gift"></i> Festival</div>
                             <div class="type-chip" data-value="ad"><i data-lucide="megaphone"></i> Paid Ad</div>
                         </div>
@@ -1029,19 +1029,36 @@
                 }
 
                 // New event - check monthly limits
-                const postCount = monthEvents.filter(ev => ['insta', 'fb', 'tw', 'threads', 'yt'].includes(ev.type)).length;
-                const videoCount = monthEvents.filter(ev => ev.type === 'video').length;
+                const postCount = monthEvents.filter(ev => ['insta', 'fb', 'tw', 'threads', 'yt', 'link'].includes(ev.type)).length;
+                const videoCount = monthEvents.filter(ev => ['video', 'yt'].includes(ev.type)).length;
                 const adCount = monthEvents.filter(ev => ev.type === 'ad').length;
 
                 let canAdd = true;
-                if (type !== 'festival' && type !== 'link') {
-                    if (['insta', 'fb', 'tw', 'threads', 'yt'].includes(type) && postCount >= planLimit.posts) {
-                        alert(`Limit Exceeded for ${type.toUpperCase()}! ${currentPlan} only allows ${planLimit.posts} posts per month.`);
-                        canAdd = false;
-                    } else if (type === 'video' && videoCount >= planLimit.videos) {
-                        alert(`Limit Exceeded for VIDEO! ${currentPlan} only allows ${planLimit.videos} videos per month.`);
-                        canAdd = false;
-                    } else if (type === 'ad' && adCount >= planLimit.ads) {
+                if (type !== 'festival') {
+                    const isVideoOnlyPlan = currentPlan.includes('Videos Only');
+
+                    if (isVideoOnlyPlan) {
+                        // For Videos Only plan, most social types count as videos (reels)
+                        const currentVideoCount = monthEvents.filter(ev => ['insta', 'fb', 'yt', 'video'].includes(ev.type)).length;
+                        if (['insta', 'fb', 'yt', 'video'].includes(type) && currentVideoCount >= planLimit.videos) {
+                            alert(`Limit Exceeded for VIDEO/REEL! ${currentPlan} only allows ${planLimit.videos} videos/reels per month.`);
+                            canAdd = false;
+                        } else if (['tw', 'threads', 'link'].includes(type)) {
+                             alert(`Plan Restriction! ${currentPlan} does not allow static posts. Please upgrade or schedule as Video.`);
+                             canAdd = false;
+                        }
+                    } else {
+                        // Standard Plan Logic
+                        if (['insta', 'fb', 'tw', 'threads', 'link', 'yt'].includes(type) && postCount >= planLimit.posts) {
+                            alert(`Limit Exceeded for ${type.toUpperCase()}! ${currentPlan} only allows ${planLimit.posts} posts per month.`);
+                            canAdd = false;
+                        } else if (type === 'video' && videoCount >= planLimit.videos) {
+                            alert(`Limit Exceeded for VIDEO! ${currentPlan} only allows ${planLimit.videos} videos per month.`);
+                            canAdd = false;
+                        }
+                    }
+
+                    if (canAdd && type === 'ad' && adCount >= planLimit.ads) {
                         alert(`Limit Exceeded for ADS! 3 runs limit reached.`);
                         canAdd = false;
                     }

@@ -484,7 +484,18 @@ function createDay(num, className, isCurrentMonth = false) {
         dayEvents.forEach(event => {
             const eventDiv = document.createElement('div');
             eventDiv.className = `event-tag ${event.type}`;
-            eventDiv.innerHTML = `<i data-lucide="${getIconName(event.type)}" style="width: 12px; height: 12px;"></i> ${event.title}`;
+            
+            // UI Enhancement: Show "1 Post" or "1 Reel" based on type as requested
+            let displayLabel = event.title;
+            if (['insta', 'fb', 'tw', 'threads', 'link'].includes(event.type)) {
+                displayLabel = "1 Post";
+            } else if (['video', 'yt'].includes(event.type)) {
+                displayLabel = "1 Reel";
+            } else if (event.type === 'ad') {
+                displayLabel = "1 Paid Ad";
+            }
+            
+            eventDiv.innerHTML = `<i data-lucide="${getIconName(event.type)}" style="width: 12px; height: 12px;"></i> ${displayLabel}`;
             dayDiv.appendChild(eventDiv);
         });
     }
@@ -514,7 +525,14 @@ function selectDay(num, element) {
         dayEvents.forEach(event => {
             const item = document.createElement('div');
             item.className = 'collection-item animate-slide';
-            item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom: 0;">${event.type.toUpperCase()}</span><span class="time"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">${event.desc}</p>`;
+            
+            // Sidebar also reflects the "1 Post/Reel" status
+            let categoryLabel = event.type.toUpperCase();
+            if (['insta', 'fb', 'tw', 'threads', 'link'].includes(event.type)) categoryLabel = "1 POST";
+            else if (['video', 'yt'].includes(event.type)) categoryLabel = "1 REEL";
+            else if (event.type === 'ad') categoryLabel = "1 PAID AD";
+
+            item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom: 0;">${categoryLabel}</span><span class="time"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">${event.desc}</p>`;
             dailyCollection.appendChild(item);
         });
     }
