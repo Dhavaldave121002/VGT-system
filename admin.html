@@ -541,6 +541,8 @@
             if (!storedBrands[key].plan) storedBrands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
             if (!storedBrands[key].trial) storedBrands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
             if (storedBrands[key].locked === undefined) storedBrands[key].locked = false;
+            if (storedBrands[key].manualUnlockOverride === undefined) storedBrands[key].manualUnlockOverride = false;
+            if (storedBrands[key].manualLockOverride === undefined) storedBrands[key].manualLockOverride = false;
             if (!storedBrands[key].events) storedBrands[key].events = [];
         });
 
@@ -578,11 +580,11 @@
                 if (brand.startDate) {
                     const start = new Date(brand.startDate);
                     start.setHours(0, 0, 0, 0);
-                    if (today < start && !brand.locked && !brand.manualUnlockOverride) {
+                    if (today < start && !brand.locked && !brand.manualUnlockOverride && !brand.manualLockOverride) {
                         brand.locked = true;
                         brand.messages.push({ text: "SYSTEM ALERT: Contract has not started yet. Account will automatically activate on " + brand.startDate, time: now });
                         stateChanged = true;
-                    } else if (today >= start && brand.locked && !brand.manualUnlockOverride) {
+                    } else if (today >= start && brand.locked && !brand.manualLockOverride) {
                         // If it's locked but the start date has arrived (and it's not past the end date)
                         let pastEnd = false;
                         if (brand.endDate) {
@@ -605,7 +607,7 @@
                     const timeDiff = end.getTime() - today.getTime();
                     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-                    if (daysDiff < 0 && !brand.locked && !brand.manualUnlockOverride) {
+                    if (daysDiff < 0 && !brand.locked && !brand.manualUnlockOverride && !brand.manualLockOverride) {
                         brand.locked = true;
                         brand.messages.push({ text: "SYSTEM ALERT: Contract expired. Your account has been automatically locked.", time: now });
                         stateChanged = true;
@@ -865,9 +867,12 @@
                 if (wasLocked && !storedBrands[id].locked) {
                     // Manual Unlock Event (Renewal/Reactivation)
                     storedBrands[id].manualUnlockOverride = true;
+                    storedBrands[id].manualLockOverride = false;
                     if (!storedBrands[id].messages) storedBrands[id].messages = [];
                     storedBrands[id].messages.push({ text: "SUCCESS: Contract Renewed and Profile Reactivated. Welcome back!", time: Date.now() });
                 } else if (!wasLocked && storedBrands[id].locked) {
+                    // Manual Lock Event
+                    storedBrands[id].manualLockOverride = true;
                     storedBrands[id].manualUnlockOverride = false;
                 }
 
@@ -948,6 +953,7 @@
                 // If end date is extended, reset manual override and unlock so it can auto-lock in future
                 if (storedBrands[editingBrandId].endDate !== endDate) {
                     storedBrands[editingBrandId].manualUnlockOverride = false;
+                    storedBrands[editingBrandId].manualLockOverride = false;
                     if (storedBrands[editingBrandId].locked) {
                         storedBrands[editingBrandId].locked = false;
                         if (!storedBrands[editingBrandId].messages) storedBrands[editingBrandId].messages = [];
@@ -973,6 +979,7 @@
                     endDate: endDate,
                     locked: false,
                     manualUnlockOverride: false,
+                    manualLockOverride: false,
                     logo: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
                     events: [],
                     messages: []
@@ -1070,54 +1077,72 @@
             if (!brand.events) brand.events = [];
 
             // ============================================================
-            // PLAN COUNTING ENGINE
-            // Counts are calculated ONCE before the loop so selecting
-            // multiple platforms at once is correctly tallied as a group.
-            // FESTIVAL is always FREE and never counted.
+            // PLATFORM-SPECIFIC PLAN VALIDATION
+            // Limits are now applied PER PLATFORM (e.g. 4 videos per IG, 4 videos per FB)
             // ============================================================
             const monthEvents = brand.events.filter(ev => ev.month === m && ev.year === y && ev.type !== 'festival');
-
-            // A "video" counts if format=reel OR type is a dedicated video type
+            
+            // Utility to categorize existing events
             const isVideoEvent = (ev) => ev.format === 'reel' || ev.type === 'video' || ev.type === 'shoot';
-            // A "post" counts if format=post OR (format=auto AND it's a social platform type)
             const isPostEvent  = (ev) => !isVideoEvent(ev) && ev.type !== 'ad' && ev.type !== 'festival';
 
-            const usedPosts  = monthEvents.filter(isPostEvent).length;
-            const usedVideos = monthEvents.filter(isVideoEvent).length;
-            const usedAds    = brand.events.filter(ev => ev.month === m && ev.year === y && ev.type === 'ad').length;
+            for (const type of selectedTypes) {
+                if (type === 'festival') continue;
 
-            const remainPosts  = Math.max(0, planLimit.posts  - usedPosts);
-            const remainVideos = Math.max(0, planLimit.videos - usedVideos);
-            const remainAds    = Math.max(0, planLimit.ads    - usedAds);
+                // Check for existing event on this day for this type (for reschedule logic)
+                const dayEvents = brand.events.filter(ev => ev.day === dateObj.getDate() && ev.month === m && ev.year === y);
+                const existingEvent = dayEvents.find(ev => ev.type === type);
 
-            // Split selected types into categories (excluding festivals which are free)
-            const nonFestivalTypes = selectedTypes.filter(t => t !== 'festival');
-            const festivalTypes    = selectedTypes.filter(t => t === 'festival');
+                const wasVideo = existingEvent ? isVideoEvent(existingEvent) : false;
+                const wasPost  = existingEvent ? isPostEvent(existingEvent) : false;
+                const wasAd    = existingEvent ? (existingEvent.type === 'ad') : false;
 
-            const requestedVideos = nonFestivalTypes.filter(t => formatInput === 'reel' || t === 'video').length;
-            const requestedPosts  = nonFestivalTypes.filter(t => formatInput !== 'reel' && t !== 'video' && t !== 'ad').length;
-            const requestedAds    = nonFestivalTypes.filter(t => t === 'ad').length;
+                const isBecomingVideo = (formatInput === 'reel' || type === 'video' || type === 'shoot');
+                const isBecomingPost  = !isBecomingVideo && type !== 'ad';
+                const isBecomingAd    = type === 'ad';
 
-            // Validate limits BEFORE adding anything
-            if (requestedPosts > 0 && planLimit.posts === 0) {
-                alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow static Posts.\nPlease upgrade your plan or schedule as a Reel/Video.`);
-                return;
-            }
-            if (requestedVideos > 0 && planLimit.videos === 0) {
-                alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow Videos/Reels.\nPlease upgrade your plan or schedule as a Post.`);
-                return;
-            }
-            if (requestedPosts > remainPosts) {
-                alert(`❌ Post Limit Reached!\n\nYou have used ${usedPosts}/${planLimit.posts} posts this month.\nOnly ${remainPosts} post(s) remaining.\n\nPlease choose fewer platforms or upgrade your plan.`);
-                return;
-            }
-            if (requestedVideos > remainVideos) {
-                alert(`❌ Video/Reel Limit Reached!\n\nYou have used ${usedVideos}/${planLimit.videos} videos this month.\nOnly ${remainVideos} video(s) remaining.\n\nPlease choose fewer platforms or upgrade your plan.`);
-                return;
-            }
-            if (requestedAds > remainAds) {
-                alert(`❌ Ad Limit Reached!\n\nOnly ${remainAds} ad run(s) remaining this month.`);
-                return;
+                // Get current counts for this specific platform
+                const platformEvents = monthEvents.filter(ev => ev.type === type);
+                const usedVideos = platformEvents.filter(isVideoEvent).length;
+                const usedPosts  = platformEvents.filter(isPostEvent).length;
+                const usedAds    = platformEvents.filter(ev => ev.type === 'ad').length;
+
+                if (isBecomingVideo) {
+                    if (planLimit.videos === 0) {
+                        alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow Videos/Reels on ${type.toUpperCase()}.`);
+                        return;
+                    }
+                    // Only count as new if it wasn't already a video
+                    const newCount = usedVideos + (existingEvent ? (wasVideo ? 0 : 1) : 1);
+                    if (newCount > planLimit.videos) {
+                        alert(`❌ Video Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedVideos}/${planLimit.videos} videos this month for this platform.`);
+                        return;
+                    }
+                }
+
+                if (isBecomingPost) {
+                    if (planLimit.posts === 0) {
+                        alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow static Posts on ${type.toUpperCase()}.`);
+                        return;
+                    }
+                    const newCount = usedPosts + (existingEvent ? (wasPost ? 0 : 1) : 1);
+                    if (newCount > planLimit.posts) {
+                        alert(`❌ Post Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedPosts}/${planLimit.posts} posts this month for this platform.`);
+                        return;
+                    }
+                }
+
+                if (isBecomingAd) {
+                    if (planLimit.ads === 0) {
+                        alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow Ads on ${type.toUpperCase()}.`);
+                        return;
+                    }
+                    const newCount = usedAds + (existingEvent ? (wasAd ? 0 : 1) : 1);
+                    if (newCount > planLimit.ads) {
+                        alert(`❌ Ad Limit Reached for ${type.toUpperCase()}!\n\nOnly ${planLimit.ads} ad run(s) allowed per platform.`);
+                        return;
+                    }
+                }
             }
 
             // ============================================================
