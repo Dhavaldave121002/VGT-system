@@ -394,7 +394,7 @@ window.dismissMessage = function (time, event) {
 
 function showSkeletons() {
     calendarGrid.innerHTML = '';
-    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+    ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
         const h = document.createElement('div');
         h.className = 'day-header';
         h.textContent = day;
@@ -450,7 +450,7 @@ function renderCalendar() {
     const month = currentDate.getMonth();
     monthDisplay.textContent = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentDate);
     calendarGrid.innerHTML = '';
-    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+    ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
         const h = document.createElement('div');
         h.className = 'day-header';
         h.textContent = day;
