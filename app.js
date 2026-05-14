@@ -722,10 +722,6 @@ function getBotResponse(input) {
     const hasGujaratiScript = /[\u0A80-\u0AFF]/.test(text);
     const hasHindiScript = /[\u0900-\u097F]/.test(text);
     
-    // Check for Romanized Gujarati/Hindi (Hinglish/Gujlish)
-    const isRomanizedLocal = /(kem chho|majama|su chale|tame|kaise ho|kya hai|apka|kaam|karu|badhana)/i.test(lowerText);
-
-    // Helper to pick the right response based on script
     const getLang = () => {
         if (hasGujaratiScript) return 'guj';
         if (hasHindiScript) return 'hin';
@@ -735,21 +731,31 @@ function getBotResponse(input) {
     const lang = getLang();
 
     // 🛡️ SECURITY PROTOCOL
-    if (/(password|key|login|credential|secret|security|પાસવર્ડ|पासवर्ड)/i.test(lowerText)) {
+    if (/(password|key|login|credential|secret|security)/i.test(lowerText)) {
         const res = {
-            guj: `🛡️ <strong>સુરક્ષા પ્રોટોકોલ:</strong> હું ${brandName} ની સિક્યુરિટી ડિટેલ્સ શેર કરી શકતો નથી. કોઈ પણ સમસ્યા માટે એડમિનનો સંપર્ક કરો.`,
-            hin: `🛡️ <strong>सुरक्षा प्रोटोकॉल:</strong> मैं ${brandName} की सुरक्षा जानकारी साझा नहीं कर सकता। किसी भी समस्या के लिए एडमिन से संपर्क करें।`,
-            eng: `🛡️ <strong>Security Protocol:</strong> I cannot share credentials for ${brandName}. Please contact our Elite Administration for access issues.`
+            guj: `🛡️ <strong>સુરક્ષા પ્રોટોકોલ:</strong> હું ${brandName} ની સિક્યુરિટી ડિટેલ્સ શેર કરી શકતો નથી.`,
+            hin: `🛡️ <strong>सुरक्षा प्रोटोकॉल:</strong> मैं ${brandName} की सुरक्षा जानकारी साझा नहीं कर सकता।`,
+            eng: `🛡️ <strong>Security Protocol:</strong> I cannot share credentials for ${brandName}.`
         };
         return res[lang];
     }
 
     // 🌟 GREETINGS
-    if (/^(hi|hello|hey|kem chho|kaise ho|namskar|namaste|નમસ્તે|नमस्ते)/i.test(lowerText)) {
+    if (/^(hi|hello|hey|kem chho|kaise ho|namaste)/i.test(lowerText)) {
         const res = {
             guj: `નમસ્તે! હું તમારો <strong>Elite AI Strategist</strong> છું. આજે આપણે <strong>${brandName}</strong> ને કેવી રીતે આગળ વધારીએ?`,
             hin: `नमस्ते! मैं आपका <strong>Elite AI Strategist</strong> हूँ। आज हम <strong>${brandName}</strong> को और बेहतर कैसे बना सकते हैं?`,
             eng: `Hello! I'm your dedicated <strong>Elite AI Strategist</strong>. How can I help you elevate <strong>${brandName}</strong> today?`
+        };
+        return res[lang];
+    }
+
+    // 🚀 VIRAL GROWTH & REELS (ADVANCED)
+    if (/(viral|reel|video|reach|વીડિયો|વિડિઓ|वीडियो)/i.test(lowerText)) {
+        const res = {
+            guj: `🚀 <strong>Viral Strategy:</strong> અમે <strong>${brandName}</strong> માટે હાઈ-રિટેન્શન હૂક સાથેના ટૂંકા વિડિયો પર ફોકસ કરીએ છીએ.`,
+            hin: `🚀 <strong>Viral Strategy:</strong> हम <strong>${brandName}</strong> के लिए हाई-रिटेंशन हुक वाले छोटे वीडियो पर ध्यान केंद्रित करते हैं।`,
+            eng: `🚀 <strong>Elite Viral Strategy:</strong> For <strong>${brandName}</strong>, we engineer high-retention "Hook-Point" short-form content.`
         };
         return res[lang];
     }
@@ -774,6 +780,16 @@ function getBotResponse(input) {
         return res[lang];
     }
 
+    // 💎 PLANS & PREMIUM ACCESS
+    if (/(plan|price|package|cost|પ્લાન|पैसा|कीमत)/i.test(lowerText)) {
+        const res = {
+            guj: `📊 <strong>Premium Plans:</strong> તમારી પ્રોફાઇલ અત્યારે <strong>"${currentBrand.plan}"</strong> પર ઓપ્ટિમાઇઝ કરેલી છે.`,
+            hin: `📊 <strong>Premium Plans:</strong> आपकी प्रोफ़ाइल अभी <strong>"${currentBrand.plan}"</strong> पर ऑप्टिमाइज़ की गई है।`,
+            eng: `📊 <strong>Tiered Excellence:</strong> Your account is currently optimized on the <strong>"${currentBrand.plan}"</strong> framework.`
+        };
+        return res[lang];
+    }
+
     // 🛠️ SERVICES
     if (/(service|kaam|kam|what do you do|su karo cho|કામ|काम)/i.test(lowerText)) {
         const res = {
@@ -785,7 +801,7 @@ function getBotResponse(input) {
     }
 
     // 📞 CONTACT
-    if (/(human|call|speak|contact|agent|number|whatsapp|phone|help|મદદ|मदद)/i.test(lowerText)) {
+    if (/(human|call|speak|contact|agent|number|whatsapp|phone|help)/i.test(lowerText)) {
         const contactInfo = `WhatsApp: <strong>+91 96645 23986</strong> | Email: <strong>connectvertexglobal2209@gmail.com</strong>`;
         const res = {
             guj: `ચોક્કસ, તમે અમારા એડમિન સાથે સીધી વાત કરી શકો છો: ${contactInfo}`,
@@ -795,24 +811,23 @@ function getBotResponse(input) {
         return res[lang];
     }
 
-    // 🗨️ YES/NO CONFIRMATIONS & SIMPLE ANSWERS
-    if (/^(yes|no|ha|na|chalse|nathi|હાલ|ના|हाँ|नहीं)/i.test(lowerText)) {
+    // 🗨️ YES/NO CONFIRMATIONS
+    if (/^(yes|no|ha|na|chalse|nathi)/i.test(lowerText)) {
         return `Understood. I've noted your preference for <strong>${brandName}</strong>. Is there anything else I can assist with?`;
     }
 
-    if (/(delete|clear|remove|nikal|bhusi|કાઢી|हटा)/i.test(lowerText)) {
-        return `I cannot delete your history directly for security audit reasons, but the system <strong>automatically resets every 24 hours</strong> to keep your stage perfect. Would you like me to help with something else?`;
+    if (/(delete|clear|remove|nikal|bhusi)/i.test(lowerText)) {
+        return `I cannot delete your history directly for security audit reasons, but the system <strong>automatically resets every 24 hours</strong>.`;
     }
 
-    // 🧠 FALLBACK (Smart learning response)
+    // 🧠 FALLBACK
     const fallback = {
-        guj: `મેં તમારી આ વાત "${text}" એડમિન માટે નોંધી લીધી છે. તેઓ ટૂંક સમયમાં <strong>${brandName}</strong> માટે તમારો સંપર્ક કરશે.`,
-        hin: `मैंने आपकी यह बात "${text}" एडमिन के लिए नोट कर ली है। वे जल्द ही <strong>${brandName}</strong> के लिए आपसे संपर्क करेंगे।`,
-        eng: `I've noted your inquiry regarding "${text}". I've logged this context for our <strong>Elite Administration</strong> to provide you with a detailed follow-up.`
+        guj: `મેં તમારી આ વાત "${text}" એડમિન માટે નોંધી લીધી છે.`,
+        hin: `मैंने आपकी यह बात "${text}" एडमिन के लिए नोट कर ली है।`,
+        eng: `I've noted your inquiry regarding "${text}". I've logged this context for our <strong>Elite Administration</strong>.`
     };
     return fallback[lang];
 }
-
 // ==========================================
 // CLIENT VIDEO TASKS ENGINE
 // ==========================================
