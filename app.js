@@ -718,24 +718,57 @@ function getBotResponse(input) {
     const lowerText = text.toLowerCase();
     const brandName = currentBrand.name || "your brand";
 
-    // 🔍 PRECISE SCRIPT DETECTION
+    // 🔍 SCRIPT DETECTION
     const hasGujaratiScript = /[\u0A80-\u0AFF]/.test(text);
     const hasHindiScript = /[\u0900-\u097F]/.test(text);
-    
-    const getLang = () => {
-        if (hasGujaratiScript) return 'guj';
-        if (hasHindiScript) return 'hin';
-        return 'eng';
-    };
+    const lang = hasGujaratiScript ? 'guj' : (hasHindiScript ? 'hin' : 'eng');
 
-    const lang = getLang();
-
-    // 🛡️ SECURITY PROTOCOL
-    if (/(password|key|login|credential|secret|security)/i.test(lowerText)) {
+    // 🏆 BLUE TICK & VERIFICATION
+    if (/(blue tick|verify|verification|badge|tick|બ્લુ ટીક|ટિક|सत्यापन|ब्लू टिक)/i.test(lowerText)) {
         const res = {
-            guj: `🛡️ <strong>સુરક્ષા પ્રોટોકોલ:</strong> હું ${brandName} ની સિક્યુરિટી ડિટેલ્સ શેર કરી શકતો નથી.`,
-            hin: `🛡️ <strong>सुरक्षा प्रोटोकॉल:</strong> मैं ${brandName} की सुरक्षा जानकारी साझा नहीं कर सकता।`,
-            eng: `🛡️ <strong>Security Protocol:</strong> I cannot share credentials for ${brandName}.`
+            guj: `💎 <strong>Blue Tick Verification:</strong> અમે <strong>${brandName}</strong> ને Instagram અને Facebook પર વેરિફાઈડ કરાવવા માટે એક્સપર્ટ સર્વિસ આપીએ છીએ.`,
+            hin: `💎 <strong>Blue Tick Verification:</strong> हम <strong>${brandName}</strong> को Instagram और Facebook पर वेरिफाइड कराने के लिए एक्सपर्ट सर्विस देते हैं।`,
+            eng: `💎 <strong>Elite Verification:</strong> We specialize in authenticating <strong>${brandName}</strong> across Meta platforms to establish absolute market authority.`
+        };
+        return res[lang];
+    }
+
+    // 🎨 BRANDING & IDENTITY
+    if (/(logo|design|branding|color|theme|દેખાવ|डिजाइन|ब्रांडिंग)/i.test(lowerText)) {
+        const res = {
+            guj: `🎨 <strong>Visual Identity:</strong> અમે <strong>${brandName}</strong> માટે પ્રીમિયમ કલર પેલેટ અને લોગો ડિઝાઈન તૈયાર કરીએ છીએ જે ગ્લોબલ સ્ટાન્ડર્ડ મુજબ હોય.`,
+            hin: `🎨 <strong>Visual Identity:</strong> हम <strong>${brandName}</strong> के लिए प्रीमियम कलर पैलेट और लोगो डिजाइन तैयार करते हैं जो ग्लोबल स्टैंडर्ड के अनुसार होते हैं।`,
+            eng: `🎨 <strong>Signature Identity:</strong> We craft a bespoke visual language for <strong>${brandName}</strong> ensuring your brand aesthetic is world-class.`
+        };
+        return res[lang];
+    }
+
+    // 📈 LEAD GEN & SALES FUNNEL
+    if (/(lead|sales|customer|client|order|enquiry|ગ્રાહક|ग्राहक|बિક્રી)/i.test(lowerText)) {
+        const res = {
+            guj: `💰 <strong>Lead Generation:</strong> અમે ફક્ત લાઈક્સ જ નહીં, પણ <strong>${brandName}</strong> માટે રિયલ સેલ્સ અને લીડ્સ જનરેટ કરવા પર ફોકસ કરીએ છીએ.`,
+            hin: `💰 <strong>Lead Generation:</strong> हम सिर्फ लाइक्स ही नहीं, बल्कि <strong>${brandName}</strong> के लिए रियल सेल्स और लीड्स जनरेट करने पर ध्यान केंद्रित करते हैं।`,
+            eng: `💰 <strong>Revenue Engineering:</strong> For <strong>${brandName}</strong>, we build high-conversion sales funnels that turn social traffic into high-value clients.`
+        };
+        return res[lang];
+    }
+
+    // ⚔️ COMPETITOR DOMINANCE
+    if (/(other|competitor|better|best|market|બીજા|દુનિયા|માર્કેટ|दुनिया)/i.test(lowerText)) {
+        const res = {
+            guj: `⚔️ <strong>Market Dominance:</strong> અમે <strong>${brandName}</strong> ને તમારા કોમ્પિટિશનથી 10 ડગલાં આગળ રાખવા માટે એડવાન્સ AI ટૂલ્સનો ઉપયોગ કરીએ છીએ.`,
+            hin: `⚔️ <strong>Market Dominance:</strong> हम <strong>${brandName}</strong> को आपके कॉम्पिटिशन से 10 कदम आगे रखने के लिए एडवांस AI टूल्स का उपयोग करते हैं।`,
+            eng: `⚔️ <strong>Elite Dominance:</strong> By leveraging advanced data-science, we keep <strong>${brandName}</strong> 10 steps ahead of the global competition.`
+        };
+        return res[lang];
+    }
+
+    // 🚀 VIRAL GROWTH & REELS
+    if (/(viral|reel|video|reach|વીડિયો|વિડિઓ|वीडियो)/i.test(lowerText)) {
+        const res = {
+            guj: `🚀 <strong>Viral Growth:</strong> અમે <strong>${brandName}</strong> માટે હાઈ-રિટેન્શન હૂક સાથેના ટૂંકા વિડિયો પર ફોકસ કરીએ છીએ.`,
+            hin: `🚀 <strong>Viral Growth:</strong> हम <strong>${brandName}</strong> के लिए हाई-रिटेंशन हुक वाले छोटे वीडियो पर ध्यान केंद्रित करते हैं।`,
+            eng: `🚀 <strong>Viral Engineering:</strong> For <strong>${brandName}</strong>, we craft high-retention short-form content designed to amplify organic exposure.`
         };
         return res[lang];
     }
@@ -743,59 +776,29 @@ function getBotResponse(input) {
     // 🌟 GREETINGS
     if (/^(hi|hello|hey|kem chho|kaise ho|namaste)/i.test(lowerText)) {
         const res = {
-            guj: `નમસ્તે! હું તમારો <strong>Elite AI Strategist</strong> છું. આજે આપણે <strong>${brandName}</strong> ને કેવી રીતે આગળ વધારીએ?`,
-            hin: `नमस्ते! मैं आपका <strong>Elite AI Strategist</strong> हूँ। आज हम <strong>${brandName}</strong> को और बेहतर कैसे बना सकते हैं?`,
-            eng: `Hello! I'm your dedicated <strong>Elite AI Strategist</strong>. How can I help you elevate <strong>${brandName}</strong> today?`
+            guj: `નમસ્તે! હું તમારો <strong>Elite AI Strategist</strong> છું. આજે આપણે <strong>${brandName}</strong> ને ગ્લોબલ લેવલ પર કેવી રીતે લઈ જઈએ?`,
+            hin: `नमस्ते! मैं आपका <strong>Elite AI Strategist</strong> हूँ। आज हम <strong>${brandName}</strong> को ग्लोबल लेवल पर कैसे लेकर चलें?`,
+            eng: `Greetings. I'm your <strong>Elite AI Strategist</strong>. How shall we accelerate the global dominance of <strong>${brandName}</strong> today?`
         };
         return res[lang];
     }
 
-    // 🚀 VIRAL GROWTH & REELS (ADVANCED)
-    if (/(viral|reel|video|reach|વીડિયો|વિડિઓ|वीडियो)/i.test(lowerText)) {
-        const res = {
-            guj: `🚀 <strong>Viral Strategy:</strong> અમે <strong>${brandName}</strong> માટે હાઈ-રિટેન્શન હૂક સાથેના ટૂંકા વિડિયો પર ફોકસ કરીએ છીએ.`,
-            hin: `🚀 <strong>Viral Strategy:</strong> हम <strong>${brandName}</strong> के लिए हाई-रिटेंशन हुक वाले छोटे वीडियो पर ध्यान केंद्रित करते हैं।`,
-            eng: `🚀 <strong>Elite Viral Strategy:</strong> For <strong>${brandName}</strong>, we engineer high-retention "Hook-Point" short-form content.`
-        };
-        return res[lang];
-    }
-
-    // 📈 SEO & GOOGLE
-    if (/(seo|google|ranking|સર્ચ|सर्च)/i.test(lowerText)) {
-        const res = {
-            guj: `SEO એ <strong>${brandName}</strong> માટે ખૂબ મહત્વનું છે. અમે તમારી વેબસાઇટને Google ના પહેલા પેજ પર લાવવા માટે કામ કરીએ છીએ.`,
-            hin: `SEO <strong>${brandName}</strong> के लिए बहुत महत्वपूर्ण है। हम आपकी वेबसाइट को Google के पहले पेज पर लाने में मदद करते हैं।`,
-            eng: `SEO is the backbone of organic growth for <strong>${brandName}</strong>. We optimize your technical presence to dominate search results.`
-        };
-        return res[lang];
-    }
-
-    // 💰 ROI & GROWTH
+    // 💰 ROI & PERFORMANCE
     if (/(roi|profit|sales|grow|business|vadharo|badhana|નફો|मुनाफा)/i.test(lowerText)) {
         const res = {
-            guj: `<strong>${brandName}</strong> નો નફો વધારવા માટે અમે ટાર્ગેટેડ એડ્સ અને હાઈ-ક્વોલિટી વીડિયો કન્ટેન્ટ પર ફોકસ કરીએ છીએ.`,
-            hin: `<strong>${brandName}</strong> का मुनाफा बढ़ाने के लिए हम टारगेटेड एड्स और हाई-क्वालिटी वीडियो कंटेंट पर ध्यान देते हैं।`,
-            eng: `Maximizing ROI for <strong>${brandName}</strong> is our priority. We achieve this through strategic ad spending and conversion optimization.`
+            guj: `<strong>${brandName}</strong> નો ROI વધારવા માટે અમે ડેટા-ડ્રિવન એડ્સ અને હાઈ-કન્વર્ઝન કન્ટેન્ટ પર ફોકસ કરીએ છીએ.`,
+            hin: `<strong>${brandName}</strong> का ROI बढ़ाने के लिए हम डेटा-ड्रिवन एड्स और हाई-कन्वर्जन कंटेंट पर ध्यान देते हैं।`,
+            eng: `Precision ROI is our standard. We optimize <strong>${brandName}</strong> through aggressive data-driven scaling and performance marketing.`
         };
         return res[lang];
     }
 
-    // 💎 PLANS & PREMIUM ACCESS
-    if (/(plan|price|package|cost|પ્લાન|पैसा|कीमत)/i.test(lowerText)) {
-        const res = {
-            guj: `📊 <strong>Premium Plans:</strong> તમારી પ્રોફાઇલ અત્યારે <strong>"${currentBrand.plan}"</strong> પર ઓપ્ટિમાઇઝ કરેલી છે.`,
-            hin: `📊 <strong>Premium Plans:</strong> आपकी प्रोफ़ाइल अभी <strong>"${currentBrand.plan}"</strong> पर ऑप्टिमाइज़ की गई है।`,
-            eng: `📊 <strong>Tiered Excellence:</strong> Your account is currently optimized on the <strong>"${currentBrand.plan}"</strong> framework.`
-        };
-        return res[lang];
-    }
-
-    // 🛠️ SERVICES
+    // 🛠️ SERVICES & AGENCY
     if (/(service|kaam|kam|what do you do|su karo cho|કામ|काम)/i.test(lowerText)) {
         const res = {
-            guj: `Vertex Global Tech એક પ્રીમિયમ એજન્સી છે. અમે <strong>Web Development</strong>, <strong>Marketing</strong>, અને <strong>Blue Tick Verification</strong> માં માસ્ટર છીએ.`,
-            hin: `Vertex Global Tech एक प्रीमियम एजेंसी है। हम <strong>Web Development</strong>, <strong>Marketing</strong>, और <strong>Blue Tick Verification</strong> में मास्टर हैं।`,
-            eng: `Vertex Global Tech is an elite agency specializing in <strong>Premium Web Dev</strong>, <strong>Verified Marketing</strong>, and <strong>Viral Social Management</strong>.`
+            guj: `Vertex Global Tech એક પ્રીમિયમ એજન્સી છે જે <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, અને <strong>Elite Branding</strong> માં માસ્ટર છે.`,
+            hin: `Vertex Global Tech एक प्रीमियम एजेंसी है जो <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, और <strong>Elite Branding</strong> में मास्टर है।`,
+            eng: `Vertex Global Tech is an elite powerhouse specializing in <strong>Bespoke Development</strong>, <strong>Aggressive Growth Marketing</strong>, and <strong>World-Class Branding</strong>.`
         };
         return res[lang];
     }
@@ -806,7 +809,7 @@ function getBotResponse(input) {
         const res = {
             guj: `ચોક્કસ, તમે અમારા એડમિન સાથે સીધી વાત કરી શકો છો: ${contactInfo}`,
             hin: `जी हाँ, आप हमारे एडमिन से सीधे संपर्क कर सकते हैं: ${contactInfo}`,
-            eng: `I understand. You can reach our Elite Administration directly at: ${contactInfo}`
+            eng: `I understand. You can bridge directly to our Elite Administration at: ${contactInfo}`
         };
         return res[lang];
     }
@@ -817,14 +820,14 @@ function getBotResponse(input) {
     }
 
     if (/(delete|clear|remove|nikal|bhusi)/i.test(lowerText)) {
-        return `I cannot delete your history directly for security audit reasons, but the system <strong>automatically resets every 24 hours</strong>.`;
+        return `I cannot delete your history for audit reasons, but the system <strong>automatically resets every 24 hours</strong>.`;
     }
 
     // 🧠 FALLBACK
     const fallback = {
-        guj: `મેં તમારી આ વાત "${text}" એડમિન માટે નોંધી લીધી છે.`,
-        hin: `मैंने आपकी यह बात "${text}" एडमिन के लिए नोट कर ली है।`,
-        eng: `I've noted your inquiry regarding "${text}". I've logged this context for our <strong>Elite Administration</strong>.`
+        guj: `મેં તમારી આ વાત "${text}" એડમિન માટે નોંધી લીધી છે. તેઓ <strong>${brandName}</strong> માટે તમારો સંપર્ક કરશે.`,
+        hin: `मैंने आपकी यह बात "${text}" एडमिन के लिए नोट कर ली है। वे <strong>${brandName}</strong> के लिए आपसे संपर्क करेंगे।`,
+        eng: `I've noted your inquiry regarding "${text}". I've logged this for our <strong>Elite Administration</strong> to review for <strong>${brandName}</strong>.`
     };
     return fallback[lang];
 }
