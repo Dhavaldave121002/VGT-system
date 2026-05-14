@@ -349,7 +349,10 @@ function login(brandId, isAutoLogin = false) {
         // Immediate Transition for Auto-Login
         loginScreen.style.display = 'none';
         dashboard.style.display = 'flex';
-        document.getElementById('chatWidgetContainer').style.display = 'flex'; // Show Chat UI
+        const chatWidget = document.getElementById('chatWidgetContainer');
+        if (chatWidget) {
+            chatWidget.style.display = currentBrand.supportChat === 'no' ? 'none' : 'flex';
+        }
         renderCalendar();
         renderClientVideoTasks();
         if (window.lucide) lucide.createIcons();
@@ -359,7 +362,10 @@ function login(brandId, isAutoLogin = false) {
         setTimeout(() => {
             loginScreen.style.display = 'none';
             dashboard.style.display = 'flex';
-            document.getElementById('chatWidgetContainer').style.display = 'flex'; // Show Chat UI
+            const chatWidget = document.getElementById('chatWidgetContainer');
+            if (chatWidget) {
+                chatWidget.style.display = currentBrand.supportChat === 'no' ? 'none' : 'flex';
+            }
             showSkeletons();
             setTimeout(() => {
                 renderCalendar();
@@ -646,13 +652,37 @@ function toggleChatWindow() {
 function renderChatMessages() {
     if (!currentBrand) return;
     const area = document.getElementById('chatMessagesArea');
-    area.innerHTML = '';
+    area.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px; opacity: 0.6;">
+            <span style="font-size: 0.65rem; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 12px; color: var(--text-gray); border: 1px solid var(--border-glass);">
+                <i data-lucide="shield" style="width: 10px; height: 10px; vertical-align: middle; margin-right: 4px;"></i>
+                Privacy Sync: Messages auto-clear every 24 hours
+            </span>
+        </div>
+    `;
 
-    if (!currentBrand.chat) {
+    const now = Date.now();
+    const expiry = 24 * 60 * 60 * 1000; // 24 Hours in ms
+
+    if (!currentBrand.chat || currentBrand.chat.length === 0) {
         currentBrand.chat = [
-            { sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: Date.now() }
+            { sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: now }
         ];
         localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
+    } else {
+        // Auto-cleanup: Keep messages only from last 24 hours
+        const originalLength = currentBrand.chat.length;
+        currentBrand.chat = currentBrand.chat.filter(msg => (now - msg.time) < expiry);
+        
+        // Always ensure at least the welcome message if empty
+        if (currentBrand.chat.length === 0) {
+            currentBrand.chat.push({ sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: now });
+        }
+
+        if (currentBrand.chat.length !== originalLength) {
+            localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+            syncToSheetDB();
+        }
     }
 
     currentBrand.chat.forEach(msg => {
@@ -765,6 +795,15 @@ function getBotResponse(input) {
         return res[lang];
     }
 
+    // 🗨️ YES/NO CONFIRMATIONS & SIMPLE ANSWERS
+    if (/^(yes|no|ha|na|chalse|nathi|હાલ|ના|हाँ|नहीं)/i.test(lowerText)) {
+        return `Understood. I've noted your preference for <strong>${brandName}</strong>. Is there anything else I can assist with?`;
+    }
+
+    if (/(delete|clear|remove|nikal|bhusi|કાઢી|हटा)/i.test(lowerText)) {
+        return `I cannot delete your history directly for security audit reasons, but the system <strong>automatically resets every 24 hours</strong> to keep your stage perfect. Would you like me to help with something else?`;
+    }
+
     // 🧠 FALLBACK (Smart learning response)
     const fallback = {
         guj: `મેં તમારી આ વાત "${text}" એડમિન માટે નોંધી લીધી છે. તેઓ ટૂંક સમયમાં <strong>${brandName}</strong> માટે તમારો સંપર્ક કરશે.`,
@@ -875,5 +914,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ==========================================
+// REAL-TIME AUTO-RESET ENGINE (Background Sync)
+// ==========================================
+setInterval(() => {
+    if (!currentBrand || !currentBrand.chat) return;
+    
+    const now = Date.now();
+    const expiry = 24 * 60 * 60 * 1000;
+    const originalLength = currentBrand.chat.length;
+    
+    currentBrand.chat = currentBrand.chat.filter(msg => (now - msg.time) < expiry);
+    
+    if (currentBrand.chat.length !== originalLength) {
+        console.log("🧹 Background Cleanup: Removing expired messages...");
+        if (currentBrand.chat.length === 0) {
+            currentBrand.chat.push({ sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: now });
+        }
+        renderChatMessages();
+        localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+        syncToSheetDB();
+    }
+}, 60000); // Check every 60 seconds
 
 
