@@ -381,6 +381,36 @@ select:focus {
     }
 }
 
+@media (max-width: 600px) {
+    .roadmap-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px;
+    }
+    
+    .roadmap-item > div:first-child {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 16px !important;
+    }
+
+    .roadmap-item .table-actions {
+        width: 100%;
+        justify-content: flex-start;
+        border-top: 1px solid var(--border-glass);
+        padding-top: 12px;
+        gap: 16px;
+    }
+    
+    .roadmap-item .table-actions button {
+        flex: 1;
+        padding: 12px;
+    }
+}
+
 
 
 /* Chat Widget Styles */

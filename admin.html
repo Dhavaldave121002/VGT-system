@@ -572,6 +572,7 @@
                     brand.events.forEach(ev => {
                         if (ev.month === undefined) { ev.month = 4; eventsChanged = true; } // May (0-indexed)
                         if (ev.year === undefined) { ev.year = 2026; eventsChanged = true; }
+                        if (!ev.id) { ev.id = 'ev_' + Math.random().toString(36).substr(2, 9); eventsChanged = true; }
                     });
                     if (eventsChanged) stateChanged = true;
                 }
@@ -752,6 +753,7 @@
 
             // Also add to Calendar as a "Shoot" event
             brand.events.push({
+                id: 'ev_' + Math.random().toString(36).substr(2, 9),
                 day: d,
                 month: m,
                 year: y,
@@ -1166,6 +1168,7 @@
 
                 const title = titleInput || `${type.charAt(0).toUpperCase() + type.slice(1)} Content`;
                 brand.events.push({
+                    id: 'ev_' + Math.random().toString(36).substr(2, 9),
                     day: dateObj.getDate(),
                     month: m,
                     year: y,
@@ -1259,8 +1262,8 @@
                         <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">${ev.desc}</p>
                     </div>
                     <div class="table-actions">
-                        <button onclick="editRoadmapEvent(${index})" title="Reschedule / Edit" style="color: #60A5FA;"><i data-lucide="edit-3" style="width: 16px; height: 16px;"></i></button>
-                        <button onclick="deleteRoadmapEvent(${index})" title="Delete Item" style="color: #F87171;"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
+                        <button onclick="editRoadmapEvent('${ev.id}')" title="Reschedule / Edit" style="color: #60A5FA;"><i data-lucide="edit-3" style="width: 16px; height: 16px;"></i></button>
+                        <button onclick="deleteRoadmapEvent('${ev.id}')" title="Delete Item" style="color: #F87171;"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i></button>
                     </div>
                 `;
                 body.appendChild(div);
@@ -1269,18 +1272,23 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        window.deleteRoadmapEvent = function(index) {
+        window.deleteRoadmapEvent = function(evId) {
             if (confirm("Permanently delete this scheduled item from the roadmap?")) {
                 const brand = storedBrands[currentRoadmapBrandId];
-                brand.events.splice(index, 1);
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
-                renderBrandRoadmap();
+                const index = brand.events.findIndex(e => e.id === evId);
+                if (index !== -1) {
+                    brand.events.splice(index, 1);
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                    renderBrandRoadmap();
+                    renderBrands();
+                }
             }
         };
 
-        window.editRoadmapEvent = function(index) {
+        window.editRoadmapEvent = function(evId) {
             const brand = storedBrands[currentRoadmapBrandId];
-            const ev = brand.events[index];
+            const ev = brand.events.find(e => e.id === evId);
+            if (!ev) return;
 
             const newDate = prompt(`Reschedule Day (1-31):`, ev.day);
             if (newDate === null) return;
@@ -1294,6 +1302,7 @@
 
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
             renderBrandRoadmap();
+            renderBrands();
             alert("✅ Item updated successfully!");
         };
 
