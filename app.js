@@ -796,9 +796,69 @@ function getBotResponse(input) {
     // 🛠️ SERVICES & AGENCY
     if (/(service|kaam|kam|what do you do|su karo cho|કામ|काम)/i.test(lowerText)) {
         const res = {
-            guj: `Vertex Global Tech એક પ્રીમિયમ એજન્સી છે જે <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, અને <strong>Elite Branding</strong> માં માસ્ટર છે.`,
-            hin: `Vertex Global Tech एक प्रीमियम एजेंसी है जो <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, और <strong>Elite Branding</strong> में मास्टर है।`,
-            eng: `Vertex Global Tech is an elite powerhouse specializing in <strong>Bespoke Development</strong>, <strong>Aggressive Growth Marketing</strong>, and <strong>World-Class Branding</strong>.`
+            guj: `Vertex Global Tech એક પ્રીમિયમ એજન્સી છે જે <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, અને <strong>Elite Branding</strong> માં માસ્ટર છે. <br><br>અમારી મુખ્ય સર્વિસમાં <strong>Web & App Development</strong>, <strong>Odoo Customization</strong>, <strong>Product Listing</strong>, <strong>Verifyboost Marketing</strong> અને <strong>Google Ads Management</strong> નો સમાવેશ થાય છે. વધુ માહિતી માટે <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">અહીં ક્લિક કરો</a>.`,
+            hin: `Vertex Global Tech एक प्रीमियम एजेंसी है जो <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, और <strong>Elite Branding</strong> में मास्टर है। <br><br>हमारी मुख्य सर्विस में <strong>Web & App Development</strong>, <strong>Odoo Customization</strong>, <strong>Product Listing</strong>, <strong>Verifyboost Marketing</strong> और <strong>Google Ads Management</strong> शामिल हैं। अधिक जानकारी के लिए <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">यहाँ क्लिक करें</a>।`,
+            eng: `Vertex Global Tech is an elite powerhouse specializing in <strong>Bespoke Development</strong>, <strong>Aggressive Growth Marketing</strong>, and <strong>World-Class Branding</strong>. <br><br>Our core expertise includes <strong>Web & App Engineering</strong>, <strong>Odoo Customization</strong>, <strong>Product Marketplace Listings</strong>, <strong>Verifyboost Marketing</strong>, and <strong>Google Ads Management</strong>. <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Book a meeting here</a>.`
+        };
+        return res[lang];
+    }
+
+    // 🌐 WEB DEVELOPMENT
+    if (/(web|website|site|ecommerce|e-commerce|વેબસાઇટ|वेबसाइट)/i.test(lowerText)) {
+        const res = {
+            guj: `🌐 <strong>Web Development:</strong> અમે <strong>${brandName}</strong> માટે હાઇ-પરફોર્મન્સ, રિસ્પોન્સિવ અને કન્વર્ઝન-ઓપ્ટિમાઇઝ્ડ વેબસાઇટ્સ બનાવીએ છીએ.`,
+            hin: `🌐 <strong>Web Development:</strong> हम <strong>${brandName}</strong> के लिए हाई-परफॉर्मेंस, रिस्पॉन्सिव और कन्वर्जन-ऑप्टिमाइज़्ड वेबसाइट्स बनाते हैं।`,
+            eng: `🌐 <strong>Elite Web Engineering:</strong> We craft high-performance, responsive, and conversion-optimized websites tailored specifically for <strong>${brandName}</strong>.`
+        };
+        return res[lang];
+    }
+
+    // 📱 APP DEVELOPMENT
+    if (/(app|application|mobile|ios|android|એપ|एप्लिकेशन|ऐप)/i.test(lowerText)) {
+        const res = {
+            guj: `📱 <strong>App Development:</strong> અમે <strong>${brandName}</strong> માટે નેટિવ અને ક્રોસ-પ્લેટફોર્મ મોબાઇલ એપ્સ ડેવલપ કરીએ છીએ.`,
+            hin: `📱 <strong>App Development:</strong> हम <strong>${brandName}</strong> के लिए नेटिव और क्रॉस-प्लेटफॉर्म मोबाइल ऐप्स डेवलप करते हैं।`,
+            eng: `📱 <strong>Mobile App Engineering:</strong> We develop robust, user-centric native and cross-platform mobile applications for <strong>${brandName}</strong>.`
+        };
+        return res[lang];
+    }
+
+    // ⚙️ ODOO CUSTOMIZATION
+    if (/(odoo|erp|customization|system|સોફ્ટવેર|सॉफ्टवेयर)/i.test(lowerText)) {
+        const res = {
+            guj: `⚙️ <strong>Odoo Customization:</strong> અમે તમારા બિઝનેસ ઓપરેશન્સને સરળ બનાવવા માટે એડવાન્સ Odoo કસ્ટમાઇઝેશન પૂરું પાડીએ છીએ.`,
+            hin: `⚙️ <strong>Odoo Customization:</strong> हम आपके बिजनेस ऑपरेशन्स को आसान बनाने के लिए एडवांस Odoo कस्टमाइज़ेशन प्रदान करते हैं।`,
+            eng: `⚙️ <strong>Odoo Customization:</strong> We provide advanced Odoo customization and ERP integration to streamline operations for <strong>${brandName}</strong>.`
+        };
+        return res[lang];
+    }
+
+    // 🛍️ PRODUCT LISTING
+    if (/(product|listing|marketplace|amazon|flipkart|પ્રોડક્ટ|उत्पाद)/i.test(lowerText)) {
+        const res = {
+            guj: `🛍️ <strong>Marketplace Listings:</strong> અમે <strong>${brandName}</strong> ના પ્રોડક્ટ્સને ટોપ માર્કેટપ્લેસ પર રેન્ક કરવા માટે પ્રોફેશનલ લિસ્ટિંગ કરીએ છીએ.`,
+            hin: `🛍️ <strong>Marketplace Listings:</strong> हम <strong>${brandName}</strong> के प्रोडक्ट्स को टॉप मार्केटप्लेस पर रैंक करने के लिए प्रोफेशनल लिस्टिंग करते हैं।`,
+            eng: `🛍️ <strong>Product Marketplace Listings:</strong> We optimize and rank <strong>${brandName}</strong>'s products across top marketplaces for maximum visibility and sales.`
+        };
+        return res[lang];
+    }
+
+    // 📈 GOOGLE ADS & MARKETING
+    if (/(ads|google|verifyboost|marketing|campaign|એડ્સ|मार्केटिंग|विज्ञापन)/i.test(lowerText)) {
+        const res = {
+            guj: `📈 <strong>Marketing & Ads:</strong> અમે <strong>${brandName}</strong> માટે Google Ads અને Verifyboost માર્કેટિંગ દ્વારા હાઈ ROI અને ગ્રોથ લાવીએ છીએ.`,
+            hin: `📈 <strong>Marketing & Ads:</strong> हम <strong>${brandName}</strong> के लिए Google Ads और Verifyboost मार्केटिंग के माध्यम से हाई ROI और ग्रोथ लाते हैं।`,
+            eng: `📈 <strong>Marketing & Ads:</strong> We scale <strong>${brandName}</strong> through precision Google Ads management and aggressive Verifyboost marketing campaigns.`
+        };
+        return res[lang];
+    }
+
+    // 📅 MEETING SCHEDULER
+    if (/(meeting|schedule|book|appointment|consultation|મીટિંગ|मीटिंग)/i.test(lowerText)) {
+        const res = {
+            guj: `📅 <strong>Meeting Booking:</strong> તમે અમારી સર્વિસ માટે <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">અહીં ક્લિક કરીને</a> ડાયરેક્ટ સિક્યોર મીટિંગ બુક કરી શકો છો.`,
+            hin: `📅 <strong>Meeting Booking:</strong> आप हमारी सर्विस के लिए <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">यहाँ क्लिक करके</a> डायरेक्ट सिक्योर मीटिंग बुक कर सकते हैं।`,
+            eng: `📅 <strong>Secure Meeting Scheduler:</strong> You can instantly book a consultation for <strong>${brandName}</strong> by visiting our <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Secure Scheduler System</a>.`
         };
         return res[lang];
     }
