@@ -883,6 +883,76 @@ function getBotResponse(input) {
         return `I cannot delete your history for audit reasons, but the system <strong>automatically resets every 24 hours</strong>.`;
     }
 
+    // 💰 PRICING & COST
+    if (/(price|cost|charge|fees|money|budget|package|plan|કિંમત|ભાવ|પૈસા|ખર્ચ|पैसे|फीस|कीमत)/i.test(lowerText)) {
+        const res = {
+            guj: `💰 <strong>Pricing:</strong> અમારી સર્વિસ કસ્ટમાઇઝ્ડ છે. <strong>${brandName}</strong> ની જરૂરિયાત મુજબ બેસ્ટ પેકેજ જાણવા માટે, કૃપા કરીને <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">મીટિંગ બુક કરો</a>.`,
+            hin: `💰 <strong>Pricing:</strong> हमारी सर्विस कस्टमाइज्ड है। <strong>${brandName}</strong> की जरूरत के अनुसार बेस्ट पैकेज जानने के लिए, कृपया <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">मीटिंग बुक करें</a>।`,
+            eng: `💰 <strong>Investment & Pricing:</strong> We build custom solutions. To get an exact quote tailored to <strong>${brandName}</strong>'s requirements, please <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Schedule a Consultation</a>.`
+        };
+        return res[lang];
+    }
+
+    // ⏳ TIMEFRAME & DURATION
+    if (/(time|days|duration|how long|fast|quick|ક્યારે|કેટલો સમય|સમય|समय|दिन)/i.test(lowerText)) {
+        const res = {
+            guj: `⏳ <strong>Timeframe:</strong> પ્રોજેક્ટની સાઇઝ પર આધાર રાખે છે. અમે <strong>${brandName}</strong> માટે હંમેશા ફાસ્ટ અને ક્વોલિટી ડિલિવરી આપીએ છીએ.`,
+            hin: `⏳ <strong>Timeframe:</strong> प्रोजेक्ट की साइज पर निर्भर करता है। हम <strong>${brandName}</strong> के लिए हमेशा फास्ट और क्वालिटी डिलीवरी देते हैं।`,
+            eng: `⏳ <strong>Delivery Timeframe:</strong> Timelines depend on project complexity. However, we pride ourselves on rapid, high-quality execution for <strong>${brandName}</strong>.`
+        };
+        return res[lang];
+    }
+
+    // 🏆 GUARANTEES & RESULTS
+    if (/(guarantee|result|promise|sure|ગેરંટી|પરિણામ|परिणाम|गारंटी)/i.test(lowerText)) {
+        const res = {
+            guj: `🏆 <strong>Results:</strong> અમે ડેટા-ડ્રિવન અપ્રોચ વાપરીએ છીએ. <strong>${brandName}</strong> માટે ROI અને ગ્રોથની પૂરી ખાતરી આપીએ છીએ.`,
+            hin: `🏆 <strong>Results:</strong> हम डेटा-ड्रिवन अप्रोच का इस्तेमाल करते हैं। <strong>${brandName}</strong> के लिए ROI और ग्रोथ की पूरी गारंटी देते हैं।`,
+            eng: `🏆 <strong>Guaranteed Results:</strong> We are entirely data-driven. We engineer measurable growth and positive ROI for <strong>${brandName}</strong>.`
+        };
+        return res[lang];
+    }
+
+    // 💼 PORTFOLIO & PAST WORK
+    if (/(portfolio|past work|example|sample|demo|કામ બતાવો|પોર્ટફોલિયો|पोर्टफोलियो|डेमो)/i.test(lowerText)) {
+        const res = {
+            guj: `💼 <strong>Portfolio:</strong> અમે ઘણા પ્રીમિયમ ક્લાયન્ટ્સ સાથે કામ કર્યું છે. <strong>${brandName}</strong> માટે અમારા પાસ્ટ વર્કનું ડેમો જોવા માટે મીટિંગ બુક કરો.`,
+            hin: `💼 <strong>Portfolio:</strong> हमने कई प्रीमियम क्लाइंट्स के साथ काम किया है। <strong>${brandName}</strong> के लिए हमारे पास्ट वर्क का डेमो देखने के लिए मीटिंग बुक करें।`,
+            eng: `💼 <strong>Elite Portfolio:</strong> We've scaled multiple premium brands. To see case studies relevant to <strong>${brandName}</strong>, let's connect on a quick call.`
+        };
+        return res[lang];
+    }
+
+    // 💻 TECH STACK
+    if (/(react|node|php|python|tech|stack|technology|ટેક્નોલોજી|तकनीक|software|language)/i.test(lowerText)) {
+        const res = {
+            guj: `💻 <strong>Technology:</strong> અમે <strong>${brandName}</strong> માટે React, Node.js, Python, અને Odoo જેવી લેટેસ્ટ અને પાવરફુલ ટેક્નોલોજી વાપરીએ છીએ.`,
+            hin: `💻 <strong>Technology:</strong> हम <strong>${brandName}</strong> के लिए React, Node.js, Python, और Odoo जैसी लेटेस्ट और पावरफुल तकनीक का उपयोग करते हैं।`,
+            eng: `💻 <strong>Advanced Tech Stack:</strong> For <strong>${brandName}</strong>, we leverage modern, scalable stacks including React, Node.js, Python, and Odoo ERP.`
+        };
+        return res[lang];
+    }
+
+    // 🛠️ SUPPORT & MAINTENANCE
+    if (/(support|maintenance|after|help|સપોર્ટ|સહાય|सपोर्ट|मदद)/i.test(lowerText)) {
+        const res = {
+            guj: `🛠️ <strong>Support:</strong> ડિલિવરી પછી પણ અમે <strong>${brandName}</strong> ને 24/7 પ્રીમિયમ ટેકનિકલ સપોર્ટ આપીએ છીએ.`,
+            hin: `🛠️ <strong>Support:</strong> डिलीवरी के बाद भी हम <strong>${brandName}</strong> को 24/7 प्रीमियम टेक्निकल सपोर्ट प्रदान करते हैं।`,
+            eng: `🛠️ <strong>Elite Support:</strong> Post-deployment, we provide 24/7 premium technical support and maintenance to ensure <strong>${brandName}</strong> runs flawlessly.`
+        };
+        return res[lang];
+    }
+
+    // 🙏 APPRECIATION / SMALL TALK
+    if (/(thanks|thank you|good|awesome|great|nice|perfect|આભાર|સરસ|ધન્યવાદ|धन्यवाद|अच्छा|बहुत बढ़िया)/i.test(lowerText)) {
+        const res = {
+            guj: `તમારો આભાર! <strong>${brandName}</strong> ને ટોચ પર લઈ જવા માટે અમે હંમેશા તૈયાર છીએ. બીજું કોઈ કામ હોય તો જણાવજો.`,
+            hin: `आपका धन्यवाद! <strong>${brandName}</strong> को टॉप पर ले जाने के लिए हम हमेशा तैयार हैं। और कोई मदद चाहिए तो बताएँ।`,
+            eng: `You're very welcome! We are committed to taking <strong>${brandName}</strong> to the top. Let me know if you need anything else.`
+        };
+        return res[lang];
+    }
+
     // 🧠 FALLBACK
     const fallback = {
         guj: `મેં તમારી આ વાત "${text}" એડમિન માટે નોંધી લીધી છે. તેઓ <strong>${brandName}</strong> માટે તમારો સંપર્ક કરશે.`,
