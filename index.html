@@ -81,6 +81,7 @@
             <div class="nav-actions">
                 <button class="btn-icon" onclick="changeOwnPassword()" title="Change Security Key"><i data-lucide="key"></i></button>
                 <button class="btn-icon" onclick="openNotificationLog()" title="View Notifications"><i data-lucide="bell"></i></button>
+                <button class="btn-icon" onclick="window.open('https://vgt-ragister.vercel.app', '_blank')" title="Register More Services" style="color: var(--primary-light);"><i data-lucide="sparkles"></i></button>
                 <button class="btn-icon" onclick="logout()" style="color: #F87171;" title="Log Out"><i data-lucide="log-out"></i></button>
             </div>
         </header>
@@ -123,14 +124,6 @@
                 <!-- Daily Collection Sidebar -->
                 <div class="detail-sidebar">
                     
-                    <!-- Register New Service Button -->
-                    <div style="margin-bottom: 24px;">
-                        <a href="https://vgt-ragister.vercel.app" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; text-decoration: none; padding: 16px; border-radius: 16px; font-weight: 700; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(99, 102, 241, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(99, 102, 241, 0.3)';">
-                            <i data-lucide="sparkles" style="width: 20px; height: 20px;"></i>
-                            Register More Services
-                        </a>
-                    </div>
-
                     <!-- Video Assignments Panel (Moved Here) -->
                     <div id="clientVideoTasksPanel" style="display: none; margin-bottom: 32px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; padding: 20px;">
                         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
