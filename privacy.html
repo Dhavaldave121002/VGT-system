@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Vertex Global Tech</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            overflow-y: auto;
+            height: auto;
+            padding: 60px 20px;
+            background-color: #0b0f1a; /* Solid base for visibility */
+            background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .terms-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.95); /* Much darker for contrast */
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 80px 60px;
+            border-radius: 40px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terms-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), #A855F7, var(--primary));
+            background-size: 200% 100%;
+            animation: gradientMove 3s linear infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .header-section {
+            margin-bottom: 60px;
+            text-align: left;
+        }
+
+        h1 {
+            margin-bottom: 16px;
+            font-size: 3rem;
+            background: linear-gradient(to right, #fff, #94A3B8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .last-updated {
+            color: var(--primary-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .term-section {
+            margin-bottom: 48px;
+            padding: 32px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: 0.3s;
+        }
+
+        .term-section:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-light);
+        }
+
+        h2 {
+            margin: 0;
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        p, li {
+            color: #CBD5E1; /* Lightened for better visibility */
+            line-height: 1.8;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            text-decoration: none;
+            margin-bottom: 40px;
+            font-weight: 700;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .back-btn:hover {
+            color: #fff;
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .footer-note {
+            margin-top: 80px;
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 30px 15px; }
+            .terms-container { padding: 40px 24px; border-radius: 24px; }
+            h1 { font-size: 2rem; }
+            .term-section { padding: 24px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="terms-container animate-slide">
+        <a href="index.html" class="back-btn"><i data-lucide="arrow-left" style="width: 18px;"></i> Return to Dashboard</a>
+        
+        <div class="header-section">
+            <span class="last-updated">Revised May 2026</span>
+            <h1>Privacy Policy</h1>
+            <p style="font-size: 1.1rem;">Securing the data and strategy of our Premium Brands.</p>
+        </div>
+
+        <div class="term-section">
+            <div class="section-header">
+                <div class="icon-box"><i data-lucide="shield"></i></div>
+                <h2>01. Data Protection Guarantee</h2>
+            </div>
+            <p>Your strategic roadmap and brand data are protected with the highest level of encryption. We do not sell, share, or compromise the integrity of the data provided to us during the execution of our services.</p>
+        </div>
+
+        <div class="term-section">
+            <div class="section-header">
+                <div class="icon-box"><i data-lucide="eye-off"></i></div>
+                <h2>02. Confidentiality of Strategy</h2>
+            </div>
+            <p>All campaigns, planned content, and scheduled broadcasts remain strictly confidential until the scheduled release date. Your competitive advantage is our priority.</p>
+        </div>
+
+        <div class="term-section">
+            <div class="section-header">
+                <div class="icon-box"><i data-lucide="database"></i></div>
+                <h2>03. Information Collection</h2>
+            </div>
+            <p>We only collect the essential metrics required to orchestrate your marketing dominance. This includes:</p>
+            <ul>
+                <li>Brand identifiers and access credentials for automated publishing.</li>
+                <li>Engagement metrics to refine targeting strategies.</li>
+                <li>Communication logs to ensure strategic alignment.</li>
+            </ul>
+        </div>
+
+        <div class="term-section">
+            <div class="section-header">
+                <div class="icon-box"><i data-lucide="lock"></i></div>
+                <h2>04. User Rights</h2>
+            </div>
+            <p>You have the absolute right to request the deletion or modification of your brand's data repository within our ecosystem. Such requests are processed within 24 hours to maintain absolute control over your digital footprint.</p>
+        </div>
+
+        <div class="footer-note">
+            <p style="font-size: 0.8rem; opacity: 0.6;">© 2026 Vertex Global Tech Digital Management. All Strategic Rights Reserved.</p>
+            <p style="font-size: 0.7rem; opacity: 0.4; margin-top: 8px;">Strictly confidential. Unauthorized distribution is prohibited.</p>
+        </div>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>
