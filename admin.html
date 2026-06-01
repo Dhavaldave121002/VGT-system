@@ -283,6 +283,9 @@
                     <button type="submit" class="btn-primary">
                         <i data-lucide="calendar-plus"></i> Schedule
                     </button>
+                    <button type="button" id="resetScheduleBtn" class="btn-secondary" style="margin-left: 8px; background: rgba(255,165,0,0.1); color: #FFA500; border: 1px solid rgba(255,165,0,0.3);">
+                        <i data-lucide="refresh-ccw"></i> Reset Month Schedule
+                    </button>
                 </form>
             </div>
         </main>
@@ -1086,10 +1089,33 @@
 
             if (!brand.events) brand.events = [];
 
-            // ============================================================
-            // PLATFORM-SPECIFIC PLAN VALIDATION
-            // Limits are now applied PER PLATFORM (e.g. 4 videos per IG, 4 videos per FB)
-            // ============================================================
+            // -------------------------------
+            // FREE MONTH & GLOBAL LIMITS
+            // -------------------------------
+            // Exclude festivals from counting
+            const monthNonFestivalEvents = monthEvents.filter(ev => ev.type !== 'festival');
+            // Count current posts and ads for the month (excluding festivals)
+            const currentPosts = monthNonFestivalEvents.filter(isPostEvent).length;
+            const currentAds = monthNonFestivalEvents.filter(ev => ev.type === 'ad').length;
+            // Define global caps (free month allowance)
+            const GLOBAL_POST_CAP = 8; // Max total posts (including videos) per month
+            const GLOBAL_AD_CAP = 6;   // Max total ads per month
+            // Validate that adding the new selections will not exceed caps
+            const additionalPosts = selectedTypes.filter(t => {
+                // Determine if this type will be counted as a post (including videos) after conversion
+                const isVideo = (formatInput === 'reel' || t === 'video' || t === 'shoot');
+                return !isVideo && t !== 'ad' && t !== 'festival';
+            }).length;
+            const additionalAds = selectedTypes.filter(t => t === 'ad').length;
+            if (currentPosts + additionalPosts > GLOBAL_POST_CAP) {
+                alert(`❌ Monthly Post Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_POST_CAP} posts (including videos) per month. Currently scheduled: ${currentPosts}.`);
+                return;
+            }
+            if (currentAds + additionalAds > GLOBAL_AD_CAP) {
+                alert(`❌ Monthly Ad Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_AD_CAP} ads per month. Currently scheduled: ${currentAds}.`);
+                return;
+            }
+
             const monthEvents = brand.events.filter(ev => ev.month === m && ev.year === y && ev.type !== 'festival');
             
             // Utility to categorize existing events
@@ -1198,6 +1224,28 @@
                 titleGroup.style.display = 'none';
             }
         });
+// Reset month schedule button handler
+document.getElementById('resetScheduleBtn').addEventListener('click', () => {
+    const brandId = selectBrand.value;
+    const dateStr = document.getElementById('scheduleDate').value;
+    if (!brandId || !dateStr) {
+        alert('Please select a brand and month to reset.');
+        return;
+    }
+    const brand = storedBrands[brandId];
+    if (!brand) return;
+    const dateObj = new Date(dateStr);
+    const m = dateObj.getMonth();
+    const y = dateObj.getFullYear();
+    const originalCount = brand.events.length;
+    // Remove events for this month/year except festivals
+    brand.events = brand.events.filter(ev => !(ev.month === m && ev.year === y && ev.type !== 'festival'));
+    const removed = originalCount - brand.events.length;
+    alert(removed > 0 ? `Reset month schedule: ${removed} item(s) removed (festivals preserved).` : 'No scheduled items to reset for this month.');
+    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+    syncToSheetDB();
+    renderBrands();
+});
 
         function deleteBrand(id) {
             if (confirm(`Delete brand ${id}?`)) {
