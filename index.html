@@ -220,5 +220,164 @@
         // Initialize Lucide icons
         lucide.createIcons();
     </script>
+<!-- Add Event Modal -->
+<div id="addEventModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:1000;">
+  <div style="background:#1a1a1a;padding:24px;border-radius:12px;max-width:400px;width:90%;color:#fff;">
+    <h3 style="margin-top:0;">Add Event for <span id="modalDate"></span></h3>
+    <form id="addEventForm">
+      <div style="margin-bottom:12px;">
+        <label>Title</label><br>
+        <input type="text" id="eventTitle" required style="width:100%;background:#2a2a2a;color:#fff;padding:8px;border:none;border-radius:4px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label>Type (insta, fb, tw, video, ad, shoot)</label><br>
+        <input type="text" id="eventType" required style="width:100%;background:#2a2a2a;color:#fff;padding:8px;border:none;border-radius:4px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label>Time (e.g., 10:00 AM)</label><br>
+        <input type="text" id="eventTime" required style="width:100%;background:#2a2a2a;color:#fff;padding:8px;border:none;border-radius:4px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label>Description</label><br>
+        <textarea id="eventDesc" required style="width:100%;background:#2a2a2a;color:#fff;padding:8px;border:none;border-radius:4px;" rows="3"></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;">
+        <button type="button" onclick="closeAddEventModal()" style="background:#555;color:#fff;border:none;padding:8px 12px;border-radius:4px;cursor:pointer;">Cancel</button>
+        <button type="submit" style="background:#10B981;color:#fff;border:none;padding:8px 12px;border-radius:4px;cursor:pointer;">Add</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  // Open modal for selected day
+  function openAddEventModal(day, month, year) {
+    const modal = document.getElementById('addEventModal');
+    document.getElementById('modalDate').textContent = `${month+1}/${day}/${year}`;
+    modal.style.display = 'flex';
+    // Store selected date in a temporary variable
+    modal.dataset.day = day;
+    modal.dataset.month = month;
+    modal.dataset.year = year;
+  }
+  function closeAddEventModal() {
+    document.getElementById('addEventModal').style.display = 'none';
+  }
+  // Hook into day click to also allow adding events (Shift+Click)
+  function selectDay(num, element, e) {
+  const year = currentDate.getFullYear();
+  const monthNum = currentDate.getMonth();
+  // Normal selection (single click)
+  const yearNow = new Date().getFullYear();
+  const monthNow = new Date().getMonth();
+  if (e && e.shiftKey) {
+    openAddEventModal(num, monthNum, year);
+    return;
+  }
+  // Existing logic unchanged (highlight and show collection)
+  document.querySelectorAll('.calendar-day').forEach(d => d.style.borderColor = 'transparent');
+  element.style.borderColor = 'var(--primary)';
+  const selectedDateTitle = document.getElementById('selectedDateTitle');
+  const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate);
+  selectedDateTitle.textContent = `${month} ${num}, ${year}`;
+  const dayEvents = (currentBrand.events || []).filter(e =>
+    e.day === num && (e.month === undefined || e.month === monthNum) && (e.year === undefined || e.year === year)
+  );
+  const dailyCollection = document.getElementById('dailyCollection');
+  dailyCollection.innerHTML = '';
+  if (dayEvents.length === 0) {
+    dailyCollection.innerHTML = `<div class="empty-state"><i data-lucide="calendar-days" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><p>Select a date to view<br>planned collection</p></div>`;
+  } else {
+    dayEvents.forEach(event => {
+      const item = document.createElement('div');
+      item.className = 'collection-item animate-slide';
+      let categoryLabel = event.type.toUpperCase();
+      const format = event.format || 'auto';
+      if (format === 'post') categoryLabel = "1 POST";
+      else if (format === 'reel') categoryLabel = "1 REEL";
+      else if (format === 'ad') categoryLabel = "1 PAID AD";
+      else if (event.type === 'shoot') categoryLabel = "SHOOT ASSIGNMENT";
+      else {
+        if (['insta','fb','tw','threads','link'].includes(event.type)) categoryLabel = "1 POST";
+        else if (['video','yt'].includes(event.type)) categoryLabel = "1 REEL";
+        else if (event.type === 'ad') categoryLabel = "1 PAID AD";
+      }
+      item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom:0;">${categoryLabel}</span><span class="time"><i data-lucide="clock" style="width:12px;height:12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size:0.8rem;color:var(--text-gray);line-height:1.4;">${event.desc}</p>`;
+      dailyCollection.appendChild(item);
+    });
+  }
+  if (window.lucide) lucide.createIcons();
+}
+    const year = currentDate.getFullYear();
+    const monthNum = currentDate.getMonth();
+    // Normal selection (single click)
+    const yearNow = new Date().getFullYear();
+    const monthNow = new Date().getMonth();
+    if (event.shiftKey) {
+      openAddEventModal(num, monthNum, year);
+      return;
+    }
+    // Existing logic unchanged (highlight and show collection)
+    document.querySelectorAll('.calendar-day').forEach(d => d.style.borderColor = 'transparent');
+    element.style.borderColor = 'var(--primary)';
+    const selectedDateTitle = document.getElementById('selectedDateTitle');
+    const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate);
+    selectedDateTitle.textContent = `${month} ${num}, ${year}`;
+    const dayEvents = (currentBrand.events || []).filter(e =>
+      e.day === num && (e.month === undefined || e.month === monthNum) && (e.year === undefined || e.year === year)
+    );
+    const dailyCollection = document.getElementById('dailyCollection');
+    dailyCollection.innerHTML = '';
+    if (dayEvents.length === 0) {
+      dailyCollection.innerHTML = `<div class="empty-state"><i data-lucide="calendar-days" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><p>Select a date to view<br>planned collection</p></div>`;
+    } else {
+      dayEvents.forEach(event => {
+        const item = document.createElement('div');
+        item.className = 'collection-item animate-slide';
+        let categoryLabel = event.type.toUpperCase();
+        const format = event.format || 'auto';
+        if (format === 'post') categoryLabel = "1 POST";
+        else if (format === 'reel') categoryLabel = "1 REEL";
+        else if (format === 'ad') categoryLabel = "1 PAID AD";
+        else if (event.type === 'shoot') categoryLabel = "SHOOT ASSIGNMENT";
+        else {
+          if (['insta','fb','tw','threads','link'].includes(event.type)) categoryLabel = "1 POST";
+          else if (['video','yt'].includes(event.type)) categoryLabel = "1 REEL";
+          else if (event.type === 'ad') categoryLabel = "1 PAID AD";
+        }
+        item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom:0;">${categoryLabel}</span><span class="time"><i data-lucide="clock" style="width:12px;height:12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size:0.8rem;color:var(--text-gray);line-height:1.4;">${event.desc}</p>`;
+        dailyCollection.appendChild(item);
+      });
+    }
+    if (window.lucide) lucide.createIcons();
+  }
+
+  // Handle form submission to add new event
+  document.getElementById('addEventForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const modal = document.getElementById('addEventModal');
+    const day = parseInt(modal.dataset.day);
+    const month = parseInt(modal.dataset.month);
+    const year = parseInt(modal.dataset.year);
+    const newEvent = {
+      day: day,
+      month: month,
+      year: year,
+      title: document.getElementById('eventTitle').value.trim(),
+      type: document.getElementById('eventType').value.trim(),
+      time: document.getElementById('eventTime').value.trim(),
+      desc: document.getElementById('eventDesc').value.trim()
+    };
+    // Ensure brand events array exists
+    if (!currentBrand.events) currentBrand.events = [];
+    currentBrand.events.push(newEvent);
+    // Persist and sync
+    localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+    syncToSheetDB();
+    // Refresh UI
+    renderCalendar();
+    closeAddEventModal();
+    alert('Event added successfully');
+  });
+</script>
 </body>
 </html>

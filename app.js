@@ -472,7 +472,7 @@ function renderCalendar() {
 function createDay(num, className, isCurrentMonth = false) {
     const dayDiv = document.createElement('div');
     dayDiv.className = `calendar-day ${className}`;
-    if (isCurrentMonth) dayDiv.addEventListener('click', () => selectDay(num, dayDiv));
+    if (isCurrentMonth) dayDiv.addEventListener('click', (e) => selectDay(num, dayDiv, e));
 
     dayDiv.innerHTML = `<span class="day-num">${num}</span>`;
 
@@ -521,7 +521,46 @@ function createDay(num, className, isCurrentMonth = false) {
     calendarGrid.appendChild(dayDiv);
 }
 
-function selectDay(num, element) {
+function selectDay(num, element, e) {
+    const year = currentDate.getFullYear();
+    const monthNum = currentDate.getMonth();
+    // Shift+Click to add event
+    if (e && e.shiftKey) {
+        openAddEventModal(num, monthNum, year);
+        return;
+    }
+    // Existing logic unchanged (highlight and show collection)
+    document.querySelectorAll('.calendar-day').forEach(d => d.style.borderColor = 'transparent');
+    element.style.borderColor = 'var(--primary)';
+    const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate);
+    selectedDateTitle.textContent = `${month} ${num}, ${year}`;
+    const dayEvents = (currentBrand.events || []).filter(e =>
+        e.day === num && (e.month === undefined || e.month === monthNum) && (e.year === undefined || e.year === year)
+    );
+    dailyCollection.innerHTML = '';
+    if (dayEvents.length === 0) {
+        dailyCollection.innerHTML = `<div class="empty-state"><i data-lucide="coffee" style="width: 32px; height: 32px; opacity: 0.2; margin-bottom: 12px;"></i><p>No collection scheduled for this day.</p></div>`;
+    } else {
+        dayEvents.forEach(event => {
+            const item = document.createElement('div');
+            item.className = 'collection-item animate-slide';
+            let categoryLabel = event.type.toUpperCase();
+            const format = event.format || 'auto';
+            if (format === 'post') categoryLabel = "1 POST";
+            else if (format === 'reel') categoryLabel = "1 REEL";
+            else if (format === 'ad') categoryLabel = "1 PAID AD";
+            else if (event.type === 'shoot') categoryLabel = "SHOOT ASSIGNMENT";
+            else {
+                if (['insta','fb','tw','threads','link'].includes(event.type)) categoryLabel = "1 POST";
+                else if (['video','yt'].includes(event.type)) categoryLabel = "1 REEL";
+                else if (event.type === 'ad') categoryLabel = "1 PAID AD";
+            }
+            item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom:0;">${categoryLabel}</span><span class="time"><i data-lucide="clock" style="width:12px;height:12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size:0.8rem;color:var(--text-gray);line-height:1.4;">${event.desc}</p>`;
+            dailyCollection.appendChild(item);
+        });
+    }
+    if (window.lucide) lucide.createIcons();
+}
     const year = currentDate.getFullYear();
     const monthNum = currentDate.getMonth();
 
