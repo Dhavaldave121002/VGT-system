@@ -21,55 +21,7 @@
         catch (e) { return null; }
     }
 
-    // ── Hardened default brand data (fallback source of truth) ──
-    // Passwords stored as SHA-256 hashes (never plain text)
-    // nike123    → f6ef843383e5a36e98e8a69e01c3f9da...
-    // sbux123    → hash below
-    // apple123   → hash below
-    const SECURE_DEFAULTS_ENCODED = encode({
-        nike: {
-            name: 'Nike Global',
-            handle: '@nike',
-            pass: 'f6ef843383e5a36e98e8a69e01c3f9da3e6faef1c4f8d14f4e2a3f9b07c2c7a4', // nike123 sha256
-            logo: 'https://img.freepik.com/free-icon/nike_318-566072.jpg',
-            plan: 'Plan 1: 3 Posts, 2 Videos',
-            trial: 'Phase 1: Buy 1, Get 1 Free',
-            locked: false,
-            gender: 'male',
-            events: [
-                { day: 5, month: 4, year: 2026, type: 'insta', title: 'Air Max Launch', time: '10:00 AM', desc: 'New colorway announcement for Air Max 2026.' },
-                { day: 12, month: 4, year: 2026, type: 'fb', title: 'Berlin Marathon', time: '08:00 AM', desc: 'Live stream and highlight reel of the marathon.' }
-            ]
-        },
-        starbucks: {
-            name: 'Starbucks Coffee',
-            handle: '@starbucks',
-            pass: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', // sbux123 sha256
-            logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png',
-            plan: 'Plan 2: 5 Posts, 3 Videos',
-            trial: 'Phase 2: 10% Discount',
-            locked: false,
-            gender: 'female',
-            events: [
-                { day: 2, month: 4, year: 2026, type: 'fb', title: 'Pumpkin Spice Return', time: '09:00 AM', desc: 'Seasonal favorite returns to all stores.' },
-                { day: 8, month: 4, year: 2026, type: 'insta', title: 'Latte Art Contest', time: '01:00 PM', desc: 'Inviting followers to share their best art.' }
-            ]
-        },
-        apple: {
-            name: 'Apple Inc.',
-            handle: '@apple',
-            pass: 'f7c3bc1d808e04732adf679965ccc34ca7ae3441700394920cc' + '40f00e3d334c', // apple123 sha256
-            logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg',
-            plan: 'Plan 3: 7 Posts, 5 Videos',
-            trial: 'Phase 3: Premium Active',
-            locked: false,
-            gender: 'male',
-            events: [
-                { day: 1, month: 4, year: 2026, type: 'tw', title: 'WWDC Keynote', time: '10:00 AM', desc: 'Live coverage of the developers conference.' },
-                { day: 20, month: 4, year: 2026, type: 'fb', title: 'M3 Chip Launch', time: '09:00 AM', desc: 'Performance deep dive for the new Mac line.' }
-            ]
-        }
-    });
+    const SECURE_DEFAULTS_ENCODED = encode({});
 
     // ── Storage key ──────────────────────────────────────────
     const LS_KEY = 'socialSphere_brands';
