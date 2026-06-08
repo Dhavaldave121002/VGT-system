@@ -719,7 +719,7 @@ main {
 }
 
 .calendar-day.today .day-num { color: var(--primary); font-weight: 800; }
-.calendar-day.inactive { opacity: 0.15; pointer-events: none; }
+.calendar-day.inactive { opacity: 0.15; }
 
 /* Event Items */
 .event-tag {

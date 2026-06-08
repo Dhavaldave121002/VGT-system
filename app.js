@@ -459,17 +459,93 @@ function renderCalendar() {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const prevLastDay = new Date(year, month, 0).getDate();
-    for (let i = firstDay; i > 0; i--) createDay(prevLastDay - i + 1, 'inactive');
+        // Previous month days
+    for (let i = firstDay; i > 0; i--) createDay(prevLastDay - i + 1, 'inactive', false, -1);
+    // Current month days
     for (let i = 1; i <= daysInMonth; i++) {
         const isToday = i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
-        createDay(i, isToday ? 'today' : '', true);
+        createDay(i, isToday ? 'today' : '', true, 0);
     }
+    // Next month filler days
     const remaining = 42 - (firstDay + daysInMonth);
-    for (let i = 1; i <= remaining; i++) createDay(i, 'inactive');
+    for (let i = 1; i <= remaining; i++) createDay(i, 'inactive', false, 1);
     if (window.lucide) lucide.createIcons();
 }
 
-function createDay(num, className, isCurrentMonth = false) {
+function createDay(num, className, isCurrentMonth = false, monthOffset = 0) {
+    const dayDiv = document.createElement('div');
+    dayDiv.className = `calendar-day ${className}`;
+    // Store actual month and year for this cell
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + monthOffset;
+    dayDiv.dataset.month = month;
+    dayDiv.dataset.year = year;
+    if (isCurrentMonth) {
+        // Click for selection or shift-add
+        dayDiv.addEventListener('click', (e) => {
+            if (e.shiftKey) {
+                // Open modal with correct date context
+                openAddEventModal(num, month, year);
+                return;
+            }
+            selectDay(num, dayDiv, e);
+        });
+    } else {
+        // For inactive days, allow shift+click to add event and normal click to select day
+        dayDiv.addEventListener('click', (e) => {
+            if (e.shiftKey) {
+                openAddEventModal(num, month, year);
+                return;
+            }
+            selectDay(num, dayDiv, e);
+        });
+    }
+
+    dayDiv.innerHTML = `<span class="day-num">${num}</span>`;
+
+    if (isCurrentMonth && currentBrand && currentBrand.events) {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        // Match day, month, and year (handle legacy data that only had day)
+        const dayEvents = currentBrand.events.filter(e =>
+            e.day === num &&
+            (e.month === undefined || e.month === month) &&
+            (e.year === undefined || e.year === year)
+        );
+
+        dayEvents.forEach(event => {
+            const eventDiv = document.createElement('div');
+            eventDiv.className = `event-tag ${event.type}`;
+            // UI Enhancement: Show "1 Post" or "1 Reel" based on manual selection OR type inference
+            let displayLabel = event.title;
+            const format = event.format || 'auto';
+
+            if (format === 'post') {
+                displayLabel = "1 Post";
+            } else if (format === 'reel') {
+                displayLabel = "1 Reel";
+            } else if (format === 'ad') {
+                displayLabel = "1 Paid Ad";
+            } else if (event.type === 'shoot') {
+                displayLabel = "1 Shoot Assignment";
+            } else {
+                // Auto-detection fallback for older events or "Auto-Detect" selection
+                if (['insta', 'fb', 'tw', 'threads', 'link'].includes(event.type)) {
+                    displayLabel = "1 Post";
+                } else if (['video', 'yt'].includes(event.type)) {
+                    displayLabel = "1 Reel";
+                } else if (event.type === 'ad') {
+                    displayLabel = "1 Paid Ad";
+                }
+            }
+
+            eventDiv.innerHTML = `<i data-lucide="${getIconName(event.type)}" style="width: 12px; height: 12px;"></i> ${displayLabel}`;
+            dayDiv.appendChild(eventDiv);
+        });
+    }
+    calendarGrid.appendChild(dayDiv);
+}
     const dayDiv = document.createElement('div');
     dayDiv.className = `calendar-day ${className}`;
     if (isCurrentMonth) dayDiv.addEventListener('click', (e) => selectDay(num, dayDiv, e));
@@ -521,7 +597,51 @@ function createDay(num, className, isCurrentMonth = false) {
     calendarGrid.appendChild(dayDiv);
 }
 
-function selectDay(num, element, e) {
+    // Ensure selectDay still works with new data attributes
+    function selectDay(num, element, e) {
+        const year = parseInt(element.dataset.year);
+        const monthNum = parseInt(element.dataset.month);
+        // Normal selection (single click)
+        const yearNow = new Date().getFullYear();
+        const monthNow = new Date().getMonth();
+        if (e && e.shiftKey) {
+            openAddEventModal(num, monthNum, year);
+            return;
+        }
+        // Existing logic unchanged (highlight and show collection)
+        document.querySelectorAll('.calendar-day').forEach(d => d.style.borderColor = 'transparent');
+        element.style.borderColor = 'var(--primary)';
+        const selectedDateTitle = document.getElementById('selectedDateTitle');
+        const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(year, monthNum));
+        selectedDateTitle.textContent = `${month} ${num}, ${year}`;
+        const dayEvents = (currentBrand.events || []).filter(e =>
+            e.day === num && (e.month === undefined || e.month === monthNum) && (e.year === undefined || e.year === year)
+        );
+        const dailyCollection = document.getElementById('dailyCollection');
+        dailyCollection.innerHTML = '';
+        if (dayEvents.length === 0) {
+            dailyCollection.innerHTML = `<div class="empty-state"><i data-lucide="calendar-days" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><p>Select a date to view<br>planned collection</p></div>`;
+        } else {
+            dayEvents.forEach(event => {
+                const item = document.createElement('div');
+                item.className = 'collection-item animate-slide';
+                let categoryLabel = event.type.toUpperCase();
+                const format = event.format || 'auto';
+                if (format === 'post') categoryLabel = "1 POST";
+                else if (format === 'reel') categoryLabel = "1 REEL";
+                else if (format === 'ad') categoryLabel = "1 PAID AD";
+                else if (event.type === 'shoot') categoryLabel = "SHOOT ASSIGNMENT";
+                else {
+                    if (['insta','fb','tw','threads','link'].includes(event.type)) categoryLabel = "1 POST";
+                    else if (['video','yt'].includes(event.type)) categoryLabel = "1 REEL";
+                    else if (event.type === 'ad') categoryLabel = "1 PAID AD";
+                }
+                item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom:0;">${categoryLabel}</span><span class="time"><i data-lucide="clock" style="width:12px;height:12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size:0.8rem;color:var(--text-gray);line-height:1.4;">${event.desc}</p>`;
+                dailyCollection.appendChild(item);
+            });
+        }
+        if (window.lucide) lucide.createIcons();
+    }
     const year = currentDate.getFullYear();
     const monthNum = currentDate.getMonth();
     // Shift+Click to add event
