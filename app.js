@@ -11,48 +11,13 @@ async function hashPassword(str) {
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-const defaultBrands = {
-    'nike': {
-        name: 'Nike Global',
-        handle: '@nike',
-        pass: 'nike123',
-        logo: 'https://img.freepik.com/free-icon/nike_318-566072.jpg',
-        events: [
-            { day: 5, type: 'insta', title: 'Air Max Launch', time: '10:00 AM', desc: 'New colorway announcement for Air Max 2026.' },
-            { day: 5, type: 'tw', title: 'Poll: Favorite Color?', time: '02:00 PM', desc: 'Engagement poll for upcoming release.' },
-            { day: 12, type: 'fb', title: 'Berlin Marathon', time: '08:00 AM', desc: 'Live stream and highlight reel of the marathon.' },
-            { day: 18, type: 'tw', title: 'LeBron Collab', time: '12:00 PM', desc: 'Sneak peek at the King James collection.' },
-            { day: 25, type: 'insta', title: 'Eco-Running Ad', time: '04:00 PM', desc: 'Promoting sustainable materials in gear.' }
-        ]
-    },
-    'starbucks': {
-        name: 'Starbucks Coffee',
-        handle: '@starbucks',
-        pass: 'sbux123',
-        logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png',
-        events: [
-            { day: 2, type: 'fb', title: 'Pumpkin Spice Return', time: '09:00 AM', desc: 'Seasonal favorite returns to all stores.' },
-            { day: 8, type: 'insta', title: 'Latte Art Contest', time: '01:00 PM', desc: 'Inviting followers to share their best art.' },
-            { day: 15, type: 'tw', title: 'Ethical Sourcing', time: '11:00 AM', desc: 'Thread on our coffee farmers and fair trade.' },
-            { day: 22, type: 'insta', title: 'Barista Stories', time: '03:00 PM', desc: 'A day in the life of a Starbucks barista.' }
-        ]
-    },
-    'apple': {
-        name: 'Apple Inc.',
-        handle: '@apple',
-        pass: 'apple123',
-        logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg',
-        events: [
-            { day: 1, type: 'tw', title: 'WWDC Keynote', time: '10:00 AM', desc: 'Live coverage of the developers conference.' },
-            { day: 10, type: 'insta', title: 'Shot on iPhone', time: '02:00 PM', desc: 'Showcasing macro photography results.' },
-            { day: 20, type: 'fb', title: 'M3 Chip Launch', time: '09:00 AM', desc: 'Performance deep dive for the new Mac line.' },
-            { day: 28, type: 'tw', title: 'Privacy Update', time: '11:00 AM', desc: 'New security features overview.' }
-        ]
-    }
-};
-
-// Global brands object that merges defaults with localStorage
-let brands = JSON.parse(localStorage.getItem('socialSphere_brands')) || defaultBrands;
+// Global brands object that merges local store with fetched data
+let brands = {};
+if (window.LocalDataStore) {
+    brands = LocalDataStore.loadAll() || {};
+} else {
+    brands = JSON.parse(localStorage.getItem('socialSphere_brands')) || {};
+}
 
 // SheetDB Sync Engine (Client-Side) - JSON Blob Architecture with Failover
 async function syncToSheetDB() {
@@ -97,7 +62,8 @@ async function loadFromSheetDB() {
                 const rows = await res.json();
                 if (rows && rows.length > 0 && rows[0].database_json) {
                     brands = JSON.parse(rows[0].database_json);
-                    localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+                    if (window.LocalDataStore) LocalDataStore.saveAll(brands);
+                    else localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
                     console.log(`✅ Loaded from: ${url}`);
                     return true;
                 } else {
@@ -173,7 +139,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (migratedLocal) {
-        localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+        if (window.LocalDataStore) LocalDataStore.saveAll(brands);
+        else localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
         syncToSheetDB();
     }
 
@@ -246,7 +213,7 @@ loginForm.addEventListener('submit', async (e) => {
         }
 
         // Check if password matches
-        if (brand.pass === inputHash || brand.pass === password || brandId === 'nike' || brandId === 'starbucks' || brandId === 'apple') {
+        if (brand.pass === inputHash || brand.pass === password) {
             errorMsg.style.display = 'none';
             loginBtn.innerHTML = `<i data-lucide="check-circle"></i> Authenticated`;
             loginBtn.style.background = '#10B981';
@@ -545,185 +512,6 @@ function createDay(num, className, isCurrentMonth = false, monthOffset = 0) {
         });
     }
     calendarGrid.appendChild(dayDiv);
-}
-    const dayDiv = document.createElement('div');
-    dayDiv.className = `calendar-day ${className}`;
-    if (isCurrentMonth) dayDiv.addEventListener('click', (e) => selectDay(num, dayDiv, e));
-
-    dayDiv.innerHTML = `<span class="day-num">${num}</span>`;
-
-    if (isCurrentMonth && currentBrand && currentBrand.events) {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-
-        // Match day, month, and year (handle legacy data that only had day)
-        const dayEvents = currentBrand.events.filter(e =>
-            e.day === num &&
-            (e.month === undefined || e.month === month) &&
-            (e.year === undefined || e.year === year)
-        );
-
-        dayEvents.forEach(event => {
-            const eventDiv = document.createElement('div');
-            eventDiv.className = `event-tag ${event.type}`;
-            
-            // UI Enhancement: Show "1 Post" or "1 Reel" based on manual selection OR type inference
-            let displayLabel = event.title;
-            const format = event.format || 'auto';
-
-            if (format === 'post') {
-                displayLabel = "1 Post";
-            } else if (format === 'reel') {
-                displayLabel = "1 Reel";
-            } else if (format === 'ad') {
-                displayLabel = "1 Paid Ad";
-            } else if (event.type === 'shoot') {
-                displayLabel = "1 Shoot Assignment";
-            } else {
-                // Auto-detection fallback for older events or "Auto-Detect" selection
-                if (['insta', 'fb', 'tw', 'threads', 'link'].includes(event.type)) {
-                    displayLabel = "1 Post";
-                } else if (['video', 'yt'].includes(event.type)) {
-                    displayLabel = "1 Reel";
-                } else if (event.type === 'ad') {
-                    displayLabel = "1 Paid Ad";
-                }
-            }
-            
-            eventDiv.innerHTML = `<i data-lucide="${getIconName(event.type)}" style="width: 12px; height: 12px;"></i> ${displayLabel}`;
-            dayDiv.appendChild(eventDiv);
-        });
-    }
-    calendarGrid.appendChild(dayDiv);
-}
-
-    // Ensure selectDay still works with new data attributes
-    function selectDay(num, element, e) {
-        const year = parseInt(element.dataset.year);
-        const monthNum = parseInt(element.dataset.month);
-        // Normal selection (single click)
-        const yearNow = new Date().getFullYear();
-        const monthNow = new Date().getMonth();
-        if (e && e.shiftKey) {
-            openAddEventModal(num, monthNum, year);
-            return;
-        }
-        // Existing logic unchanged (highlight and show collection)
-        document.querySelectorAll('.calendar-day').forEach(d => d.style.borderColor = 'transparent');
-        element.style.borderColor = 'var(--primary)';
-        const selectedDateTitle = document.getElementById('selectedDateTitle');
-        const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(year, monthNum));
-        selectedDateTitle.textContent = `${month} ${num}, ${year}`;
-        const dayEvents = (currentBrand.events || []).filter(e =>
-            e.day === num && (e.month === undefined || e.month === monthNum) && (e.year === undefined || e.year === year)
-        );
-        const dailyCollection = document.getElementById('dailyCollection');
-        dailyCollection.innerHTML = '';
-        if (dayEvents.length === 0) {
-            dailyCollection.innerHTML = `<div class="empty-state"><i data-lucide="calendar-days" style="width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px;"></i><p>Select a date to view<br>planned collection</p></div>`;
-        } else {
-            dayEvents.forEach(event => {
-                const item = document.createElement('div');
-                item.className = 'collection-item animate-slide';
-                let categoryLabel = event.type.toUpperCase();
-                const format = event.format || 'auto';
-                if (format === 'post') categoryLabel = "1 POST";
-                else if (format === 'reel') categoryLabel = "1 REEL";
-                else if (format === 'ad') categoryLabel = "1 PAID AD";
-                else if (event.type === 'shoot') categoryLabel = "SHOOT ASSIGNMENT";
-                else {
-                    if (['insta','fb','tw','threads','link'].includes(event.type)) categoryLabel = "1 POST";
-                    else if (['video','yt'].includes(event.type)) categoryLabel = "1 REEL";
-                    else if (event.type === 'ad') categoryLabel = "1 PAID AD";
-                }
-                item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom:0;">${categoryLabel}</span><span class="time"><i data-lucide="clock" style="width:12px;height:12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size:0.8rem;color:var(--text-gray);line-height:1.4;">${event.desc}</p>`;
-                dailyCollection.appendChild(item);
-            });
-        }
-        if (window.lucide) lucide.createIcons();
-    }
-    const year = currentDate.getFullYear();
-    const monthNum = currentDate.getMonth();
-    // Shift+Click to add event
-    if (e && e.shiftKey) {
-        openAddEventModal(num, monthNum, year);
-        return;
-    }
-    // Existing logic unchanged (highlight and show collection)
-    document.querySelectorAll('.calendar-day').forEach(d => d.style.borderColor = 'transparent');
-    element.style.borderColor = 'var(--primary)';
-    const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate);
-    selectedDateTitle.textContent = `${month} ${num}, ${year}`;
-    const dayEvents = (currentBrand.events || []).filter(e =>
-        e.day === num && (e.month === undefined || e.month === monthNum) && (e.year === undefined || e.year === year)
-    );
-    dailyCollection.innerHTML = '';
-    if (dayEvents.length === 0) {
-        dailyCollection.innerHTML = `<div class="empty-state"><i data-lucide="coffee" style="width: 32px; height: 32px; opacity: 0.2; margin-bottom: 12px;"></i><p>No collection scheduled for this day.</p></div>`;
-    } else {
-        dayEvents.forEach(event => {
-            const item = document.createElement('div');
-            item.className = 'collection-item animate-slide';
-            let categoryLabel = event.type.toUpperCase();
-            const format = event.format || 'auto';
-            if (format === 'post') categoryLabel = "1 POST";
-            else if (format === 'reel') categoryLabel = "1 REEL";
-            else if (format === 'ad') categoryLabel = "1 PAID AD";
-            else if (event.type === 'shoot') categoryLabel = "SHOOT ASSIGNMENT";
-            else {
-                if (['insta','fb','tw','threads','link'].includes(event.type)) categoryLabel = "1 POST";
-                else if (['video','yt'].includes(event.type)) categoryLabel = "1 REEL";
-                else if (event.type === 'ad') categoryLabel = "1 PAID AD";
-            }
-            item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom:0;">${categoryLabel}</span><span class="time"><i data-lucide="clock" style="width:12px;height:12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size:0.8rem;color:var(--text-gray);line-height:1.4;">${event.desc}</p>`;
-            dailyCollection.appendChild(item);
-        });
-    }
-    if (window.lucide) lucide.createIcons();
-}
-    const year = currentDate.getFullYear();
-    const monthNum = currentDate.getMonth();
-
-    document.querySelectorAll('.calendar-day').forEach(d => d.style.borderColor = 'transparent');
-    element.style.borderColor = 'var(--primary)';
-
-    const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentDate);
-    selectedDateTitle.textContent = `${month} ${num}, ${year}`;
-
-    const dayEvents = (currentBrand.events || []).filter(e =>
-        e.day === num &&
-        (e.month === undefined || e.month === monthNum) &&
-        (e.year === undefined || e.year === year)
-    );
-
-    dailyCollection.innerHTML = '';
-    if (dayEvents.length === 0) {
-        dailyCollection.innerHTML = `<div class="empty-state"><i data-lucide="coffee" style="width: 32px; height: 32px; opacity: 0.2; margin-bottom: 12px;"></i><p>No collection scheduled for this day.</p></div>`;
-    } else {
-        dayEvents.forEach(event => {
-            const item = document.createElement('div');
-            item.className = 'collection-item animate-slide';
-            
-            // Sidebar also reflects the "1 Post/Reel" status
-            let categoryLabel = event.type.toUpperCase();
-            const format = event.format || 'auto';
-
-            if (format === 'post') categoryLabel = "1 POST";
-            else if (format === 'reel') categoryLabel = "1 REEL";
-            else if (format === 'ad') categoryLabel = "1 PAID AD";
-            else if (event.type === 'shoot') categoryLabel = "SHOOT ASSIGNMENT";
-            else {
-                // Fallback
-                if (['insta', 'fb', 'tw', 'threads', 'link'].includes(event.type)) categoryLabel = "1 POST";
-                else if (['video', 'yt'].includes(event.type)) categoryLabel = "1 REEL";
-                else if (event.type === 'ad') categoryLabel = "1 PAID AD";
-            }
-
-            item.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;"><span class="event-tag ${event.type}" style="margin-bottom: 0;">${categoryLabel}</span><span class="time"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> ${event.time}</span></div><h5>${event.title}</h5><p style="font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">${event.desc}</p>`;
-            dailyCollection.appendChild(item);
-        });
-    }
-    if (window.lucide) lucide.createIcons();
 }
 
 function getIconName(type) {
@@ -1242,6 +1030,7 @@ setInterval(() => {
         renderChatMessages();
         localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
         syncToSheetDB();
+    
     }
 }, 60000); // Check every 60 seconds
 
