@@ -27,7 +27,6 @@
     const LS_KEY = 'socialSphere_brands';
     const LS_BACKUP_KEY = 'socialSphere_brands_backup';
     const LS_STORE_VERSION = 'socialSphere_store_v1';
-const SAVE_TOKEN = 'PLACEHOLDER_TOKEN'; // Replace with your Vercel env token
 
     // ── Public API exposed on window ─────────────────────────
     window.LocalDataStore = {
@@ -59,36 +58,24 @@ const SAVE_TOKEN = 'PLACEHOLDER_TOKEN'; // Replace with your Vercel env token
          * Save brands to localStorage + create encrypted backup snapshot.
          * Called automatically on every save in app.js via saveAll().
          */
-// Save data locally and also sync to server for persistent JSON storage.
-async saveAll(brandsObj) {
-    try {
-        // Local persistence
-        localStorage.setItem(LS_KEY, JSON.stringify(brandsObj));
-        const encoded = encode(brandsObj);
-        if (encoded) localStorage.setItem(LS_BACKUP_KEY, encoded);
-        
-        // Server‑side persistence
-        const response = await fetch('/api/saveData', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // Optional secret token – set via Vercel env var "SAVE_TOKEN"
-                'x-save-token': SAVE_TOKEN
-            },
-            body: JSON.stringify({ brands: brandsObj })
-        });
-        
-        if (response.ok) {
-            localStorage.setItem(LS_STORE_VERSION, Date.now().toString());
-        } else {
-            console.warn('⚠️ Failed to sync to server:', await response.text());
-        }
-        return true;
-    } catch (e) {
-        console.error('❌ LocalDataStore save failed:', e);
-        return false;
-    }
-},
+        /**
+         * Save brands to localStorage (primary) + Base64 backup snapshot.
+         * Both writes happen synchronously – no network calls that can fail.
+         */
+        saveAll(brandsObj) {
+            try {
+                const json = JSON.stringify(brandsObj);
+                localStorage.setItem(LS_KEY, json);
+                const encoded = encode(brandsObj);
+                if (encoded) localStorage.setItem(LS_BACKUP_KEY, encoded);
+                localStorage.setItem(LS_STORE_VERSION, Date.now().toString());
+                console.log('✅ LocalDataStore: Saved', Object.keys(brandsObj).length, 'brands.');
+                return true;
+            } catch (e) {
+                console.error('❌ LocalDataStore save failed:', e);
+                return false;
+            }
+        },
 
         /**
          * Returns timestamp of last successful save.

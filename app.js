@@ -125,8 +125,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (loginForm) loginForm.reset();
     if (window.lucide) lucide.createIcons();
 
-    const loadingEl = document.getElementById('loginScreen');
-    await loadFromSheetDB(); // Pull latest data from cloud
+    // Only pull from SheetDB if we have no local data
+    if (!Object.keys(brands).length) {
+        await loadFromSheetDB(); // Pull latest data from cloud when local store is empty
+    }
 
     let migratedLocal = false;
     // Re-run property audit after cloud load and migrate passwords to SHA-256
