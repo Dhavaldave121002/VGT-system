@@ -829,7 +829,13 @@
         function clearVideoTask(brandId, taskIndex) {
             if (confirm('Dismiss this submitted link from your view?')) {
                 storedBrands[brandId].videoTasks.splice(taskIndex, 1);
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
+                syncToSheetDB();
                 renderAdminVideoTasks();
             }
         }
@@ -846,7 +852,12 @@
                 }
             }
             if (stateChanged) {
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
                 syncToSheetDB();
             }
 
@@ -892,7 +903,13 @@
                     storedBrands[id].manualUnlockOverride = false;
                 }
 
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
+                syncToSheetDB();
                 renderBrands();
             }
         }
@@ -901,7 +918,13 @@
             const newPass = prompt(`Enter new Security Key for ${storedBrands[id].name}:`);
             if (newPass && newPass.trim().length > 0) {
                 storedBrands[id].pass = await hashPassword(newPass.trim());
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
+                syncToSheetDB();
                 renderBrands();
                 alert('Security Key updated successfully!');
             }
@@ -1086,9 +1109,9 @@
             }
 
             const limits = {
-                'Plan 1: 3 Posts, 2 Videos': { posts: 3, videos: 2, ads: 3 },
-                'Plan 2: 6 Posts Only':       { posts: 6, videos: 0, ads: 3 },
-                'Plan 3: 4 Videos Only':      { posts: 0, videos: 4, ads: 3 }
+                'Plan 1: 3 Posts, 2 Videos': { posts: 3, videos: 2, ads: 6 },
+                'Plan 2: 6 Posts Only':       { posts: 6, videos: 0, ads: 6 },
+                'Plan 3: 4 Videos Only':      { posts: 0, videos: 4, ads: 6 }
             };
 
             const currentPlan = brand.plan || 'Plan 1: 3 Posts, 2 Videos';
@@ -1224,7 +1247,14 @@
 
             if (addedCount > 0) {
                 alert(`Successfully scheduled ${addedCount} item(s)!`);
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    // Fallback: direct localStorage (should not happen)
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
+                syncToSheetDB();
                 renderBrands();
                 scheduleForm.reset();
                 document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('active'));
@@ -1257,7 +1287,13 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
         function deleteBrand(id) {
             if (confirm(`Delete brand ${id}?`)) {
                 delete storedBrands[id];
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
+                syncToSheetDB();
                 renderBrands();
             }
         }
@@ -1341,7 +1377,13 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
                 const index = brand.events.findIndex(e => e.id === evId);
                 if (index !== -1) {
                     brand.events.splice(index, 1);
-                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                    // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
+                syncToSheetDB();
                     renderBrandRoadmap();
                     renderBrands();
                 }
@@ -1422,7 +1464,12 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             const originalLength = brand.chat.length;
             brand.chat = brand.chat.filter(msg => (now - msg.time) < expiry);
             if (brand.chat.length !== originalLength) {
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
                 syncToSheetDB();
             }
 
@@ -1595,7 +1642,13 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
                         storedBrands[id].chat = [];
                     }
                 });
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+                // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
+                syncToSheetDB();
                 renderGlobalSupportInbox();
                 alert("All questions and chat histories have been cleared.");
             }
@@ -1667,7 +1720,12 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
 
             if (stateChanged) {
                 console.log("🧹 Admin: Background cleanup completed.");
-                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                // Persist using LocalDataStore (encrypted) and sync to SheetDB
+                if (window.LocalDataStore) {
+                    LocalDataStore.saveAll(storedBrands);
+                } else {
+                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                }
                 syncToSheetDB();
                 renderGlobalSupportInbox();
                 if (currentAdminChatId) {
