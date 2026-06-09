@@ -1,5 +1,12 @@
 // Data Management - Sync with Admin Portal
 // Multi-API Failover System (Automatic Fallback if limit reached)
+
+// ── Server JSON Storage Config ────────────────────────────────────────────
+// Set this to your SAVE_TOKEN value from Vercel environment variables.
+// This is the same token set as SAVE_TOKEN in your Vercel project settings.
+const SERVER_SAVE_TOKEN = window.__SERVER_SAVE_TOKEN__ || '';
+// ─────────────────────────────────────────────────────────────────────────
+
 const SHEETDB_API_URLS = [
     "https://sheetdb.io/api/v1/vvutbhezp19tr", // Primary API
     "https://sheetdb.io/api/v1/bv1v9wrq0pziw" // ✅ Secondary API Connected
@@ -28,6 +35,8 @@ if (window.LocalDataStore) {
 
 // SheetDB Sync Engine (Client-Side) - JSON Blob Architecture with Failover
 async function syncToSheetDB() {
+    syncToServer(); // 🚀 Also sync to Vercel Server JSON Storage concurrently
+
     for (const url of SHEETDB_API_URLS) {
         if (!url || url.includes('YOUR_NEW_API_ID')) continue;
         try {
@@ -90,6 +99,47 @@ async function loadFromSheetDB() {
     return false;
 }
 
+// ── Sync brands to server JSON storage ────────────────────────────────────
+async function syncToServer() {
+    if (!SERVER_SAVE_TOKEN) return; // skip if token not configured
+    try {
+        const res = await fetch('/api/saveData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-save-token': SERVER_SAVE_TOKEN
+            },
+            body: JSON.stringify({ brands })
+        });
+        if (res.ok) console.log('✅ Synced to server JSON storage');
+        else console.warn('⚠️ Server sync failed:', res.status);
+    } catch (e) {
+        console.warn('⚠️ syncToServer error', e);
+    }
+}
+
+// Load data from server JSON storage
+async function loadFromServer() {
+    if (!SERVER_SAVE_TOKEN) return false; // skip if token not configured
+    try {
+        const res = await fetch('/api/loadData', {
+            headers: { 'Accept': 'application/json', 'x-save-token': SERVER_SAVE_TOKEN }
+        });
+        if (!res.ok) return false;
+        const data = await res.json();
+        if (data && data.brands) {
+            brands = data.brands;
+            if (window.LocalDataStore) LocalDataStore.saveAll(brands);
+            else localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+            console.log('✅ Loaded from server');
+            return true;
+        }
+    } catch (e) {
+        console.warn('⚠️ loadFromServer error', e);
+    }
+    return false;
+}
+
 // PERFECTION AUDIT: Ensure all brands (new and legacy) have necessary properties
 Object.keys(brands).forEach(key => {
     if (!brands[key].name) brands[key].name = key;
@@ -125,9 +175,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (loginForm) loginForm.reset();
     if (window.lucide) lucide.createIcons();
 
-    // Only pull from SheetDB if we have no local data
+    // Load data with priority: localStorage → server → SheetDB
     if (!Object.keys(brands).length) {
-        await loadFromSheetDB(); // Pull latest data from cloud when local store is empty
+        // Try server first (if API available)
+        try {
+            const serverLoaded = await loadFromServer();
+            if (!serverLoaded) {
+                await loadFromSheetDB(); // fallback to SheetDB if server empty or fails
+            }
+        } catch (e) {
+            console.warn('⚠️ Server load failed, falling back to SheetDB', e);
+            await loadFromSheetDB();
+        }
     }
 
     let migratedLocal = false;

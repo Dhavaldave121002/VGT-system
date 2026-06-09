@@ -64,13 +64,28 @@
          */
         saveAll(brandsObj) {
             try {
-                const json = JSON.stringify(brandsObj);
-                localStorage.setItem(LS_KEY, json);
-                const encoded = encode(brandsObj);
-                if (encoded) localStorage.setItem(LS_BACKUP_KEY, encoded);
-                localStorage.setItem(LS_STORE_VERSION, Date.now().toString());
-                console.log('✅ LocalDataStore: Saved', Object.keys(brandsObj).length, 'brands.');
-                return true;
+    const json = JSON.stringify(brandsObj);
+    localStorage.setItem(LS_KEY, json);
+    const encoded = encode(brandsObj);
+    if (encoded) localStorage.setItem(LS_BACKUP_KEY, encoded);
+    localStorage.setItem(LS_STORE_VERSION, Date.now().toString());
+    console.log('✅ LocalDataStore: Saved', Object.keys(brandsObj).length, 'brands.');
+    // Sync to server if SAVE_TOKEN is configured
+    if (typeof process !== 'undefined' && process.env && process.env.SAVE_TOKEN) {
+        fetch('/api/saveData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-save-token': process.env.SAVE_TOKEN
+            },
+            body: JSON.stringify({ brands: brandsObj })
+        })
+        .then(res => {
+            if (!res.ok) console.warn('⚠️ Server sync failed:', res.status);
+        })
+        .catch(err => console.error('❌ Server sync error:', err));
+    }
+    return true;
             } catch (e) {
                 console.error('❌ LocalDataStore save failed:', e);
                 return false;
