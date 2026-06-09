@@ -7,14 +7,21 @@ const SHEETDB_API_URLS = [
 
 // SHA-256 Security Engine
 async function hashPassword(str) {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    try {
+        if (crypto && crypto.subtle) {
+            const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+    } catch (e) {
+        console.warn("Crypto API not available, falling back to plaintext.");
+    }
+    return str;
 }
 
 // Global brands object that merges local store with fetched data
 let brands = {};
 if (window.LocalDataStore) {
-    brands = LocalDataStore.loadAll() || {};
+    brands = LocalDataStore.getAll() || {};
 } else {
     brands = JSON.parse(localStorage.getItem('socialSphere_brands')) || {};
 }
@@ -61,7 +68,7 @@ async function loadFromSheetDB() {
             if (res.ok) {
                 const rows = await res.json();
                 if (rows && rows.length > 0 && rows[0].database_json) {
-                    brands = JSON.parse(rows[0].database_json);
+                    brands = JSON.parse(rows[0].database_json) || {};
                     if (window.LocalDataStore) LocalDataStore.saveAll(brands);
                     else localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
                     console.log(`✅ Loaded from: ${url}`);
