@@ -450,8 +450,9 @@ function createDay(num, className, isCurrentMonth = false, monthOffset = 0) {
     const dayDiv = document.createElement('div');
     dayDiv.className = `calendar-day ${className}`;
     // Store actual month and year for this cell
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + monthOffset;
+    const cellDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + monthOffset, 1);
+    const year = cellDate.getFullYear();
+    const month = cellDate.getMonth();
     dayDiv.dataset.month = month;
     dayDiv.dataset.year = year;
     if (isCurrentMonth) {

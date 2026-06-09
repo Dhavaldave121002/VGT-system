@@ -1356,10 +1356,18 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             const newDate = prompt(`Reschedule Day (1-31):`, ev.day);
             if (newDate === null) return;
 
+            const newMonth = prompt(`Reschedule Month (1-12):`, ev.month !== undefined ? ev.month + 1 : new Date().getMonth() + 1);
+            if (newMonth === null) return;
+
+            const newYear = prompt(`Reschedule Year:`, ev.year !== undefined ? ev.year : new Date().getFullYear());
+            if (newYear === null) return;
+
             const newTitle = prompt(`Edit Title:`, ev.title);
             if (newTitle === null) return;
 
             ev.day = parseInt(newDate) || ev.day;
+            if (parseInt(newMonth)) ev.month = parseInt(newMonth) - 1;
+            ev.year = parseInt(newYear) || ev.year;
             ev.title = newTitle.trim() || ev.title;
             ev.desc = `Campaign: ${ev.title}. Updated via Admin Roadmap Manager.`;
 

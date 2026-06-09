@@ -265,8 +265,10 @@
   }
   // Hook into day click to also allow adding events (Shift+Click)
   function selectDay(num, element, e) {
-  const year = currentDate.getFullYear();
-  const monthNum = currentDate.getMonth();
+  const dsYear = parseInt(element.dataset.year);
+  const year = isNaN(dsYear) ? currentDate.getFullYear() : dsYear;
+  const dsMonth = parseInt(element.dataset.month);
+  const monthNum = isNaN(dsMonth) ? currentDate.getMonth() : dsMonth;
   // Normal selection (single click)
   const yearNow = new Date().getFullYear();
   const monthNow = new Date().getMonth();
