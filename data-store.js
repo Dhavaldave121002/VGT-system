@@ -103,7 +103,37 @@
             a.click();
             URL.revokeObjectURL(url);
         },
+        /**
+         * Add a new brand object and persist.
+         * @param {Object} brand - brand object with unique id.
+         */
+        addBrand(brand) {
+            const all = this.getAll();
+            all[brand.id] = brand;
+            this.saveAll(all);
+        },
 
+        /**
+         * Update an existing brand by id.
+         */
+        updateBrand(id, updates) {
+            const all = this.getAll();
+            if (!all[id]) return false;
+            all[id] = { ...all[id], ...updates };
+            this.saveAll(all);
+            return true;
+        },
+
+        /**
+         * Delete a brand by id.
+         */
+        deleteBrand(id) {
+            const all = this.getAll();
+            if (!all[id]) return false;
+            delete all[id];
+            this.saveAll(all);
+            return true;
+        },
         /**
          * Import from a JSON file (used in admin panel).
          * @param {File} file
