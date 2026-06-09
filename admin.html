@@ -1099,6 +1099,12 @@
             // -------------------------------
             // FREE MONTH & GLOBAL LIMITS
             // -------------------------------
+            const monthEvents = brand.events.filter(ev => ev.month === m && ev.year === y && ev.type !== 'festival');
+            
+            // Utility to categorize existing events
+            const isVideoEvent = (ev) => ev.format === 'reel' || ev.type === 'video' || ev.type === 'shoot';
+            const isPostEvent  = (ev) => !isVideoEvent(ev) && ev.type !== 'ad' && ev.type !== 'festival';
+
             // Exclude festivals from counting
             const monthNonFestivalEvents = monthEvents.filter(ev => ev.type !== 'festival');
             // Count current posts and ads for the month (excluding festivals)
@@ -1122,12 +1128,6 @@
                 alert(`❌ Monthly Ad Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_AD_CAP} ads per month. Currently scheduled: ${currentAds}.`);
                 return;
             }
-
-            const monthEvents = brand.events.filter(ev => ev.month === m && ev.year === y && ev.type !== 'festival');
-            
-            // Utility to categorize existing events
-            const isVideoEvent = (ev) => ev.format === 'reel' || ev.type === 'video' || ev.type === 'shoot';
-            const isPostEvent  = (ev) => !isVideoEvent(ev) && ev.type !== 'ad' && ev.type !== 'festival';
 
             for (const type of selectedTypes) {
                 if (type === 'festival') continue;
