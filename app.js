@@ -8,8 +8,8 @@ const SERVER_SAVE_TOKEN = window.__SERVER_SAVE_TOKEN__ || '';
 // ─────────────────────────────────────────────────────────────────────────
 
 const SHEETDB_API_URLS = [
-    "https://sheetdb.io/api/v1/vvutbhezp19tr", // Primary API
-    "https://sheetdb.io/api/v1/bv1v9wrq0pziw" // ✅ Secondary API Connected
+    "https://sheetdb.io/api/v1/bv1v9wrq0pziw", // ✅ Secondary API Connected (Working)
+    "https://sheetdb.io/api/v1/vvutbhezp19tr" // Primary API (Currently returning 401 on PATCH)
 ];
 
 // SHA-256 Security Engine
@@ -35,6 +35,7 @@ if (window.LocalDataStore) {
 
 // SheetDB Sync Engine (Client-Side) - JSON Blob Architecture with Failover
 async function syncToSheetDB() {
+    brands._lastUpdated = Date.now();
     syncToServer(); // 🚀 Also sync to Vercel Server JSON Storage concurrently
 
     for (const url of SHEETDB_API_URLS) {
@@ -77,10 +78,19 @@ async function loadFromSheetDB() {
             if (res.ok) {
                 const rows = await res.json();
                 if (rows && rows.length > 0 && rows[0].database_json) {
-                    brands = JSON.parse(rows[0].database_json) || {};
-                    if (window.LocalDataStore) LocalDataStore.saveAll(brands);
-                    else localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-                    console.log(`✅ Loaded from: ${url}`);
+                    const cloudBrands = JSON.parse(rows[0].database_json) || {};
+                    const localTime = brands._lastUpdated || 0;
+                    const cloudTime = cloudBrands._lastUpdated || 0;
+                    
+                    if (cloudTime >= localTime) {
+                        brands = cloudBrands;
+                        if (window.LocalDataStore) LocalDataStore.saveAll(brands);
+                        else localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+                        console.log(`✅ Loaded from: ${url}`);
+                    } else {
+                        console.log(`📡 Local data is newer (${localTime} > ${cloudTime}), skipping overwrite.`);
+                        syncToSheetDB(); // Push local changes back to cloud
+                    }
                     return true;
                 } else {
                     // 🚨 NEW SHEET DETECTED: If sheet is empty but we have local data, populate the sheet
@@ -142,6 +152,7 @@ async function loadFromServer() {
 
 // PERFECTION AUDIT: Ensure all brands (new and legacy) have necessary properties
 Object.keys(brands).forEach(key => {
+    if (key.startsWith('_')) return; // skip metadata
     if (!brands[key].name) brands[key].name = key;
     if (!brands[key].plan) brands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
     if (!brands[key].trial) brands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
@@ -192,6 +203,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     let migratedLocal = false;
     // Re-run property audit after cloud load and migrate passwords to SHA-256
     for (let key of Object.keys(brands)) {
+        if (key.startsWith('_')) continue; // Skip metadata
         if (!brands[key].name) brands[key].name = key;
         if (!brands[key].plan) brands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
         if (!brands[key].trial) brands[key].trial = 'Phase 1: Buy 1, Get 1 Free';

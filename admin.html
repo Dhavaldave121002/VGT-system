@@ -447,11 +447,13 @@
         // SHEETDB DATABASE SYNC ENGINE - MULTI-API FAILOVER
         // ==========================================
         const SHEETDB_API_URLS = [
-            "https://sheetdb.io/api/v1/vvutbhezp19tr", // Primary
-            "https://sheetdb.io/api/v1/bv1v9wrq0pziw" // ✅ Secondary Connected
+            "https://sheetdb.io/api/v1/bv1v9wrq0pziw", // ✅ Secondary API Connected (Working)
+            "https://sheetdb.io/api/v1/vvutbhezp19tr" // Primary API (Currently returning 401 on PATCH)
         ];
 
         async function syncToSheetDB() {
+            storedBrands._lastUpdated = Date.now();
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
             for (const url of SHEETDB_API_URLS) {
                 if (!url || url.includes('YOUR_NEW_API_ID')) continue;
                 try {
@@ -468,14 +470,14 @@
                     } else if (patchRes.status === 429) {
                         console.warn(`⚠️ Admin: Limit reached for ${url}, trying next...`);
                         continue;
-                    } else {
-                        // Row 1 doesn't exist, create it
-                        await fetch(url, {
+                    } else if (patchRes.status === 400) {
+                        // Row 1 doesn't exist, try POST
+                        const postRes = await fetch(url, {
                             method: 'POST',
                             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ data: [{ id: 1, database_json: JSON.stringify(storedBrands) }] })
+                            body: JSON.stringify({ data: { id: 1, database_json: JSON.stringify(storedBrands) } })
                         });
-                        return;
+                        if (postRes.ok) return;
                     }
                 } catch (error) {
                     console.error(`❌ Admin: Sync failed for ${url}:`, error);
@@ -494,22 +496,31 @@
                     if (res.ok) {
                         const rows = await res.json();
                         if (rows && rows.length > 0 && rows[0].database_json) {
-                            storedBrands = JSON.parse(rows[0].database_json) || {};
-                            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-                            console.log(`✅ Admin: Loaded from ${url}`);
+                            const cloudBrands = JSON.parse(rows[0].database_json) || {};
+                            const currentLocalTime = storedBrands._lastUpdated || 0;
+                            const cloudTime = cloudBrands._lastUpdated || 0;
+                            
+                            if (cloudTime >= currentLocalTime) {
+                                storedBrands = cloudBrands;
+                                localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+                                console.log(`✅ Admin: Loaded from ${url}`);
+                            } else {
+                                console.log(`📡 Local data is newer (${currentLocalTime} > ${cloudTime}), pushing to cloud...`);
+                                syncToSheetDB();
+                            }
                             return true;
                         } else {
-                            // 📡 AUTO-MIGRATE: If sheet is empty, push current local data to it
-                            console.log(`📡 Admin: Initializing new sheet ${url}`);
+                            // Empty sheet logic
+                            console.log(`📡 Initializing empty sheet ${url}`);
                             syncToSheetDB();
                             return true;
                         }
                     } else if (res.status === 429) {
-                        console.warn(`⚠️ Admin: Load limit reached for ${url}, trying next...`);
+                        console.warn(`⚠️ Admin: Load limit reached for ${url}`);
                         continue;
                     }
                 } catch (error) {
-                    console.warn(`❌ Admin: Load error for ${url}:`, error);
+                    console.error(`❌ Admin: Load error on ${url}:`, error);
                 }
             }
             return false;
@@ -571,7 +582,7 @@
             const now = Date.now();
             let stateChanged = false;
 
-            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('_')).forEach(id => {
                 const brand = storedBrands[id];
                 if (!brand.messages) brand.messages = [];
 
