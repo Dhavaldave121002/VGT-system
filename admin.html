@@ -56,13 +56,13 @@
                     </div>
                     <div class="input-group">
                         <label>Password</label>
-                        <input type="password" id="newBrandPass" placeholder="••••••••" required>
+                        <input type="password" id="newBrandPass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
                     </div>
                     <div class="input-group">
                         <label>Owner Profile Type</label>
                         <select id="newBrandGender">
-                            <option value="male">👔 Male Owner</option>
-                            <option value="female">👗 Female Owner</option>
+                            <option value="male">ðŸ‘” Male Owner</option>
+                            <option value="female">ðŸ‘— Female Owner</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -83,8 +83,8 @@
                     <div class="input-group">
                         <label>Support Chat Access</label>
                         <select id="newBrandChat">
-                            <option value="yes">✅ Chat Enabled (Yes)</option>
-                            <option value="no">🚫 Chat Disabled (No)</option>
+                            <option value="yes">âœ… Chat Enabled (Yes)</option>
+                            <option value="no">ðŸš« Chat Disabled (No)</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -136,7 +136,7 @@
                             <div class="input-group">
                                 <label>Recipient</label>
                                 <select id="broadcastRecipient">
-                                    <option value="all">📢 All Brands (Global)</option>
+                                    <option value="all">ðŸ“¢ All Brands (Global)</option>
                                     <!-- Injected by JS -->
                                 </select>
                             </div>
@@ -266,10 +266,10 @@
                     <div class="input-group">
                         <label>Content Format (Auto-Label)</label>
                         <select id="scheduleFormat">
-                            <option value="auto">✨ Auto-Detect</option>
-                            <option value="post">📝 Standard Post</option>
-                            <option value="reel">🎬 Video / Reel</option>
-                            <option value="ad">📢 Paid Ad</option>
+                            <option value="auto">âœ¨ Auto-Detect</option>
+                            <option value="post">ðŸ“ Standard Post</option>
+                            <option value="reel">ðŸŽ¬ Video / Reel</option>
+                            <option value="ad">ðŸ“¢ Paid Ad</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -382,7 +382,7 @@
 
 
     <script>
-        // ✅ ADMIN SECURITY GUARD (Immediate Check)
+        // âœ… ADMIN SECURITY GUARD (Immediate Check)
         if (localStorage.getItem('socialSphere_admin') !== 'true') {
             window.location.href = 'index.html';
         }
@@ -422,7 +422,7 @@
             storedBrands.__system_admin_hash__ = hashed;
             syncToSheetDB();
 
-            errorEl.textContent = "✅ Admin Password Updated & Synced!";
+            errorEl.textContent = "âœ… Admin Password Updated & Synced!";
             errorEl.style.cssText = "color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 16px; display: block;";
             
             setTimeout(() => {
@@ -447,7 +447,7 @@
         // SHEETDB DATABASE SYNC ENGINE - MULTI-API FAILOVER
         // ==========================================
         const SHEETDB_API_URLS = [
-            "https://sheetdb.io/api/v1/bv1v9wrq0pziw", // ✅ Secondary API Connected (Working)
+            "https://sheetdb.io/api/v1/bv1v9wrq0pziw", // âœ… Secondary API Connected (Working)
             "https://sheetdb.io/api/v1/vvutbhezp19tr" // Primary API (Currently returning 401 on PATCH)
         ];
 
@@ -465,10 +465,10 @@
                     });
                     
                     if (patchRes.ok) {
-                        console.log(`✅ Admin: Synced to ${url}`);
+                        console.log(`âœ… Admin: Synced to ${url}`);
                         return;
                     } else if (patchRes.status === 429) {
-                        console.warn(`⚠️ Admin: Limit reached for ${url}, trying next...`);
+                        console.warn(`âš ï¸ Admin: Limit reached for ${url}, trying next...`);
                         continue;
                     } else if (patchRes.status === 400) {
                         // Row 1 doesn't exist, try POST
@@ -480,7 +480,7 @@
                         if (postRes.ok) return;
                     }
                 } catch (error) {
-                    console.error(`❌ Admin: Sync failed for ${url}:`, error);
+                    console.error(`âŒ Admin: Sync failed for ${url}:`, error);
                 }
             }
         }
@@ -503,24 +503,24 @@
                             if (cloudTime >= currentLocalTime) {
                                 storedBrands = cloudBrands;
                                 localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-                                console.log(`✅ Admin: Loaded from ${url}`);
+                                console.log(`âœ… Admin: Loaded from ${url}`);
                             } else {
-                                console.log(`📡 Local data is newer (${currentLocalTime} > ${cloudTime}), pushing to cloud...`);
+                                console.log(`ðŸ“¡ Local data is newer (${currentLocalTime} > ${cloudTime}), pushing to cloud...`);
                                 syncToSheetDB();
                             }
                             return true;
                         } else {
                             // Empty sheet logic
-                            console.log(`📡 Initializing empty sheet ${url}`);
+                            console.log(`ðŸ“¡ Initializing empty sheet ${url}`);
                             syncToSheetDB();
                             return true;
                         }
                     } else if (res.status === 429) {
-                        console.warn(`⚠️ Admin: Load limit reached for ${url}`);
+                        console.warn(`âš ï¸ Admin: Load limit reached for ${url}`);
                         continue;
                     }
                 } catch (error) {
-                    console.error(`❌ Admin: Load error on ${url}:`, error);
+                    console.error(`âŒ Admin: Load error on ${url}:`, error);
                 }
             }
             return false;
@@ -558,6 +558,7 @@
 
         // PERFECTION AUDIT: Ensure all data is consistent
         Object.keys(storedBrands).forEach(key => {
+            if (key.startsWith('_')) return; // skip metadata
             if (!storedBrands[key].plan) storedBrands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
             if (!storedBrands[key].trial) storedBrands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
             if (storedBrands[key].locked === undefined) storedBrands[key].locked = false;
@@ -572,7 +573,7 @@
         function renderBrands() {
             brandListTable.innerHTML = '';
             selectBrand.innerHTML = '';
-            broadcastRecipient.innerHTML = '<option value="all">📢 All Brands (Global)</option>';
+            broadcastRecipient.innerHTML = '<option value="all">ðŸ“¢ All Brands (Global)</option>';
             document.getElementById('videoTaskRecipient').innerHTML = '';
 
 
@@ -646,7 +647,7 @@
             });
             if (stateChanged) localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
 
-            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('_')).forEach(id => {
                 const brand = storedBrands[id];
                 const isLocked = brand.locked === true;
                 const avatarUrl = brand.gender === 'female' ? './female_owner.png' : './male_owner.png';
@@ -663,7 +664,7 @@
                     <td data-label="User ID">${id}</td>
                     <td data-label="Security">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-family: monospace; color: var(--text-gray); font-size: 0.8rem;">••••••••</span>
+                            <span style="font-family: monospace; color: var(--text-gray); font-size: 0.8rem;">â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢</span>
                             <button onclick="changePassword('${id}')" class="btn-icon-small"><i data-lucide="key" style="width: 14px; height: 14px;"></i></button>
                         </div>
                     </td>
@@ -716,13 +717,13 @@
                 // Broadcast Dropdown
                 const opt2 = document.createElement('option');
                 opt2.value = id;
-                opt2.textContent = `🎯 ${brand.name}`;
+                opt2.textContent = `ðŸŽ¯ ${brand.name}`;
                 broadcastRecipient.appendChild(opt2);
 
                 // Video Task Dropdown
                 const opt3 = document.createElement('option');
                 opt3.value = id;
-                opt3.textContent = `🎬 ${brand.name}`;
+                opt3.textContent = `ðŸŽ¬ ${brand.name}`;
                 document.getElementById('videoTaskRecipient').appendChild(opt3);
             });
 
@@ -790,7 +791,7 @@
 
             // Also send a notification
             if (!brand.messages) brand.messages = [];
-            brand.messages.push({ text: `🎬 New Video Shoot Scheduled for ${dateStr}. Please check your roadmap.`, time: Date.now() });
+            brand.messages.push({ text: `ðŸŽ¬ New Video Shoot Scheduled for ${dateStr}. Please check your roadmap.`, time: Date.now() });
 
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
             document.getElementById('videoTaskForm').reset();
@@ -803,7 +804,7 @@
             list.innerHTML = '';
             let hasSubmitted = false;
 
-            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('_')).forEach(id => {
                 const brand = storedBrands[id];
                 if (brand.videoTasks) {
                     brand.videoTasks.forEach((task, index) => {
@@ -857,6 +858,7 @@
 
             let stateChanged = false;
             for (let key of Object.keys(storedBrands)) {
+                if (key.startsWith('_')) continue; // skip metadata
                 if (storedBrands[key].pass && storedBrands[key].pass.length !== 64) {
                     storedBrands[key].pass = await hashPassword(storedBrands[key].pass);
                     stateChanged = true;
@@ -883,7 +885,7 @@
             const now = Date.now();
 
             if (target === 'all') {
-                Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
+                Object.keys(storedBrands).filter(k => !k.startsWith('_')).forEach(id => {
                     if (!storedBrands[id].messages) storedBrands[id].messages = [];
                     storedBrands[id].messages.push({ text: msg, time: now });
                 });
@@ -1155,11 +1157,11 @@
             }).length;
             const additionalAds = selectedTypes.filter(t => t === 'ad').length;
             if (currentPosts + additionalPosts > GLOBAL_POST_CAP) {
-                alert(`❌ Monthly Post Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_POST_CAP} posts (including videos) per month. Currently scheduled: ${currentPosts}.`);
+                alert(`âŒ Monthly Post Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_POST_CAP} posts (including videos) per month. Currently scheduled: ${currentPosts}.`);
                 return;
             }
             if (currentAds + additionalAds > GLOBAL_AD_CAP) {
-                alert(`❌ Monthly Ad Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_AD_CAP} ads per month. Currently scheduled: ${currentAds}.`);
+                alert(`âŒ Monthly Ad Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_AD_CAP} ads per month. Currently scheduled: ${currentAds}.`);
                 return;
             }
 
@@ -1186,37 +1188,37 @@
 
                 if (isBecomingVideo) {
                     if (planLimit.videos === 0) {
-                        alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow Videos/Reels on ${type.toUpperCase()}.`);
+                        alert(`âŒ Plan Restriction!\n\n"${currentPlan}" does not allow Videos/Reels on ${type.toUpperCase()}.`);
                         return;
                     }
                     // Only count as new if it wasn't already a video
                     const newCount = usedVideos + (existingEvent ? (wasVideo ? 0 : 1) : 1);
                     if (newCount > planLimit.videos) {
-                        alert(`❌ Video Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedVideos}/${planLimit.videos} videos this month for this platform.`);
+                        alert(`âŒ Video Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedVideos}/${planLimit.videos} videos this month for this platform.`);
                         return;
                     }
                 }
 
                 if (isBecomingPost) {
                     if (planLimit.posts === 0) {
-                        alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow static Posts on ${type.toUpperCase()}.`);
+                        alert(`âŒ Plan Restriction!\n\n"${currentPlan}" does not allow static Posts on ${type.toUpperCase()}.`);
                         return;
                     }
                     const newCount = usedPosts + (existingEvent ? (wasPost ? 0 : 1) : 1);
                     if (newCount > planLimit.posts) {
-                        alert(`❌ Post Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedPosts}/${planLimit.posts} posts this month for this platform.`);
+                        alert(`âŒ Post Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedPosts}/${planLimit.posts} posts this month for this platform.`);
                         return;
                     }
                 }
 
                 if (isBecomingAd) {
                     if (planLimit.ads === 0) {
-                        alert(`❌ Plan Restriction!\n\n"${currentPlan}" does not allow Ads on ${type.toUpperCase()}.`);
+                        alert(`âŒ Plan Restriction!\n\n"${currentPlan}" does not allow Ads on ${type.toUpperCase()}.`);
                         return;
                     }
                     const newCount = usedAds + (existingEvent ? (wasAd ? 0 : 1) : 1);
                     if (newCount > planLimit.ads) {
-                        alert(`❌ Ad Limit Reached for ${type.toUpperCase()}!\n\nOnly ${planLimit.ads} ad run(s) allowed per platform.`);
+                        alert(`âŒ Ad Limit Reached for ${type.toUpperCase()}!\n\nOnly ${planLimit.ads} ad run(s) allowed per platform.`);
                         return;
                     }
                 }
@@ -1427,7 +1429,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
             renderBrandRoadmap();
             renderBrands();
-            alert("✅ Item updated successfully!");
+            alert("âœ… Item updated successfully!");
         };
 
         // ==========================================
@@ -1552,7 +1554,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
 
             let allMessages = [];
 
-            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('_')).forEach(id => {
                 const brand = storedBrands[id];
                 const now = Date.now();
                 const expiry = 24 * 60 * 60 * 1000;
@@ -1646,7 +1648,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
 
         function clearAllInbox() {
             if (confirm("CRITICAL WARNING: This will permanently delete ALL user questions from the global inbox across all brands. Are you absolutely sure?")) {
-                Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
+                Object.keys(storedBrands).filter(k => !k.startsWith('_')).forEach(id => {
                     if (storedBrands[id].chat) {
                         // Keep bot/admin replies if needed? The user requested to clear the global inbox of questions.
                         // We will wipe the entire chat array to be clean, or just user messages. Let's wipe all chat for a clean slate.
@@ -1667,7 +1669,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
 
         function downloadInboxCSV() {
             let csvContent = "data:text/csv;charset=utf-8,Brand,Date,Question\n";
-            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('_')).forEach(id => {
                 const brand = storedBrands[id];
                 if (brand.chat) {
                     brand.chat.filter(m => m.sender === 'user').forEach(msg => {
@@ -1695,6 +1697,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             await loadFromSheetDB(); // Load latest data from cloud
             // Re-run audit after cloud load
             Object.keys(storedBrands).forEach(key => {
+                if (key.startsWith('_')) return; // skip metadata
                 if (!storedBrands[key].name) storedBrands[key].name = key;
                 if (!storedBrands[key].plan) storedBrands[key].plan = 'Plan 1: 3 Posts, 2 Videos';
                 if (!storedBrands[key].trial) storedBrands[key].trial = 'Phase 1: Buy 1, Get 1 Free';
@@ -1717,7 +1720,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             const now = Date.now();
             const expiry = 24 * 60 * 60 * 1000;
 
-            Object.keys(storedBrands).filter(k => !k.startsWith('__')).forEach(id => {
+            Object.keys(storedBrands).filter(k => !k.startsWith('_')).forEach(id => {
                 const brand = storedBrands[id];
                 if (brand.chat && brand.chat.length > 0) {
                     const originalLength = brand.chat.length;
@@ -1730,7 +1733,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             });
 
             if (stateChanged) {
-                console.log("🧹 Admin: Background cleanup completed.");
+                console.log("ðŸ§¹ Admin: Background cleanup completed.");
                 // Persist using LocalDataStore (encrypted) and sync to SheetDB
                 if (window.LocalDataStore) {
                     LocalDataStore.saveAll(storedBrands);
