@@ -1161,3 +1161,30 @@ main {
 
 
 
+
+/* Mobile drawer for detail sidebar */
+@media (max-width: 768px) {
+    .detail-sidebar {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 85%;
+        max-width: 320px;
+        z-index: 2000;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        background: var(--bg-panel);
+        backdrop-filter: blur(20px);
+        border-left: 1px solid var(--border-glass);
+    }
+    .detail-sidebar.active { right: 0; }
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1999;
+    }
+    .sidebar-overlay.active { display: block; }
+}
