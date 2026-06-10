@@ -1,14 +1,14 @@
-﻿// Data Management - Sync with Admin Portal
+// Data Management - Sync with Admin Portal
 // Multi-API Failover System (Automatic Fallback if limit reached)
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Server JSON Storage Config Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Server JSON Storage Config ────────────────────────────────────────────
 // Set this to your SAVE_TOKEN value from Vercel environment variables.
 // This is the same token set as SAVE_TOKEN in your Vercel project settings.
 const SERVER_SAVE_TOKEN = window.__SERVER_SAVE_TOKEN__ || '';
-// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ─────────────────────────────────────────────────────────────────────────
 
 const SHEETDB_API_URLS = [
-    "https://sheetdb.io/api/v1/bv1v9wrq0pziw", // Ã¢Å“â€¦ Secondary API Connected (Working)
+    "https://sheetdb.io/api/v1/bv1v9wrq0pziw", // ✅ Secondary API Connected (Working)
     "https://sheetdb.io/api/v1/vvutbhezp19tr" // Primary API (Currently returning 401 on PATCH)
 ];
 
@@ -37,7 +37,7 @@ if (window.LocalDataStore) {
 async function syncToSheetDB() {
     syncToServer(); // Also sync to Vercel concurrently
 
-    // Clean brands object â€” only brand keys, no metadata
+    // Clean brands object — only brand keys, no metadata
     const cleanBrands = {};
     for (const [k, v] of Object.entries(brands)) {
         if (!k.startsWith('_') && typeof v === 'object') cleanBrands[k] = v;
@@ -54,22 +54,22 @@ async function syncToSheetDB() {
                 body: JSON.stringify({ data: { database_json: jsonStr } })
             });
             if (patchRes.ok) {
-                console.log(`âœ… Synced to SheetDB: ${url}`);
+                console.log(`✅ Synced to SheetDB: ${url}`);
                 return;
             } else if (patchRes.status === 429) {
-                console.warn(`âš ï¸ Rate limit on ${url}, trying next...`);
+                console.warn(`⚠️ Rate limit on ${url}, trying next...`);
                 continue;
             } else {
-                // Row doesn't exist â€” create it with POST
+                // Row doesn't exist — create it with POST
                 const postRes = await fetch(url, {
                     method: 'POST',
                     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
                     body: JSON.stringify({ data: [{ id: 1, database_json: jsonStr }] })
                 });
-                if (postRes.ok) { console.log(`âœ… Created row in SheetDB: ${url}`); return; }
+                if (postRes.ok) { console.log(`✅ Created row in SheetDB: ${url}`); return; }
             }
         } catch (error) {
-            console.error(`âŒ SheetDB sync error [${url}]:`, error);
+            console.error(`❌ SheetDB sync error [${url}]:`, error);
         }
     }
 }
@@ -82,30 +82,30 @@ async function loadFromSheetDB() {
             if (res.ok) {
                 const rows = await res.json();
                 if (rows && rows.length > 0 && rows[0].database_json) {
-                    // SheetDB has data â€” use it as source of truth
+                    // SheetDB has data — use it as source of truth
                     const cloudBrands = JSON.parse(rows[0].database_json) || {};
                     brands = cloudBrands;
                     localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-                    console.log(`âœ… Loaded from SheetDB: ${url} | Brands: ${Object.keys(brands).join(', ')}`);
+                    console.log(`✅ Loaded from SheetDB: ${url} | Brands: ${Object.keys(brands).join(', ')}`);
                     return true;
                 } else {
-                    // SheetDB is empty â€” push local data to it
-                    console.log(`ðŸ“¡ SheetDB empty, pushing local data to ${url}`);
+                    // SheetDB is empty — push local data to it
+                    console.log(`📡 SheetDB empty, pushing local data to ${url}`);
                     syncToSheetDB();
                     return true;
                 }
             } else if (res.status === 429) {
-                console.warn(`Ã¢Å¡Â Ã¯Â¸Â Load limit reached for ${url}, trying next...`);
+                console.warn(`⚠️ Rate limit on load [${url}], trying next...`);
                 continue;
             }
         } catch (error) {
-            console.warn(`Ã¢ÂÅ’ Load error with ${url}:`, error);
+            console.warn(`❌ SheetDB load error [${url}]:`, error);
         }
     }
     return false;
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ Sync brands to server JSON storage Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// ── Sync brands to server JSON storage ────────────────────────────────────
 async function syncToServer() {
     if (!SERVER_SAVE_TOKEN) return; // skip if token not configured
     try {
@@ -117,10 +117,10 @@ async function syncToServer() {
             },
             body: JSON.stringify({ brands })
         });
-        if (res.ok) console.log('Ã¢Å“â€¦ Synced to server JSON storage');
-        else console.warn('Ã¢Å¡Â Ã¯Â¸Â Server sync failed:', res.status);
+        if (res.ok) console.log('✅ Synced to server JSON storage');
+        else console.warn('⚠️ Server sync failed:', res.status);
     } catch (e) {
-        console.warn('Ã¢Å¡Â Ã¯Â¸Â syncToServer error', e);
+        console.warn('⚠️ syncToServer error', e);
     }
 }
 
@@ -137,11 +137,11 @@ async function loadFromServer() {
             brands = data.brands;
             if (window.LocalDataStore) LocalDataStore.saveAll(brands);
             else localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-            console.log('Ã¢Å“â€¦ Loaded from server');
+            console.log('✅ Loaded from server');
             return true;
         }
     } catch (e) {
-        console.warn('Ã¢Å¡Â Ã¯Â¸Â loadFromServer error', e);
+        console.warn('⚠️ loadFromServer error', e);
     }
     return false;
 }
@@ -171,9 +171,9 @@ const monthDisplay = document.getElementById('monthDisplay');
 const dailyCollection = document.getElementById('dailyCollection');
 const selectedDateTitle = document.getElementById('selectedDateTitle');
 
-// Initialize Ã¢â‚¬â€ Load from Cloud DB first, then init UI
+// Initialize — Load from Cloud DB first, then init UI
 window.addEventListener('DOMContentLoaded', async () => {
-    // Ã°Å¸â€ºÂ¡Ã¯Â¸Â RESET UI STATE: Prevent 'Authenticated' artifacts
+    // 🛡️ RESET UI STATE: Prevent 'Authenticated' artifacts
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
         loginBtn.innerHTML = `<i data-lucide="unlock" style="width: 18px; height: 18px;"></i> Unlock Dashboard`;
@@ -182,7 +182,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (loginForm) loginForm.reset();
     if (window.lucide) lucide.createIcons();
 
-    // Load data with priority: localStorage Ã¢â€ â€™ server Ã¢â€ â€™ SheetDB
+    // Load data with priority: localStorage → server → SheetDB
     if (!Object.keys(brands).length) {
         // Try server first (if API available)
         try {
@@ -191,7 +191,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 await loadFromSheetDB(); // fallback to SheetDB if server empty or fails
             }
         } catch (e) {
-            console.warn('Ã¢Å¡Â Ã¯Â¸Â Server load failed, falling back to SheetDB', e);
+            console.warn('⚠️ Server load failed, falling back to SheetDB', e);
             await loadFromSheetDB();
         }
     }
@@ -220,7 +220,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         syncToSheetDB();
     }
 
-    // Ã¢Å“â€¦ PERSISTENT LOGIN CHECK
+    // ✅ PERSISTENT LOGIN CHECK
     const savedAdmin = localStorage.getItem('socialSphere_admin');
     if (savedAdmin === 'true') {
         window.location.href = 'admin.html';
@@ -229,7 +229,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const savedBrandId = localStorage.getItem('socialSphere_currentBrandId');
     if (savedBrandId && brands[savedBrandId]) {
-        login(savedBrandId, true); // Ã¢Å“â€¦ Pass true for auto-login (skip animations)
+        login(savedBrandId, true); // ✅ Pass true for auto-login (skip animations)
     }
 });
 
@@ -245,7 +245,7 @@ loginForm.addEventListener('submit', async (e) => {
     loginBtn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Verifying...`;
     if (window.lucide) lucide.createIcons();
 
-    // Ã°Å¸â€ºÂ¡Ã¯Â¸Â REAL-TIME SECURITY SYNC: Pull latest credentials from Cloud before authenticating
+    // 🛡️ REAL-TIME SECURITY SYNC: Pull latest credentials from Cloud before authenticating
     await loadFromSheetDB();
 
     const inputHash = await hashPassword(password);
@@ -265,7 +265,7 @@ loginForm.addEventListener('submit', async (e) => {
         loginBtn.style.background = '#10B981';
         if (window.lucide) lucide.createIcons();
         
-        // Ã¢Å“â€¦ Save Admin Session
+        // ✅ Save Admin Session
         localStorage.setItem('socialSphere_admin', 'true');
         localStorage.removeItem('socialSphere_currentBrandId');
 
@@ -314,7 +314,7 @@ function login(brandId, isAutoLogin = false) {
     currentBrand = brands[brandId];
     currentBrandId = brandId;
 
-    // Ã¢Å“â€¦ Save User Session
+    // ✅ Save User Session
     localStorage.setItem('socialSphere_currentBrandId', brandId);
     localStorage.removeItem('socialSphere_admin'); // Clear any admin session
 
@@ -326,8 +326,7 @@ function login(brandId, isAutoLogin = false) {
             if (ev.year === undefined) { ev.year = 2026; eventsChanged = true; }
         });
         if (eventsChanged) {
-            localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-        syncToSheetDB();
+            localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
         }
     }
 
@@ -342,7 +341,7 @@ function login(brandId, isAutoLogin = false) {
     // Update Plan Badge
     const planBadge = document.getElementById('brandPlanBadge');
     if (planBadge) {
-        planBadge.textContent = `${currentBrand.plan || 'Standard'} Ã¢â‚¬Â¢ ${currentBrand.trial || 'Active'}`;
+        planBadge.textContent = `${currentBrand.plan || 'Standard'} • ${currentBrand.trial || 'Active'}`;
     }
 
     // Render 48h Alerts
@@ -378,7 +377,7 @@ function login(brandId, isAutoLogin = false) {
                 </div>
                 <div style="flex-grow: 1;">
                     <p style="font-size: 0.9rem; font-weight: 500; margin: 0;">${msg.text}</p>
-                    <p style="font-size: 0.7rem; color: var(--text-gray); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px;">Admin Broadcast Ã¢â‚¬Â¢ Expires in ${Math.round((expiry - (now - msg.time)) / 3600000)} hours</p>
+                    <p style="font-size: 0.7rem; color: var(--text-gray); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px;">Admin Broadcast • Expires in ${Math.round((expiry - (now - msg.time)) / 3600000)} hours</p>
                 </div>
                 <button onclick="dismissMessage('${msg.time}', event)" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.3s;" title="Dismiss Message">
                     <i data-lucide="x" style="width: 16px; height: 16px;"></i>
@@ -386,8 +385,7 @@ function login(brandId, isAutoLogin = false) {
             `;
             alertContainer.appendChild(div);
         });
-        localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-        syncToSheetDB();
+        localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
     }
 
     if (isAutoLogin) {
@@ -424,8 +422,7 @@ function login(brandId, isAutoLogin = false) {
 window.dismissMessage = function (time, event) {
     if (currentBrand && currentBrand.messages) {
         currentBrand.messages = currentBrand.messages.filter(m => m.time.toString() !== time.toString());
-        localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-        syncToSheetDB();
+        localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
 
         // Visual removal
         const alertDiv = event.currentTarget.closest('.animate-slide');
@@ -468,7 +465,7 @@ function logout() {
     currentBrand = null;
     currentBrandId = null;
     
-    // Ã¢Å“â€¦ Clear Session
+    // ✅ Clear Session
     localStorage.removeItem('socialSphere_currentBrandId');
     localStorage.removeItem('socialSphere_admin');
 
@@ -485,8 +482,7 @@ async function changeOwnPassword() {
     if (newPass && newPass.trim().length > 0) {
         if (brands[currentBrandId]) {
             brands[currentBrandId].pass = await hashPassword(newPass.trim());
-            localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-        syncToSheetDB();
+            localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
             alert('Security Key updated successfully! Please use this new key for your next login.');
         }
     }
@@ -696,8 +692,7 @@ function renderChatMessages() {
         currentBrand.chat = [
             { sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: now }
         ];
-        localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-        syncToSheetDB();
+        localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
     } else {
         // Auto-cleanup: Keep messages only from last 24 hours
         const originalLength = currentBrand.chat.length;
@@ -747,163 +742,163 @@ function getBotResponse(input) {
     const lowerText = text.toLowerCase();
     const brandName = currentBrand.name || "your brand";
 
-    // Ã°Å¸â€Â SCRIPT DETECTION
+    // 🔍 SCRIPT DETECTION
     const hasGujaratiScript = /[\u0A80-\u0AFF]/.test(text);
     const hasHindiScript = /[\u0900-\u097F]/.test(text);
     const lang = hasGujaratiScript ? 'guj' : (hasHindiScript ? 'hin' : 'eng');
 
-    // Ã°Å¸Ââ€  BLUE TICK & VERIFICATION
-    if (/(blue tick|verify|verification|badge|tick|Ã ÂªÂ¬Ã Â«ÂÃ ÂªÂ²Ã Â«Â Ã ÂªÅ¸Ã Â«â‚¬Ã Âªâ€¢|Ã ÂªÅ¸Ã ÂªÂ¿Ã Âªâ€¢|Ã Â¤Â¸Ã Â¤Â¤Ã Â¥ÂÃ Â¤Â¯Ã Â¤Â¾Ã Â¤ÂªÃ Â¤Â¨|Ã Â¤Â¬Ã Â¥ÂÃ Â¤Â²Ã Â¥â€š Ã Â¤Å¸Ã Â¤Â¿Ã Â¤â€¢)/i.test(lowerText)) {
+    // 🏆 BLUE TICK & VERIFICATION
+    if (/(blue tick|verify|verification|badge|tick|બ્લુ ટીક|ટિક|सत्यापन|ब्लू टिक)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€™Å½ <strong>Blue Tick Verification:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ¨Ã Â«â€¡ Instagram Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Facebook Ã ÂªÂªÃ ÂªÂ° Ã ÂªÂµÃ Â«â€¡Ã ÂªÂ°Ã ÂªÂ¿Ã ÂªÂ«Ã ÂªÂ¾Ã ÂªË†Ã ÂªÂ¡ Ã Âªâ€¢Ã ÂªÂ°Ã ÂªÂ¾Ã ÂªÂµÃ ÂªÂµÃ ÂªÂ¾ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂÃ Âªâ€¢Ã Â«ÂÃ ÂªÂ¸Ã ÂªÂªÃ ÂªÂ°Ã Â«ÂÃ ÂªÅ¸ Ã ÂªÂ¸Ã ÂªÂ°Ã Â«ÂÃ ÂªÂµÃ ÂªÂ¿Ã ÂªÂ¸ Ã Âªâ€ Ã ÂªÂªÃ Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸â€™Å½ <strong>Blue Tick Verification:</strong> Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¹ Instagram Ã Â¤â€Ã Â¤Â° Facebook Ã Â¤ÂªÃ Â¤Â° Ã Â¤ÂµÃ Â¥â€¡Ã Â¤Â°Ã Â¤Â¿Ã Â¤Â«Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Â¡ Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¾Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤ÂÃ Â¤â€¢Ã Â¥ÂÃ Â¤Â¸Ã Â¤ÂªÃ Â¤Â°Ã Â¥ÂÃ Â¤Å¸ Ã Â¤Â¸Ã Â¤Â°Ã Â¥ÂÃ Â¤ÂµÃ Â¤Â¿Ã Â¤Â¸ Ã Â¤Â¦Ã Â¥â€¡Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸â€™Å½ <strong>Elite Verification:</strong> We specialize in authenticating <strong>${brandName}</strong> across Meta platforms to establish absolute market authority.`
+            guj: `💎 <strong>Blue Tick Verification:</strong> અમે <strong>${brandName}</strong> ને Instagram અને Facebook પર વેરિફાઈડ કરાવવા માટે એક્સપર્ટ સર્વિસ આપીએ છીએ.`,
+            hin: `💎 <strong>Blue Tick Verification:</strong> हम <strong>${brandName}</strong> को Instagram और Facebook पर वेरिफाइड कराने के लिए एक्सपर्ट सर्विस देते हैं।`,
+            eng: `💎 <strong>Elite Verification:</strong> We specialize in authenticating <strong>${brandName}</strong> across Meta platforms to establish absolute market authority.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸Å½Â¨ BRANDING & IDENTITY
-    if (/(logo|design|branding|color|theme|Ã ÂªÂ¦Ã Â«â€¡Ã Âªâ€“Ã ÂªÂ¾Ã ÂªÂµ|Ã Â¤Â¡Ã Â¤Â¿Ã Â¤Å“Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Â¨|Ã Â¤Â¬Ã Â¥ÂÃ Â¤Â°Ã Â¤Â¾Ã Â¤â€šÃ Â¤Â¡Ã Â¤Â¿Ã Â¤â€šÃ Â¤â€”)/i.test(lowerText)) {
+    // 🎨 BRANDING & IDENTITY
+    if (/(logo|design|branding|color|theme|દેખાવ|डिजाइन|ब्रांडिंग)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸Å½Â¨ <strong>Visual Identity:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂªÃ Â«ÂÃ ÂªÂ°Ã Â«â‚¬Ã ÂªÂ®Ã ÂªÂ¿Ã ÂªÂ¯Ã ÂªÂ® Ã Âªâ€¢Ã ÂªÂ²Ã ÂªÂ° Ã ÂªÂªÃ Â«â€¡Ã ÂªÂ²Ã Â«â€¡Ã ÂªÅ¸ Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Ã ÂªÂ²Ã Â«â€¹Ã Âªâ€”Ã Â«â€¹ Ã ÂªÂ¡Ã ÂªÂ¿Ã ÂªÂÃ ÂªÂ¾Ã ÂªË†Ã ÂªÂ¨ Ã ÂªÂ¤Ã Â«Ë†Ã ÂªÂ¯Ã ÂªÂ¾Ã ÂªÂ° Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ Ã ÂªÅ“Ã Â«â€¡ Ã Âªâ€”Ã Â«ÂÃ ÂªÂ²Ã Â«â€¹Ã ÂªÂ¬Ã ÂªÂ² Ã ÂªÂ¸Ã Â«ÂÃ ÂªÅ¸Ã ÂªÂ¾Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂ¡Ã ÂªÂ°Ã Â«ÂÃ ÂªÂ¡ Ã ÂªÂ®Ã Â«ÂÃ ÂªÅ“Ã ÂªÂ¬ Ã ÂªÂ¹Ã Â«â€¹Ã ÂªÂ¯.`,
-            hin: `Ã°Å¸Å½Â¨ <strong>Visual Identity:</strong> Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¥â‚¬Ã Â¤Â®Ã Â¤Â¿Ã Â¤Â¯Ã Â¤Â® Ã Â¤â€¢Ã Â¤Â²Ã Â¤Â° Ã Â¤ÂªÃ Â¥Ë†Ã Â¤Â²Ã Â¥â€¡Ã Â¤Å¸ Ã Â¤â€Ã Â¤Â° Ã Â¤Â²Ã Â¥â€¹Ã Â¤â€”Ã Â¥â€¹ Ã Â¤Â¡Ã Â¤Â¿Ã Â¤Å“Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Â¨ Ã Â¤Â¤Ã Â¥Ë†Ã Â¤Â¯Ã Â¤Â¾Ã Â¤Â° Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€š Ã Â¤Å“Ã Â¥â€¹ Ã Â¤â€”Ã Â¥ÂÃ Â¤Â²Ã Â¥â€¹Ã Â¤Â¬Ã Â¤Â² Ã Â¤Â¸Ã Â¥ÂÃ Â¤Å¸Ã Â¥Ë†Ã Â¤â€šÃ Â¤Â¡Ã Â¤Â°Ã Â¥ÂÃ Â¤Â¡ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤â€¦Ã Â¤Â¨Ã Â¥ÂÃ Â¤Â¸Ã Â¤Â¾Ã Â¤Â° Ã Â¤Â¹Ã Â¥â€¹Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸Å½Â¨ <strong>Signature Identity:</strong> We craft a bespoke visual language for <strong>${brandName}</strong> ensuring your brand aesthetic is world-class.`
+            guj: `🎨 <strong>Visual Identity:</strong> અમે <strong>${brandName}</strong> માટે પ્રીમિયમ કલર પેલેટ અને લોગો ડિઝાઈન તૈયાર કરીએ છીએ જે ગ્લોબલ સ્ટાન્ડર્ડ મુજબ હોય.`,
+            hin: `🎨 <strong>Visual Identity:</strong> हम <strong>${brandName}</strong> के लिए प्रीमियम कलर पैलेट और लोगो डिजाइन तैयार करते हैं जो ग्लोबल स्टैंडर्ड के अनुसार होते हैं।`,
+            eng: `🎨 <strong>Signature Identity:</strong> We craft a bespoke visual language for <strong>${brandName}</strong> ensuring your brand aesthetic is world-class.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€œË† LEAD GEN & SALES FUNNEL
-    if (/(lead|sales|customer|client|order|enquiry|Ã Âªâ€”Ã Â«ÂÃ ÂªÂ°Ã ÂªÂ¾Ã ÂªÂ¹Ã Âªâ€¢|Ã Â¤â€”Ã Â¥ÂÃ Â¤Â°Ã Â¤Â¾Ã Â¤Â¹Ã Â¤â€¢|Ã Â¤Â¬Ã ÂªÂ¿Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ°Ã Â«â‚¬)/i.test(lowerText)) {
+    // 📈 LEAD GEN & SALES FUNNEL
+    if (/(lead|sales|customer|client|order|enquiry|ગ્રાહક|ग्राहक|बિક્રી)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€™Â° <strong>Lead Generation:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ Ã ÂªÂ«Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ¤ Ã ÂªÂ²Ã ÂªÂ¾Ã ÂªË†Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ¸ Ã ÂªÅ“ Ã ÂªÂ¨Ã ÂªÂ¹Ã Â«â‚¬Ã Âªâ€š, Ã ÂªÂªÃ ÂªÂ£ <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂ°Ã ÂªÂ¿Ã ÂªÂ¯Ã ÂªÂ² Ã ÂªÂ¸Ã Â«â€¡Ã ÂªÂ²Ã Â«ÂÃ ÂªÂ¸ Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Ã ÂªÂ²Ã Â«â‚¬Ã ÂªÂ¡Ã Â«ÂÃ ÂªÂ¸ Ã ÂªÅ“Ã ÂªÂ¨Ã ÂªÂ°Ã Â«â€¡Ã ÂªÅ¸ Ã Âªâ€¢Ã ÂªÂ°Ã ÂªÂµÃ ÂªÂ¾ Ã ÂªÂªÃ ÂªÂ° Ã ÂªÂ«Ã Â«â€¹Ã Âªâ€¢Ã ÂªÂ¸ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸â€™Â° <strong>Lead Generation:</strong> Ã Â¤Â¹Ã Â¤Â® Ã Â¤Â¸Ã Â¤Â¿Ã Â¤Â°Ã Â¥ÂÃ Â¤Â« Ã Â¤Â²Ã Â¤Â¾Ã Â¤â€¡Ã Â¤â€¢Ã Â¥ÂÃ Â¤Â¸ Ã Â¤Â¹Ã Â¥â‚¬ Ã Â¤Â¨Ã Â¤Â¹Ã Â¥â‚¬Ã Â¤â€š, Ã Â¤Â¬Ã Â¤Â²Ã Â¥ÂÃ Â¤â€¢Ã Â¤Â¿ <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â°Ã Â¤Â¿Ã Â¤Â¯Ã Â¤Â² Ã Â¤Â¸Ã Â¥â€¡Ã Â¤Â²Ã Â¥ÂÃ Â¤Â¸ Ã Â¤â€Ã Â¤Â° Ã Â¤Â²Ã Â¥â‚¬Ã Â¤Â¡Ã Â¥ÂÃ Â¤Â¸ Ã Â¤Å“Ã Â¤Â¨Ã Â¤Â°Ã Â¥â€¡Ã Â¤Å¸ Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤ÂªÃ Â¤Â° Ã Â¤Â§Ã Â¥ÂÃ Â¤Â¯Ã Â¤Â¾Ã Â¤Â¨ Ã Â¤â€¢Ã Â¥â€¡Ã Â¤â€šÃ Â¤Â¦Ã Â¥ÂÃ Â¤Â°Ã Â¤Â¿Ã Â¤Â¤ Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸â€™Â° <strong>Revenue Engineering:</strong> For <strong>${brandName}</strong>, we build high-conversion sales funnels that turn social traffic into high-value clients.`
+            guj: `💰 <strong>Lead Generation:</strong> અમે ફક્ત લાઈક્સ જ નહીં, પણ <strong>${brandName}</strong> માટે રિયલ સેલ્સ અને લીડ્સ જનરેટ કરવા પર ફોકસ કરીએ છીએ.`,
+            hin: `💰 <strong>Lead Generation:</strong> हम सिर्फ लाइक्स ही नहीं, बल्कि <strong>${brandName}</strong> के लिए रियल सेल्स और लीड्स जनरेट करने पर ध्यान केंद्रित करते हैं।`,
+            eng: `💰 <strong>Revenue Engineering:</strong> For <strong>${brandName}</strong>, we build high-conversion sales funnels that turn social traffic into high-value clients.`
         };
         return res[lang];
     }
 
-    // Ã¢Å¡â€Ã¯Â¸Â COMPETITOR DOMINANCE
-    if (/(other|competitor|better|best|market|Ã ÂªÂ¬Ã Â«â‚¬Ã ÂªÅ“Ã ÂªÂ¾|Ã ÂªÂ¦Ã Â«ÂÃ ÂªÂ¨Ã ÂªÂ¿Ã ÂªÂ¯Ã ÂªÂ¾|Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«ÂÃ Âªâ€¢Ã Â«â€¡Ã ÂªÅ¸|Ã Â¤Â¦Ã Â¥ÂÃ Â¤Â¨Ã Â¤Â¿Ã Â¤Â¯Ã Â¤Â¾)/i.test(lowerText)) {
+    // ⚔️ COMPETITOR DOMINANCE
+    if (/(other|competitor|better|best|market|બીજા|દુનિયા|માર્કેટ|दुनिया)/i.test(lowerText)) {
         const res = {
-            guj: `Ã¢Å¡â€Ã¯Â¸Â <strong>Market Dominance:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ¨Ã Â«â€¡ Ã ÂªÂ¤Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã ÂªÂ¾ Ã Âªâ€¢Ã Â«â€¹Ã ÂªÂ®Ã Â«ÂÃ ÂªÂªÃ ÂªÂ¿Ã ÂªÅ¸Ã ÂªÂ¿Ã ÂªÂ¶Ã ÂªÂ¨Ã ÂªÂ¥Ã Â«â‚¬ 10 Ã ÂªÂ¡Ã Âªâ€”Ã ÂªÂ²Ã ÂªÂ¾Ã Âªâ€š Ã Âªâ€ Ã Âªâ€”Ã ÂªÂ³ Ã ÂªÂ°Ã ÂªÂ¾Ã Âªâ€“Ã ÂªÂµÃ ÂªÂ¾ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂÃ ÂªÂ¡Ã ÂªÂµÃ ÂªÂ¾Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂ¸ AI Ã ÂªÅ¸Ã Â«â€šÃ ÂªÂ²Ã Â«ÂÃ ÂªÂ¸Ã ÂªÂ¨Ã Â«â€¹ Ã Âªâ€°Ã ÂªÂªÃ ÂªÂ¯Ã Â«â€¹Ã Âªâ€” Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã¢Å¡â€Ã¯Â¸Â <strong>Market Dominance:</strong> Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¹ Ã Â¤â€ Ã Â¤ÂªÃ Â¤â€¢Ã Â¥â€¡ Ã Â¤â€¢Ã Â¥â€°Ã Â¤Â®Ã Â¥ÂÃ Â¤ÂªÃ Â¤Â¿Ã Â¤Å¸Ã Â¤Â¿Ã Â¤Â¶Ã Â¤Â¨ Ã Â¤Â¸Ã Â¥â€¡ 10 Ã Â¤â€¢Ã Â¤Â¦Ã Â¤Â® Ã Â¤â€ Ã Â¤â€”Ã Â¥â€¡ Ã Â¤Â°Ã Â¤â€“Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤ÂÃ Â¤Â¡Ã Â¤ÂµÃ Â¤Â¾Ã Â¤â€šÃ Â¤Â¸ AI Ã Â¤Å¸Ã Â¥â€šÃ Â¤Â²Ã Â¥ÂÃ Â¤Â¸ Ã Â¤â€¢Ã Â¤Â¾ Ã Â¤â€°Ã Â¤ÂªÃ Â¤Â¯Ã Â¥â€¹Ã Â¤â€” Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã¢Å¡â€Ã¯Â¸Â <strong>Elite Dominance:</strong> By leveraging advanced data-science, we keep <strong>${brandName}</strong> 10 steps ahead of the global competition.`
+            guj: `⚔️ <strong>Market Dominance:</strong> અમે <strong>${brandName}</strong> ને તમારા કોમ્પિટિશનથી 10 ડગલાં આગળ રાખવા માટે એડવાન્સ AI ટૂલ્સનો ઉપયોગ કરીએ છીએ.`,
+            hin: `⚔️ <strong>Market Dominance:</strong> हम <strong>${brandName}</strong> को आपके कॉम्पिटिशन से 10 कदम आगे रखने के लिए एडवांस AI टूल्स का उपयोग करते हैं।`,
+            eng: `⚔️ <strong>Elite Dominance:</strong> By leveraging advanced data-science, we keep <strong>${brandName}</strong> 10 steps ahead of the global competition.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸Å¡â‚¬ VIRAL GROWTH & REELS
-    if (/(viral|reel|video|reach|Ã ÂªÂµÃ Â«â‚¬Ã ÂªÂ¡Ã ÂªÂ¿Ã ÂªÂ¯Ã Â«â€¹|Ã ÂªÂµÃ ÂªÂ¿Ã ÂªÂ¡Ã ÂªÂ¿Ã Âªâ€œ|Ã Â¤ÂµÃ Â¥â‚¬Ã Â¤Â¡Ã Â¤Â¿Ã Â¤Â¯Ã Â¥â€¹)/i.test(lowerText)) {
+    // 🚀 VIRAL GROWTH & REELS
+    if (/(viral|reel|video|reach|વીડિયો|વિડિઓ|वीडियो)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸Å¡â‚¬ <strong>Viral Growth:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂ¹Ã ÂªÂ¾Ã ÂªË†-Ã ÂªÂ°Ã ÂªÂ¿Ã ÂªÅ¸Ã Â«â€¡Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂ¶Ã ÂªÂ¨ Ã ÂªÂ¹Ã Â«â€šÃ Âªâ€¢ Ã ÂªÂ¸Ã ÂªÂ¾Ã ÂªÂ¥Ã Â«â€¡Ã ÂªÂ¨Ã ÂªÂ¾ Ã ÂªÅ¸Ã Â«â€šÃ Âªâ€šÃ Âªâ€¢Ã ÂªÂ¾ Ã ÂªÂµÃ ÂªÂ¿Ã ÂªÂ¡Ã ÂªÂ¿Ã ÂªÂ¯Ã Â«â€¹ Ã ÂªÂªÃ ÂªÂ° Ã ÂªÂ«Ã Â«â€¹Ã Âªâ€¢Ã ÂªÂ¸ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸Å¡â‚¬ <strong>Viral Growth:</strong> Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â¹Ã Â¤Â¾Ã Â¤Ë†-Ã Â¤Â°Ã Â¤Â¿Ã Â¤Å¸Ã Â¥â€¡Ã Â¤â€šÃ Â¤Â¶Ã Â¤Â¨ Ã Â¤Â¹Ã Â¥ÂÃ Â¤â€¢ Ã Â¤ÂµÃ Â¤Â¾Ã Â¤Â²Ã Â¥â€¡ Ã Â¤â€ºÃ Â¥â€¹Ã Â¤Å¸Ã Â¥â€¡ Ã Â¤ÂµÃ Â¥â‚¬Ã Â¤Â¡Ã Â¤Â¿Ã Â¤Â¯Ã Â¥â€¹ Ã Â¤ÂªÃ Â¤Â° Ã Â¤Â§Ã Â¥ÂÃ Â¤Â¯Ã Â¤Â¾Ã Â¤Â¨ Ã Â¤â€¢Ã Â¥â€¡Ã Â¤â€šÃ Â¤Â¦Ã Â¥ÂÃ Â¤Â°Ã Â¤Â¿Ã Â¤Â¤ Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸Å¡â‚¬ <strong>Viral Engineering:</strong> For <strong>${brandName}</strong>, we craft high-retention short-form content designed to amplify organic exposure.`
+            guj: `🚀 <strong>Viral Growth:</strong> અમે <strong>${brandName}</strong> માટે હાઈ-રિટેન્શન હૂક સાથેના ટૂંકા વિડિયો પર ફોકસ કરીએ છીએ.`,
+            hin: `🚀 <strong>Viral Growth:</strong> हम <strong>${brandName}</strong> के लिए हाई-रिटेंशन हुक वाले छोटे वीडियो पर ध्यान केंद्रित करते हैं।`,
+            eng: `🚀 <strong>Viral Engineering:</strong> For <strong>${brandName}</strong>, we craft high-retention short-form content designed to amplify organic exposure.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸Å’Å¸ GREETINGS
+    // 🌟 GREETINGS
     if (/^(hi|hello|hey|kem chho|kaise ho|namaste)/i.test(lowerText)) {
         const res = {
-            guj: `Ã ÂªÂ¨Ã ÂªÂ®Ã ÂªÂ¸Ã Â«ÂÃ ÂªÂ¤Ã Â«â€¡! Ã ÂªÂ¹Ã Â«ÂÃ Âªâ€š Ã ÂªÂ¤Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«â€¹ <strong>Elite AI Strategist</strong> Ã Âªâ€ºÃ Â«ÂÃ Âªâ€š. Ã Âªâ€ Ã ÂªÅ“Ã Â«â€¡ Ã Âªâ€ Ã ÂªÂªÃ ÂªÂ£Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ¨Ã Â«â€¡ Ã Âªâ€”Ã Â«ÂÃ ÂªÂ²Ã Â«â€¹Ã ÂªÂ¬Ã ÂªÂ² Ã ÂªÂ²Ã Â«â€¡Ã ÂªÂµÃ ÂªÂ² Ã ÂªÂªÃ ÂªÂ° Ã Âªâ€¢Ã Â«â€¡Ã ÂªÂµÃ Â«â‚¬ Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ¤Ã Â«â€¡ Ã ÂªÂ²Ã ÂªË† Ã ÂªÅ“Ã ÂªË†Ã ÂªÂ?`,
-            hin: `Ã Â¤Â¨Ã Â¤Â®Ã Â¤Â¸Ã Â¥ÂÃ Â¤Â¤Ã Â¥â€¡! Ã Â¤Â®Ã Â¥Ë†Ã Â¤â€š Ã Â¤â€ Ã Â¤ÂªÃ Â¤â€¢Ã Â¤Â¾ <strong>Elite AI Strategist</strong> Ã Â¤Â¹Ã Â¥â€šÃ Â¤ÂÃ Â¥Â¤ Ã Â¤â€ Ã Â¤Å“ Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¹ Ã Â¤â€”Ã Â¥ÂÃ Â¤Â²Ã Â¥â€¹Ã Â¤Â¬Ã Â¤Â² Ã Â¤Â²Ã Â¥â€¡Ã Â¤ÂµÃ Â¤Â² Ã Â¤ÂªÃ Â¤Â° Ã Â¤â€¢Ã Â¥Ë†Ã Â¤Â¸Ã Â¥â€¡ Ã Â¤Â²Ã Â¥â€¡Ã Â¤â€¢Ã Â¤Â° Ã Â¤Å¡Ã Â¤Â²Ã Â¥â€¡Ã Â¤â€š?`,
+            guj: `નમસ્તે! હું તમારો <strong>Elite AI Strategist</strong> છું. આજે આપણે <strong>${brandName}</strong> ને ગ્લોબલ લેવલ પર કેવી રીતે લઈ જઈએ?`,
+            hin: `नमस्ते! मैं आपका <strong>Elite AI Strategist</strong> हूँ। आज हम <strong>${brandName}</strong> को ग्लोबल लेवल पर कैसे लेकर चलें?`,
             eng: `Greetings. I'm your <strong>Elite AI Strategist</strong>. How shall we accelerate the global dominance of <strong>${brandName}</strong> today?`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€™Â° ROI & PERFORMANCE
-    if (/(roi|profit|sales|grow|business|vadharo|badhana|Ã ÂªÂ¨Ã ÂªÂ«Ã Â«â€¹|Ã Â¤Â®Ã Â¥ÂÃ Â¤Â¨Ã Â¤Â¾Ã Â¤Â«Ã Â¤Â¾)/i.test(lowerText)) {
+    // 💰 ROI & PERFORMANCE
+    if (/(roi|profit|sales|grow|business|vadharo|badhana|નફો|मुनाफा)/i.test(lowerText)) {
         const res = {
-            guj: `<strong>${brandName}</strong> Ã ÂªÂ¨Ã Â«â€¹ ROI Ã ÂªÂµÃ ÂªÂ§Ã ÂªÂ¾Ã ÂªÂ°Ã ÂªÂµÃ ÂªÂ¾ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ Ã ÂªÂ¡Ã Â«â€¡Ã ÂªÅ¸Ã ÂªÂ¾-Ã ÂªÂ¡Ã Â«ÂÃ ÂªÂ°Ã ÂªÂ¿Ã ÂªÂµÃ ÂªÂ¨ Ã ÂªÂÃ ÂªÂ¡Ã Â«ÂÃ ÂªÂ¸ Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Ã ÂªÂ¹Ã ÂªÂ¾Ã ÂªË†-Ã Âªâ€¢Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂµÃ ÂªÂ°Ã Â«ÂÃ ÂªÂÃ ÂªÂ¨ Ã Âªâ€¢Ã ÂªÂ¨Ã Â«ÂÃ ÂªÅ¸Ã Â«â€¡Ã ÂªÂ¨Ã Â«ÂÃ ÂªÅ¸ Ã ÂªÂªÃ ÂªÂ° Ã ÂªÂ«Ã Â«â€¹Ã Âªâ€¢Ã ÂªÂ¸ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `<strong>${brandName}</strong> Ã Â¤â€¢Ã Â¤Â¾ ROI Ã Â¤Â¬Ã Â¥ÂÃ Â¤Â¾Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â¹Ã Â¤Â® Ã Â¤Â¡Ã Â¥â€¡Ã Â¤Å¸Ã Â¤Â¾-Ã Â¤Â¡Ã Â¥ÂÃ Â¤Â°Ã Â¤Â¿Ã Â¤ÂµÃ Â¤Â¨ Ã Â¤ÂÃ Â¤Â¡Ã Â¥ÂÃ Â¤Â¸ Ã Â¤â€Ã Â¤Â° Ã Â¤Â¹Ã Â¤Â¾Ã Â¤Ë†-Ã Â¤â€¢Ã Â¤Â¨Ã Â¥ÂÃ Â¤ÂµÃ Â¤Â°Ã Â¥ÂÃ Â¤Å“Ã Â¤Â¨ Ã Â¤â€¢Ã Â¤â€šÃ Â¤Å¸Ã Â¥â€¡Ã Â¤â€šÃ Â¤Å¸ Ã Â¤ÂªÃ Â¤Â° Ã Â¤Â§Ã Â¥ÂÃ Â¤Â¯Ã Â¤Â¾Ã Â¤Â¨ Ã Â¤Â¦Ã Â¥â€¡Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
+            guj: `<strong>${brandName}</strong> નો ROI વધારવા માટે અમે ડેટા-ડ્રિવન એડ્સ અને હાઈ-કન્વર્ઝન કન્ટેન્ટ પર ફોકસ કરીએ છીએ.`,
+            hin: `<strong>${brandName}</strong> का ROI बढ़ाने के लिए हम डेटा-ड्रिवन एड्स और हाई-कन्वर्जन कंटेंट पर ध्यान देते हैं।`,
             eng: `Precision ROI is our standard. We optimize <strong>${brandName}</strong> through aggressive data-driven scaling and performance marketing.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€ºÂ Ã¯Â¸Â SERVICES & AGENCY
-    if (/(service|kaam|kam|what do you do|su karo cho|Ã Âªâ€¢Ã ÂªÂ¾Ã ÂªÂ®|Ã Â¤â€¢Ã Â¤Â¾Ã Â¤Â®)/i.test(lowerText)) {
+    // 🛠️ SERVICES & AGENCY
+    if (/(service|kaam|kam|what do you do|su karo cho|કામ|काम)/i.test(lowerText)) {
         const res = {
-            guj: `Vertex Global Tech Ã ÂªÂÃ Âªâ€¢ Ã ÂªÂªÃ Â«ÂÃ ÂªÂ°Ã Â«â‚¬Ã ÂªÂ®Ã ÂªÂ¿Ã ÂªÂ¯Ã ÂªÂ® Ã ÂªÂÃ ÂªÅ“Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂ¸Ã Â«â‚¬ Ã Âªâ€ºÃ Â«â€¡ Ã ÂªÅ“Ã Â«â€¡ <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ <strong>Elite Branding</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã Âªâ€š Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ¸Ã Â«ÂÃ ÂªÅ¸Ã ÂªÂ° Ã Âªâ€ºÃ Â«â€¡. <br><br>Ã Âªâ€¦Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«â‚¬ Ã ÂªÂ®Ã Â«ÂÃ Âªâ€“Ã Â«ÂÃ ÂªÂ¯ Ã ÂªÂ¸Ã ÂªÂ°Ã Â«ÂÃ ÂªÂµÃ ÂªÂ¿Ã ÂªÂ¸Ã ÂªÂ®Ã ÂªÂ¾Ã Âªâ€š <strong>Web & App Development</strong>, <strong>Odoo Customization</strong>, <strong>Product Listing</strong>, <strong>Verifyboost Marketing</strong> Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ <strong>Google Ads Management</strong> Ã ÂªÂ¨Ã Â«â€¹ Ã ÂªÂ¸Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂµÃ Â«â€¡Ã ÂªÂ¶ Ã ÂªÂ¥Ã ÂªÂ¾Ã ÂªÂ¯ Ã Âªâ€ºÃ Â«â€¡. Ã ÂªÂµÃ ÂªÂ§Ã Â«Â Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ¹Ã ÂªÂ¿Ã ÂªÂ¤Ã Â«â‚¬ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">Ã Âªâ€¦Ã ÂªÂ¹Ã Â«â‚¬Ã Âªâ€š Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ²Ã ÂªÂ¿Ã Âªâ€¢ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â€¹</a>.`,
-            hin: `Vertex Global Tech Ã Â¤ÂÃ Â¤â€¢ Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¥â‚¬Ã Â¤Â®Ã Â¤Â¿Ã Â¤Â¯Ã Â¤Â® Ã Â¤ÂÃ Â¤Å“Ã Â¥â€¡Ã Â¤â€šÃ Â¤Â¸Ã Â¥â‚¬ Ã Â¤Â¹Ã Â¥Ë† Ã Â¤Å“Ã Â¥â€¹ <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, Ã Â¤â€Ã Â¤Â° <strong>Elite Branding</strong> Ã Â¤Â®Ã Â¥â€¡Ã Â¤â€š Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â¸Ã Â¥ÂÃ Â¤Å¸Ã Â¤Â° Ã Â¤Â¹Ã Â¥Ë†Ã Â¥Â¤ <br><br>Ã Â¤Â¹Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â°Ã Â¥â‚¬ Ã Â¤Â®Ã Â¥ÂÃ Â¤â€“Ã Â¥ÂÃ Â¤Â¯ Ã Â¤Â¸Ã Â¤Â°Ã Â¥ÂÃ Â¤ÂµÃ Â¤Â¿Ã Â¤Â¸ Ã Â¤Â®Ã Â¥â€¡Ã Â¤â€š <strong>Web & App Development</strong>, <strong>Odoo Customization</strong>, <strong>Product Listing</strong>, <strong>Verifyboost Marketing</strong> Ã Â¤â€Ã Â¤Â° <strong>Google Ads Management</strong> Ã Â¤Â¶Ã Â¤Â¾Ã Â¤Â®Ã Â¤Â¿Ã Â¤Â² Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤ Ã Â¤â€¦Ã Â¤Â§Ã Â¤Â¿Ã Â¤â€¢ Ã Â¤Å“Ã Â¤Â¾Ã Â¤Â¨Ã Â¤â€¢Ã Â¤Â¾Ã Â¤Â°Ã Â¥â‚¬ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">Ã Â¤Â¯Ã Â¤Â¹Ã Â¤Â¾Ã Â¤Â Ã Â¤â€¢Ã Â¥ÂÃ Â¤Â²Ã Â¤Â¿Ã Â¤â€¢ Ã Â¤â€¢Ã Â¤Â°Ã Â¥â€¡Ã Â¤â€š</a>Ã Â¥Â¤`,
+            guj: `Vertex Global Tech એક પ્રીમિયમ એજન્સી છે જે <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, અને <strong>Elite Branding</strong> માં માસ્ટર છે. <br><br>અમારી મુખ્ય સર્વિસમાં <strong>Web & App Development</strong>, <strong>Odoo Customization</strong>, <strong>Product Listing</strong>, <strong>Verifyboost Marketing</strong> અને <strong>Google Ads Management</strong> નો સમાવેશ થાય છે. વધુ માહિતી માટે <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">અહીં ક્લિક કરો</a>.`,
+            hin: `Vertex Global Tech एक प्रीमियम एजेंसी है जो <strong>Web Dev</strong>, <strong>Growth Marketing</strong>, और <strong>Elite Branding</strong> में मास्टर है। <br><br>हमारी मुख्य सर्विस में <strong>Web & App Development</strong>, <strong>Odoo Customization</strong>, <strong>Product Listing</strong>, <strong>Verifyboost Marketing</strong> और <strong>Google Ads Management</strong> शामिल हैं। अधिक जानकारी के लिए <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">यहाँ क्लिक करें</a>।`,
             eng: `Vertex Global Tech is an elite powerhouse specializing in <strong>Bespoke Development</strong>, <strong>Aggressive Growth Marketing</strong>, and <strong>World-Class Branding</strong>. <br><br>Our core expertise includes <strong>Web & App Engineering</strong>, <strong>Odoo Customization</strong>, <strong>Product Marketplace Listings</strong>, <strong>Verifyboost Marketing</strong>, and <strong>Google Ads Management</strong>. <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Book a meeting here</a>.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸Å’Â WEB DEVELOPMENT
-    if (/(web|website|site|ecommerce|e-commerce|Ã ÂªÂµÃ Â«â€¡Ã ÂªÂ¬Ã ÂªÂ¸Ã ÂªÂ¾Ã Âªâ€¡Ã ÂªÅ¸|Ã Â¤ÂµÃ Â¥â€¡Ã Â¤Â¬Ã Â¤Â¸Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Å¸)/i.test(lowerText)) {
+    // 🌐 WEB DEVELOPMENT
+    if (/(web|website|site|ecommerce|e-commerce|વેબસાઇટ|वेबसाइट)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸Å’Â <strong>Web Development:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂ¹Ã ÂªÂ¾Ã Âªâ€¡-Ã ÂªÂªÃ ÂªÂ°Ã ÂªÂ«Ã Â«â€¹Ã ÂªÂ°Ã Â«ÂÃ ÂªÂ®Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂ¸, Ã ÂªÂ°Ã ÂªÂ¿Ã ÂªÂ¸Ã Â«ÂÃ ÂªÂªÃ Â«â€¹Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂ¸Ã ÂªÂ¿Ã ÂªÂµ Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Ã Âªâ€¢Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂµÃ ÂªÂ°Ã Â«ÂÃ ÂªÂÃ ÂªÂ¨-Ã Âªâ€œÃ ÂªÂªÃ Â«ÂÃ ÂªÅ¸Ã ÂªÂ¿Ã ÂªÂ®Ã ÂªÂ¾Ã Âªâ€¡Ã ÂªÂÃ Â«ÂÃ ÂªÂ¡ Ã ÂªÂµÃ Â«â€¡Ã ÂªÂ¬Ã ÂªÂ¸Ã ÂªÂ¾Ã Âªâ€¡Ã ÂªÅ¸Ã Â«ÂÃ ÂªÂ¸ Ã ÂªÂ¬Ã ÂªÂ¨Ã ÂªÂ¾Ã ÂªÂµÃ Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸Å’Â <strong>Web Development:</strong> Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â¹Ã Â¤Â¾Ã Â¤Ë†-Ã Â¤ÂªÃ Â¤Â°Ã Â¤Â«Ã Â¥â€°Ã Â¤Â°Ã Â¥ÂÃ Â¤Â®Ã Â¥â€¡Ã Â¤â€šÃ Â¤Â¸, Ã Â¤Â°Ã Â¤Â¿Ã Â¤Â¸Ã Â¥ÂÃ Â¤ÂªÃ Â¥â€°Ã Â¤Â¨Ã Â¥ÂÃ Â¤Â¸Ã Â¤Â¿Ã Â¤Âµ Ã Â¤â€Ã Â¤Â° Ã Â¤â€¢Ã Â¤Â¨Ã Â¥ÂÃ Â¤ÂµÃ Â¤Â°Ã Â¥ÂÃ Â¤Å“Ã Â¤Â¨-Ã Â¤â€˜Ã Â¤ÂªÃ Â¥ÂÃ Â¤Å¸Ã Â¤Â¿Ã Â¤Â®Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Å“Ã Â¤Â¼Ã Â¥ÂÃ Â¤Â¡ Ã Â¤ÂµÃ Â¥â€¡Ã Â¤Â¬Ã Â¤Â¸Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Å¸Ã Â¥ÂÃ Â¤Â¸ Ã Â¤Â¬Ã Â¤Â¨Ã Â¤Â¾Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸Å’Â <strong>Elite Web Engineering:</strong> We craft high-performance, responsive, and conversion-optimized websites tailored specifically for <strong>${brandName}</strong>.`
+            guj: `🌐 <strong>Web Development:</strong> અમે <strong>${brandName}</strong> માટે હાઇ-પરફોર્મન્સ, રિસ્પોન્સિવ અને કન્વર્ઝન-ઓપ્ટિમાઇઝ્ડ વેબસાઇટ્સ બનાવીએ છીએ.`,
+            hin: `🌐 <strong>Web Development:</strong> हम <strong>${brandName}</strong> के लिए हाई-परफॉर्मेंस, रिस्पॉन्सिव और कन्वर्जन-ऑप्टिमाइज़्ड वेबसाइट्स बनाते हैं।`,
+            eng: `🌐 <strong>Elite Web Engineering:</strong> We craft high-performance, responsive, and conversion-optimized websites tailored specifically for <strong>${brandName}</strong>.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€œÂ± APP DEVELOPMENT
-    if (/(app|application|mobile|ios|android|Ã ÂªÂÃ ÂªÂª|Ã Â¤ÂÃ Â¤ÂªÃ Â¥ÂÃ Â¤Â²Ã Â¤Â¿Ã Â¤â€¢Ã Â¥â€¡Ã Â¤Â¶Ã Â¤Â¨|Ã Â¤ÂÃ Â¤Âª)/i.test(lowerText)) {
+    // 📱 APP DEVELOPMENT
+    if (/(app|application|mobile|ios|android|એપ|एप्लिकेशन|ऐप)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€œÂ± <strong>App Development:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂ¨Ã Â«â€¡Ã ÂªÅ¸Ã ÂªÂ¿Ã ÂªÂµ Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ°Ã Â«â€¹Ã ÂªÂ¸-Ã ÂªÂªÃ Â«ÂÃ ÂªÂ²Ã Â«â€¡Ã ÂªÅ¸Ã ÂªÂ«Ã Â«â€¹Ã ÂªÂ°Ã Â«ÂÃ ÂªÂ® Ã ÂªÂ®Ã Â«â€¹Ã ÂªÂ¬Ã ÂªÂ¾Ã Âªâ€¡Ã ÂªÂ² Ã ÂªÂÃ ÂªÂªÃ Â«ÂÃ ÂªÂ¸ Ã ÂªÂ¡Ã Â«â€¡Ã ÂªÂµÃ ÂªÂ²Ã ÂªÂª Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸â€œÂ± <strong>App Development:</strong> Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â¨Ã Â¥â€¡Ã Â¤Å¸Ã Â¤Â¿Ã Â¤Âµ Ã Â¤â€Ã Â¤Â° Ã Â¤â€¢Ã Â¥ÂÃ Â¤Â°Ã Â¥â€°Ã Â¤Â¸-Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â²Ã Â¥â€¡Ã Â¤Å¸Ã Â¤Â«Ã Â¥â€°Ã Â¤Â°Ã Â¥ÂÃ Â¤Â® Ã Â¤Â®Ã Â¥â€¹Ã Â¤Â¬Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Â² Ã Â¤ÂÃ Â¤ÂªÃ Â¥ÂÃ Â¤Â¸ Ã Â¤Â¡Ã Â¥â€¡Ã Â¤ÂµÃ Â¤Â²Ã Â¤Âª Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸â€œÂ± <strong>Mobile App Engineering:</strong> We develop robust, user-centric native and cross-platform mobile applications for <strong>${brandName}</strong>.`
+            guj: `📱 <strong>App Development:</strong> અમે <strong>${brandName}</strong> માટે નેટિવ અને ક્રોસ-પ્લેટફોર્મ મોબાઇલ એપ્સ ડેવલપ કરીએ છીએ.`,
+            hin: `📱 <strong>App Development:</strong> हम <strong>${brandName}</strong> के लिए नेटिव और क्रॉस-प्लेटफॉर्म मोबाइल ऐप्स डेवलप करते हैं।`,
+            eng: `📱 <strong>Mobile App Engineering:</strong> We develop robust, user-centric native and cross-platform mobile applications for <strong>${brandName}</strong>.`
         };
         return res[lang];
     }
 
-    // Ã¢Å¡â„¢Ã¯Â¸Â ODOO CUSTOMIZATION
-    if (/(odoo|erp|customization|system|Ã ÂªÂ¸Ã Â«â€¹Ã ÂªÂ«Ã Â«ÂÃ ÂªÅ¸Ã ÂªÂµÃ Â«â€¡Ã ÂªÂ°|Ã Â¤Â¸Ã Â¥â€°Ã Â¤Â«Ã Â¥ÂÃ Â¤Å¸Ã Â¤ÂµÃ Â¥â€¡Ã Â¤Â¯Ã Â¤Â°)/i.test(lowerText)) {
+    // ⚙️ ODOO CUSTOMIZATION
+    if (/(odoo|erp|customization|system|સોફ્ટવેર|सॉफ्टवेयर)/i.test(lowerText)) {
         const res = {
-            guj: `Ã¢Å¡â„¢Ã¯Â¸Â <strong>Odoo Customization:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ Ã ÂªÂ¤Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã ÂªÂ¾ Ã ÂªÂ¬Ã ÂªÂ¿Ã ÂªÂÃ ÂªÂ¨Ã Â«â€¡Ã ÂªÂ¸ Ã Âªâ€œÃ ÂªÂªÃ ÂªÂ°Ã Â«â€¡Ã ÂªÂ¶Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂ¸Ã ÂªÂ¨Ã Â«â€¡ Ã ÂªÂ¸Ã ÂªÂ°Ã ÂªÂ³ Ã ÂªÂ¬Ã ÂªÂ¨Ã ÂªÂ¾Ã ÂªÂµÃ ÂªÂµÃ ÂªÂ¾ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂÃ ÂªÂ¡Ã ÂªÂµÃ ÂªÂ¾Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂ¸ Odoo Ã Âªâ€¢Ã ÂªÂ¸Ã Â«ÂÃ ÂªÅ¸Ã ÂªÂ®Ã ÂªÂ¾Ã Âªâ€¡Ã ÂªÂÃ Â«â€¡Ã ÂªÂ¶Ã ÂªÂ¨ Ã ÂªÂªÃ Â«â€šÃ ÂªÂ°Ã Â«ÂÃ Âªâ€š Ã ÂªÂªÃ ÂªÂ¾Ã ÂªÂ¡Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã¢Å¡â„¢Ã¯Â¸Â <strong>Odoo Customization:</strong> Ã Â¤Â¹Ã Â¤Â® Ã Â¤â€ Ã Â¤ÂªÃ Â¤â€¢Ã Â¥â€¡ Ã Â¤Â¬Ã Â¤Â¿Ã Â¤Å“Ã Â¤Â¨Ã Â¥â€¡Ã Â¤Â¸ Ã Â¤â€˜Ã Â¤ÂªÃ Â¤Â°Ã Â¥â€¡Ã Â¤Â¶Ã Â¤Â¨Ã Â¥ÂÃ Â¤Â¸ Ã Â¤â€¢Ã Â¥â€¹ Ã Â¤â€ Ã Â¤Â¸Ã Â¤Â¾Ã Â¤Â¨ Ã Â¤Â¬Ã Â¤Â¨Ã Â¤Â¾Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤ÂÃ Â¤Â¡Ã Â¤ÂµÃ Â¤Â¾Ã Â¤â€šÃ Â¤Â¸ Odoo Ã Â¤â€¢Ã Â¤Â¸Ã Â¥ÂÃ Â¤Å¸Ã Â¤Â®Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Å“Ã Â¤Â¼Ã Â¥â€¡Ã Â¤Â¶Ã Â¤Â¨ Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¤Â¦Ã Â¤Â¾Ã Â¤Â¨ Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã¢Å¡â„¢Ã¯Â¸Â <strong>Odoo Customization:</strong> We provide advanced Odoo customization and ERP integration to streamline operations for <strong>${brandName}</strong>.`
+            guj: `⚙️ <strong>Odoo Customization:</strong> અમે તમારા બિઝનેસ ઓપરેશન્સને સરળ બનાવવા માટે એડવાન્સ Odoo કસ્ટમાઇઝેશન પૂરું પાડીએ છીએ.`,
+            hin: `⚙️ <strong>Odoo Customization:</strong> हम आपके बिजनेस ऑपरेशन्स को आसान बनाने के लिए एडवांस Odoo कस्टमाइज़ेशन प्रदान करते हैं।`,
+            eng: `⚙️ <strong>Odoo Customization:</strong> We provide advanced Odoo customization and ERP integration to streamline operations for <strong>${brandName}</strong>.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€ºÂÃ¯Â¸Â PRODUCT LISTING
-    if (/(product|listing|marketplace|amazon|flipkart|Ã ÂªÂªÃ Â«ÂÃ ÂªÂ°Ã Â«â€¹Ã ÂªÂ¡Ã Âªâ€¢Ã Â«ÂÃ ÂªÅ¸|Ã Â¤â€°Ã Â¤Â¤Ã Â¥ÂÃ Â¤ÂªÃ Â¤Â¾Ã Â¤Â¦)/i.test(lowerText)) {
+    // 🛍️ PRODUCT LISTING
+    if (/(product|listing|marketplace|amazon|flipkart|પ્રોડક્ટ|उत्पाद)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€ºÂÃ¯Â¸Â <strong>Marketplace Listings:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ¨Ã ÂªÂ¾ Ã ÂªÂªÃ Â«ÂÃ ÂªÂ°Ã Â«â€¹Ã ÂªÂ¡Ã Âªâ€¢Ã Â«ÂÃ ÂªÅ¸Ã Â«ÂÃ ÂªÂ¸Ã ÂªÂ¨Ã Â«â€¡ Ã ÂªÅ¸Ã Â«â€¹Ã ÂªÂª Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«ÂÃ Âªâ€¢Ã Â«â€¡Ã ÂªÅ¸Ã ÂªÂªÃ Â«ÂÃ ÂªÂ²Ã Â«â€¡Ã ÂªÂ¸ Ã ÂªÂªÃ ÂªÂ° Ã ÂªÂ°Ã Â«â€¡Ã ÂªÂ¨Ã Â«ÂÃ Âªâ€¢ Ã Âªâ€¢Ã ÂªÂ°Ã ÂªÂµÃ ÂªÂ¾ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂªÃ Â«ÂÃ ÂªÂ°Ã Â«â€¹Ã ÂªÂ«Ã Â«â€¡Ã ÂªÂ¶Ã ÂªÂ¨Ã ÂªÂ² Ã ÂªÂ²Ã ÂªÂ¿Ã ÂªÂ¸Ã Â«ÂÃ ÂªÅ¸Ã ÂªÂ¿Ã Âªâ€šÃ Âªâ€” Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸â€ºÂÃ¯Â¸Â <strong>Marketplace Listings:</strong> Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¥â€¹Ã Â¤Â¡Ã Â¤â€¢Ã Â¥ÂÃ Â¤Å¸Ã Â¥ÂÃ Â¤Â¸ Ã Â¤â€¢Ã Â¥â€¹ Ã Â¤Å¸Ã Â¥â€°Ã Â¤Âª Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â°Ã Â¥ÂÃ Â¤â€¢Ã Â¥â€¡Ã Â¤Å¸Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â²Ã Â¥â€¡Ã Â¤Â¸ Ã Â¤ÂªÃ Â¤Â° Ã Â¤Â°Ã Â¥Ë†Ã Â¤â€šÃ Â¤â€¢ Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¥â€¹Ã Â¤Â«Ã Â¥â€¡Ã Â¤Â¶Ã Â¤Â¨Ã Â¤Â² Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â¸Ã Â¥ÂÃ Â¤Å¸Ã Â¤Â¿Ã Â¤â€šÃ Â¤â€” Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸â€ºÂÃ¯Â¸Â <strong>Product Marketplace Listings:</strong> We optimize and rank <strong>${brandName}</strong>'s products across top marketplaces for maximum visibility and sales.`
+            guj: `🛍️ <strong>Marketplace Listings:</strong> અમે <strong>${brandName}</strong> ના પ્રોડક્ટ્સને ટોપ માર્કેટપ્લેસ પર રેન્ક કરવા માટે પ્રોફેશનલ લિસ્ટિંગ કરીએ છીએ.`,
+            hin: `🛍️ <strong>Marketplace Listings:</strong> हम <strong>${brandName}</strong> के प्रोडक्ट्स को टॉप मार्केटप्लेस पर रैंक करने के लिए प्रोफेशनल लिस्टिंग करते हैं।`,
+            eng: `🛍️ <strong>Product Marketplace Listings:</strong> We optimize and rank <strong>${brandName}</strong>'s products across top marketplaces for maximum visibility and sales.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€œË† GOOGLE ADS & MARKETING
-    if (/(ads|google|verifyboost|marketing|campaign|Ã ÂªÂÃ ÂªÂ¡Ã Â«ÂÃ ÂªÂ¸|Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â°Ã Â¥ÂÃ Â¤â€¢Ã Â¥â€¡Ã Â¤Å¸Ã Â¤Â¿Ã Â¤â€šÃ Â¤â€”|Ã Â¤ÂµÃ Â¤Â¿Ã Â¤Å“Ã Â¥ÂÃ Â¤Å¾Ã Â¤Â¾Ã Â¤ÂªÃ Â¤Â¨)/i.test(lowerText)) {
+    // 📈 GOOGLE ADS & MARKETING
+    if (/(ads|google|verifyboost|marketing|campaign|એડ્સ|मार्केटिंग|विज्ञापन)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€œË† <strong>Marketing & Ads:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Google Ads Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Verifyboost Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«ÂÃ Âªâ€¢Ã Â«â€¡Ã ÂªÅ¸Ã ÂªÂ¿Ã Âªâ€šÃ Âªâ€” Ã ÂªÂ¦Ã Â«ÂÃ ÂªÂµÃ ÂªÂ¾Ã ÂªÂ°Ã ÂªÂ¾ Ã ÂªÂ¹Ã ÂªÂ¾Ã ÂªË† ROI Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Ã Âªâ€”Ã Â«ÂÃ ÂªÂ°Ã Â«â€¹Ã ÂªÂ¥ Ã ÂªÂ²Ã ÂªÂ¾Ã ÂªÂµÃ Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸â€œË† <strong>Marketing & Ads:</strong> Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Google Ads Ã Â¤â€Ã Â¤Â° Verifyboost Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â°Ã Â¥ÂÃ Â¤â€¢Ã Â¥â€¡Ã Â¤Å¸Ã Â¤Â¿Ã Â¤â€šÃ Â¤â€” Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â§Ã Â¥ÂÃ Â¤Â¯Ã Â¤Â® Ã Â¤Â¸Ã Â¥â€¡ Ã Â¤Â¹Ã Â¤Â¾Ã Â¤Ë† ROI Ã Â¤â€Ã Â¤Â° Ã Â¤â€”Ã Â¥ÂÃ Â¤Â°Ã Â¥â€¹Ã Â¤Â¥ Ã Â¤Â²Ã Â¤Â¾Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸â€œË† <strong>Marketing & Ads:</strong> We scale <strong>${brandName}</strong> through precision Google Ads management and aggressive Verifyboost marketing campaigns.`
+            guj: `📈 <strong>Marketing & Ads:</strong> અમે <strong>${brandName}</strong> માટે Google Ads અને Verifyboost માર્કેટિંગ દ્વારા હાઈ ROI અને ગ્રોથ લાવીએ છીએ.`,
+            hin: `📈 <strong>Marketing & Ads:</strong> हम <strong>${brandName}</strong> के लिए Google Ads और Verifyboost मार्केटिंग के माध्यम से हाई ROI और ग्रोथ लाते हैं।`,
+            eng: `📈 <strong>Marketing & Ads:</strong> We scale <strong>${brandName}</strong> through precision Google Ads management and aggressive Verifyboost marketing campaigns.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€œâ€¦ MEETING SCHEDULER
-    if (/(meeting|schedule|book|appointment|consultation|Ã ÂªÂ®Ã Â«â‚¬Ã ÂªÅ¸Ã ÂªÂ¿Ã Âªâ€šÃ Âªâ€”|Ã Â¤Â®Ã Â¥â‚¬Ã Â¤Å¸Ã Â¤Â¿Ã Â¤â€šÃ Â¤â€”)/i.test(lowerText)) {
+    // 📅 MEETING SCHEDULER
+    if (/(meeting|schedule|book|appointment|consultation|મીટિંગ|मीटिंग)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€œâ€¦ <strong>Meeting Booking:</strong> Ã ÂªÂ¤Ã ÂªÂ®Ã Â«â€¡ Ã Âªâ€¦Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«â‚¬ Ã ÂªÂ¸Ã ÂªÂ°Ã Â«ÂÃ ÂªÂµÃ ÂªÂ¿Ã ÂªÂ¸ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Ã Âªâ€¦Ã ÂªÂ¹Ã Â«â‚¬Ã Âªâ€š Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ²Ã ÂªÂ¿Ã Âªâ€¢ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ¨Ã Â«â€¡</a> Ã ÂªÂ¡Ã ÂªÂ¾Ã ÂªÂ¯Ã ÂªÂ°Ã Â«â€¡Ã Âªâ€¢Ã Â«ÂÃ ÂªÅ¸ Ã ÂªÂ¸Ã ÂªÂ¿Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ¯Ã Â«â€¹Ã ÂªÂ° Ã ÂªÂ®Ã Â«â‚¬Ã ÂªÅ¸Ã ÂªÂ¿Ã Âªâ€šÃ Âªâ€” Ã ÂªÂ¬Ã Â«ÂÃ Âªâ€¢ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬ Ã ÂªÂ¶Ã Âªâ€¢Ã Â«â€¹ Ã Âªâ€ºÃ Â«â€¹.`,
-            hin: `Ã°Å¸â€œâ€¦ <strong>Meeting Booking:</strong> Ã Â¤â€ Ã Â¤Âª Ã Â¤Â¹Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â°Ã Â¥â‚¬ Ã Â¤Â¸Ã Â¤Â°Ã Â¥ÂÃ Â¤ÂµÃ Â¤Â¿Ã Â¤Â¸ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Ã Â¤Â¯Ã Â¤Â¹Ã Â¤Â¾Ã Â¤Â Ã Â¤â€¢Ã Â¥ÂÃ Â¤Â²Ã Â¤Â¿Ã Â¤â€¢ Ã Â¤â€¢Ã Â¤Â°Ã Â¤â€¢Ã Â¥â€¡</a> Ã Â¤Â¡Ã Â¤Â¾Ã Â¤Â¯Ã Â¤Â°Ã Â¥â€¡Ã Â¤â€¢Ã Â¥ÂÃ Â¤Å¸ Ã Â¤Â¸Ã Â¤Â¿Ã Â¤â€¢Ã Â¥ÂÃ Â¤Â¯Ã Â¥â€¹Ã Â¤Â° Ã Â¤Â®Ã Â¥â‚¬Ã Â¤Å¸Ã Â¤Â¿Ã Â¤â€šÃ Â¤â€” Ã Â¤Â¬Ã Â¥ÂÃ Â¤â€¢ Ã Â¤â€¢Ã Â¤Â° Ã Â¤Â¸Ã Â¤â€¢Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸â€œâ€¦ <strong>Secure Meeting Scheduler:</strong> You can instantly book a consultation for <strong>${brandName}</strong> by visiting our <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Secure Scheduler System</a>.`
+            guj: `📅 <strong>Meeting Booking:</strong> તમે અમારી સર્વિસ માટે <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">અહીં ક્લિક કરીને</a> ડાયરેક્ટ સિક્યોર મીટિંગ બુક કરી શકો છો.`,
+            hin: `📅 <strong>Meeting Booking:</strong> आप हमारी सर्विस के लिए <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">यहाँ क्लिक करके</a> डायरेक्ट सिक्योर मीटिंग बुक कर सकते हैं।`,
+            eng: `📅 <strong>Secure Meeting Scheduler:</strong> You can instantly book a consultation for <strong>${brandName}</strong> by visiting our <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Secure Scheduler System</a>.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€œÅ¾ CONTACT
+    // 📞 CONTACT
     if (/(human|call|speak|contact|agent|number|whatsapp|phone|help)/i.test(lowerText)) {
         const contactInfo = `WhatsApp: <strong>+91 96645 23986</strong> | Email: <strong>connectvertexglobal2209@gmail.com</strong>`;
         const res = {
-            guj: `Ã ÂªÅ¡Ã Â«â€¹Ã Âªâ€¢Ã Â«ÂÃ Âªâ€¢Ã ÂªÂ¸, Ã ÂªÂ¤Ã ÂªÂ®Ã Â«â€¡ Ã Âªâ€¦Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã ÂªÂ¾ Ã ÂªÂÃ ÂªÂ¡Ã ÂªÂ®Ã ÂªÂ¿Ã ÂªÂ¨ Ã ÂªÂ¸Ã ÂªÂ¾Ã ÂªÂ¥Ã Â«â€¡ Ã ÂªÂ¸Ã Â«â‚¬Ã ÂªÂ§Ã Â«â‚¬ Ã ÂªÂµÃ ÂªÂ¾Ã ÂªÂ¤ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬ Ã ÂªÂ¶Ã Âªâ€¢Ã Â«â€¹ Ã Âªâ€ºÃ Â«â€¹: ${contactInfo}`,
-            hin: `Ã Â¤Å“Ã Â¥â‚¬ Ã Â¤Â¹Ã Â¤Â¾Ã Â¤Â, Ã Â¤â€ Ã Â¤Âª Ã Â¤Â¹Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â°Ã Â¥â€¡ Ã Â¤ÂÃ Â¤Â¡Ã Â¤Â®Ã Â¤Â¿Ã Â¤Â¨ Ã Â¤Â¸Ã Â¥â€¡ Ã Â¤Â¸Ã Â¥â‚¬Ã Â¤Â§Ã Â¥â€¡ Ã Â¤Â¸Ã Â¤â€šÃ Â¤ÂªÃ Â¤Â°Ã Â¥ÂÃ Â¤â€¢ Ã Â¤â€¢Ã Â¤Â° Ã Â¤Â¸Ã Â¤â€¢Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€š: ${contactInfo}`,
+            guj: `ચોક્કસ, તમે અમારા એડમિન સાથે સીધી વાત કરી શકો છો: ${contactInfo}`,
+            hin: `जी हाँ, आप हमारे एडमिन से सीधे संपर्क कर सकते हैं: ${contactInfo}`,
             eng: `I understand. You can bridge directly to our Elite Administration at: ${contactInfo}`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€”Â¨Ã¯Â¸Â YES/NO CONFIRMATIONS
+    // 🗨️ YES/NO CONFIRMATIONS
     if (/^(yes|no|ha|na|chalse|nathi)/i.test(lowerText)) {
         return `Understood. I've noted your preference for <strong>${brandName}</strong>. Is there anything else I can assist with?`;
     }
@@ -912,80 +907,80 @@ function getBotResponse(input) {
         return `I cannot delete your history for audit reasons, but the system <strong>automatically resets every 24 hours</strong>.`;
     }
 
-    // Ã°Å¸â€™Â° PRICING & COST
-    if (/(price|cost|charge|fees|money|budget|package|plan|Ã Âªâ€¢Ã ÂªÂ¿Ã Âªâ€šÃ ÂªÂ®Ã ÂªÂ¤|Ã ÂªÂ­Ã ÂªÂ¾Ã ÂªÂµ|Ã ÂªÂªÃ Â«Ë†Ã ÂªÂ¸Ã ÂªÂ¾|Ã Âªâ€“Ã ÂªÂ°Ã Â«ÂÃ ÂªÅ¡|Ã Â¤ÂªÃ Â¥Ë†Ã Â¤Â¸Ã Â¥â€¡|Ã Â¤Â«Ã Â¥â‚¬Ã Â¤Â¸|Ã Â¤â€¢Ã Â¥â‚¬Ã Â¤Â®Ã Â¤Â¤)/i.test(lowerText)) {
+    // 💰 PRICING & COST
+    if (/(price|cost|charge|fees|money|budget|package|plan|કિંમત|ભાવ|પૈસા|ખર્ચ|पैसे|फीस|कीमत)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€™Â° <strong>Pricing:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«â‚¬ Ã ÂªÂ¸Ã ÂªÂ°Ã Â«ÂÃ ÂªÂµÃ ÂªÂ¿Ã ÂªÂ¸ Ã Âªâ€¢Ã ÂªÂ¸Ã Â«ÂÃ ÂªÅ¸Ã ÂªÂ®Ã ÂªÂ¾Ã Âªâ€¡Ã ÂªÂÃ Â«ÂÃ ÂªÂ¡ Ã Âªâ€ºÃ Â«â€¡. <strong>${brandName}</strong> Ã ÂªÂ¨Ã Â«â‚¬ Ã ÂªÅ“Ã ÂªÂ°Ã Â«â€šÃ ÂªÂ°Ã ÂªÂ¿Ã ÂªÂ¯Ã ÂªÂ¾Ã ÂªÂ¤ Ã ÂªÂ®Ã Â«ÂÃ ÂªÅ“Ã ÂªÂ¬ Ã ÂªÂ¬Ã Â«â€¡Ã ÂªÂ¸Ã Â«ÂÃ ÂªÅ¸ Ã ÂªÂªÃ Â«â€¡Ã Âªâ€¢Ã Â«â€¡Ã ÂªÅ“ Ã ÂªÅ“Ã ÂªÂ¾Ã ÂªÂ£Ã ÂªÂµÃ ÂªÂ¾ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡, Ã Âªâ€¢Ã Â«Æ’Ã ÂªÂªÃ ÂªÂ¾ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â‚¬Ã ÂªÂ¨Ã Â«â€¡ <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">Ã ÂªÂ®Ã Â«â‚¬Ã ÂªÅ¸Ã ÂªÂ¿Ã Âªâ€šÃ Âªâ€” Ã ÂªÂ¬Ã Â«ÂÃ Âªâ€¢ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â€¹</a>.`,
-            hin: `Ã°Å¸â€™Â° <strong>Pricing:</strong> Ã Â¤Â¹Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â°Ã Â¥â‚¬ Ã Â¤Â¸Ã Â¤Â°Ã Â¥ÂÃ Â¤ÂµÃ Â¤Â¿Ã Â¤Â¸ Ã Â¤â€¢Ã Â¤Â¸Ã Â¥ÂÃ Â¤Å¸Ã Â¤Â®Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Å“Ã Â¥ÂÃ Â¤Â¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¥Â¤ <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â‚¬ Ã Â¤Å“Ã Â¤Â°Ã Â¥â€šÃ Â¤Â°Ã Â¤Â¤ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤â€¦Ã Â¤Â¨Ã Â¥ÂÃ Â¤Â¸Ã Â¤Â¾Ã Â¤Â° Ã Â¤Â¬Ã Â¥â€¡Ã Â¤Â¸Ã Â¥ÂÃ Â¤Å¸ Ã Â¤ÂªÃ Â¥Ë†Ã Â¤â€¢Ã Â¥â€¡Ã Â¤Å“ Ã Â¤Å“Ã Â¤Â¾Ã Â¤Â¨Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â, Ã Â¤â€¢Ã Â¥Æ’Ã Â¤ÂªÃ Â¤Â¯Ã Â¤Â¾ <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">Ã Â¤Â®Ã Â¥â‚¬Ã Â¤Å¸Ã Â¤Â¿Ã Â¤â€šÃ Â¤â€” Ã Â¤Â¬Ã Â¥ÂÃ Â¤â€¢ Ã Â¤â€¢Ã Â¤Â°Ã Â¥â€¡Ã Â¤â€š</a>Ã Â¥Â¤`,
-            eng: `Ã°Å¸â€™Â° <strong>Investment & Pricing:</strong> We build custom solutions. To get an exact quote tailored to <strong>${brandName}</strong>'s requirements, please <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Schedule a Consultation</a>.`
+            guj: `💰 <strong>Pricing:</strong> અમારી સર્વિસ કસ્ટમાઇઝ્ડ છે. <strong>${brandName}</strong> ની જરૂરિયાત મુજબ બેસ્ટ પેકેજ જાણવા માટે, કૃપા કરીને <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">મીટિંગ બુક કરો</a>.`,
+            hin: `💰 <strong>Pricing:</strong> हमारी सर्विस कस्टमाइज्ड है। <strong>${brandName}</strong> की जरूरत के अनुसार बेस्ट पैकेज जानने के लिए, कृपया <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981;">मीटिंग बुक करें</a>।`,
+            eng: `💰 <strong>Investment & Pricing:</strong> We build custom solutions. To get an exact quote tailored to <strong>${brandName}</strong>'s requirements, please <a href="https://vgt-ragister.vercel.app" target="_blank" style="color: #10B981; text-decoration: underline;">Schedule a Consultation</a>.`
         };
         return res[lang];
     }
 
-    // Ã¢ÂÂ³ TIMEFRAME & DURATION
-    if (/(time|days|duration|how long|fast|quick|Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ¯Ã ÂªÂ¾Ã ÂªÂ°Ã Â«â€¡|Ã Âªâ€¢Ã Â«â€¡Ã ÂªÅ¸Ã ÂªÂ²Ã Â«â€¹ Ã ÂªÂ¸Ã ÂªÂ®Ã ÂªÂ¯|Ã ÂªÂ¸Ã ÂªÂ®Ã ÂªÂ¯|Ã Â¤Â¸Ã Â¤Â®Ã Â¤Â¯|Ã Â¤Â¦Ã Â¤Â¿Ã Â¤Â¨)/i.test(lowerText)) {
+    // ⏳ TIMEFRAME & DURATION
+    if (/(time|days|duration|how long|fast|quick|ક્યારે|કેટલો સમય|સમય|समय|दिन)/i.test(lowerText)) {
         const res = {
-            guj: `Ã¢ÂÂ³ <strong>Timeframe:</strong> Ã ÂªÂªÃ Â«ÂÃ ÂªÂ°Ã Â«â€¹Ã ÂªÅ“Ã Â«â€¡Ã Âªâ€¢Ã Â«ÂÃ ÂªÅ¸Ã ÂªÂ¨Ã Â«â‚¬ Ã ÂªÂ¸Ã ÂªÂ¾Ã Âªâ€¡Ã ÂªÂ Ã ÂªÂªÃ ÂªÂ° Ã Âªâ€ Ã ÂªÂ§Ã ÂªÂ¾Ã ÂªÂ° Ã ÂªÂ°Ã ÂªÂ¾Ã Âªâ€“Ã Â«â€¡ Ã Âªâ€ºÃ Â«â€¡. Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂ¹Ã Âªâ€šÃ ÂªÂ®Ã Â«â€¡Ã ÂªÂ¶Ã ÂªÂ¾ Ã ÂªÂ«Ã ÂªÂ¾Ã ÂªÂ¸Ã Â«ÂÃ ÂªÅ¸ Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Ã Âªâ€¢Ã Â«ÂÃ ÂªÂµÃ Â«â€¹Ã ÂªÂ²Ã ÂªÂ¿Ã ÂªÅ¸Ã Â«â‚¬ Ã ÂªÂ¡Ã ÂªÂ¿Ã ÂªÂ²Ã ÂªÂ¿Ã ÂªÂµÃ ÂªÂ°Ã Â«â‚¬ Ã Âªâ€ Ã ÂªÂªÃ Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã¢ÂÂ³ <strong>Timeframe:</strong> Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¥â€¹Ã Â¤Å“Ã Â¥â€¡Ã Â¤â€¢Ã Â¥ÂÃ Â¤Å¸ Ã Â¤â€¢Ã Â¥â‚¬ Ã Â¤Â¸Ã Â¤Â¾Ã Â¤â€¡Ã Â¤Å“ Ã Â¤ÂªÃ Â¤Â° Ã Â¤Â¨Ã Â¤Â¿Ã Â¤Â°Ã Â¥ÂÃ Â¤Â­Ã Â¤Â° Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¤Â¾ Ã Â¤Â¹Ã Â¥Ë†Ã Â¥Â¤ Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â¹Ã Â¤Â®Ã Â¥â€¡Ã Â¤Â¶Ã Â¤Â¾ Ã Â¤Â«Ã Â¤Â¾Ã Â¤Â¸Ã Â¥ÂÃ Â¤Å¸ Ã Â¤â€Ã Â¤Â° Ã Â¤â€¢Ã Â¥ÂÃ Â¤ÂµÃ Â¤Â¾Ã Â¤Â²Ã Â¤Â¿Ã Â¤Å¸Ã Â¥â‚¬ Ã Â¤Â¡Ã Â¤Â¿Ã Â¤Â²Ã Â¥â‚¬Ã Â¤ÂµÃ Â¤Â°Ã Â¥â‚¬ Ã Â¤Â¦Ã Â¥â€¡Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã¢ÂÂ³ <strong>Delivery Timeframe:</strong> Timelines depend on project complexity. However, we pride ourselves on rapid, high-quality execution for <strong>${brandName}</strong>.`
+            guj: `⏳ <strong>Timeframe:</strong> પ્રોજેક્ટની સાઇઝ પર આધાર રાખે છે. અમે <strong>${brandName}</strong> માટે હંમેશા ફાસ્ટ અને ક્વોલિટી ડિલિવરી આપીએ છીએ.`,
+            hin: `⏳ <strong>Timeframe:</strong> प्रोजेक्ट की साइज पर निर्भर करता है। हम <strong>${brandName}</strong> के लिए हमेशा फास्ट और क्वालिटी डिलीवरी देते हैं।`,
+            eng: `⏳ <strong>Delivery Timeframe:</strong> Timelines depend on project complexity. However, we pride ourselves on rapid, high-quality execution for <strong>${brandName}</strong>.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸Ââ€  GUARANTEES & RESULTS
-    if (/(guarantee|result|promise|sure|Ã Âªâ€”Ã Â«â€¡Ã ÂªÂ°Ã Âªâ€šÃ ÂªÅ¸Ã Â«â‚¬|Ã ÂªÂªÃ ÂªÂ°Ã ÂªÂ¿Ã ÂªÂ£Ã ÂªÂ¾Ã ÂªÂ®|Ã Â¤ÂªÃ Â¤Â°Ã Â¤Â¿Ã Â¤Â£Ã Â¤Â¾Ã Â¤Â®|Ã Â¤â€”Ã Â¤Â¾Ã Â¤Â°Ã Â¤â€šÃ Â¤Å¸Ã Â¥â‚¬)/i.test(lowerText)) {
+    // 🏆 GUARANTEES & RESULTS
+    if (/(guarantee|result|promise|sure|ગેરંટી|પરિણામ|परिणाम|गारंटी)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸Ââ€  <strong>Results:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ Ã ÂªÂ¡Ã Â«â€¡Ã ÂªÅ¸Ã ÂªÂ¾-Ã ÂªÂ¡Ã Â«ÂÃ ÂªÂ°Ã ÂªÂ¿Ã ÂªÂµÃ ÂªÂ¨ Ã Âªâ€¦Ã ÂªÂªÃ Â«ÂÃ ÂªÂ°Ã Â«â€¹Ã ÂªÅ¡ Ã ÂªÂµÃ ÂªÂ¾Ã ÂªÂªÃ ÂªÂ°Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ. <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ ROI Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Ã Âªâ€”Ã Â«ÂÃ ÂªÂ°Ã Â«â€¹Ã ÂªÂ¥Ã ÂªÂ¨Ã Â«â‚¬ Ã ÂªÂªÃ Â«â€šÃ ÂªÂ°Ã Â«â‚¬ Ã Âªâ€“Ã ÂªÂ¾Ã ÂªÂ¤Ã ÂªÂ°Ã Â«â‚¬ Ã Âªâ€ Ã ÂªÂªÃ Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸Ââ€  <strong>Results:</strong> Ã Â¤Â¹Ã Â¤Â® Ã Â¤Â¡Ã Â¥â€¡Ã Â¤Å¸Ã Â¤Â¾-Ã Â¤Â¡Ã Â¥ÂÃ Â¤Â°Ã Â¤Â¿Ã Â¤ÂµÃ Â¤Â¨ Ã Â¤â€¦Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¥â€¹Ã Â¤Å¡ Ã Â¤â€¢Ã Â¤Â¾ Ã Â¤â€¡Ã Â¤Â¸Ã Â¥ÂÃ Â¤Â¤Ã Â¥â€¡Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â² Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤ <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â ROI Ã Â¤â€Ã Â¤Â° Ã Â¤â€”Ã Â¥ÂÃ Â¤Â°Ã Â¥â€¹Ã Â¤Â¥ Ã Â¤â€¢Ã Â¥â‚¬ Ã Â¤ÂªÃ Â¥â€šÃ Â¤Â°Ã Â¥â‚¬ Ã Â¤â€”Ã Â¤Â¾Ã Â¤Â°Ã Â¤â€šÃ Â¤Å¸Ã Â¥â‚¬ Ã Â¤Â¦Ã Â¥â€¡Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸Ââ€  <strong>Guaranteed Results:</strong> We are entirely data-driven. We engineer measurable growth and positive ROI for <strong>${brandName}</strong>.`
+            guj: `🏆 <strong>Results:</strong> અમે ડેટા-ડ્રિવન અપ્રોચ વાપરીએ છીએ. <strong>${brandName}</strong> માટે ROI અને ગ્રોથની પૂરી ખાતરી આપીએ છીએ.`,
+            hin: `🏆 <strong>Results:</strong> हम डेटा-ड्रिवन अप्रोच का इस्तेमाल करते हैं। <strong>${brandName}</strong> के लिए ROI और ग्रोथ की पूरी गारंटी देते हैं।`,
+            eng: `🏆 <strong>Guaranteed Results:</strong> We are entirely data-driven. We engineer measurable growth and positive ROI for <strong>${brandName}</strong>.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€™Â¼ PORTFOLIO & PAST WORK
-    if (/(portfolio|past work|example|sample|demo|Ã Âªâ€¢Ã ÂªÂ¾Ã ÂªÂ® Ã ÂªÂ¬Ã ÂªÂ¤Ã ÂªÂ¾Ã ÂªÂµÃ Â«â€¹|Ã ÂªÂªÃ Â«â€¹Ã ÂªÂ°Ã Â«ÂÃ ÂªÅ¸Ã ÂªÂ«Ã Â«â€¹Ã ÂªÂ²Ã ÂªÂ¿Ã ÂªÂ¯Ã Â«â€¹|Ã Â¤ÂªÃ Â¥â€¹Ã Â¤Â°Ã Â¥ÂÃ Â¤Å¸Ã Â¤Â«Ã Â¥â€¹Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â¯Ã Â¥â€¹|Ã Â¤Â¡Ã Â¥â€¡Ã Â¤Â®Ã Â¥â€¹)/i.test(lowerText)) {
+    // 💼 PORTFOLIO & PAST WORK
+    if (/(portfolio|past work|example|sample|demo|કામ બતાવો|પોર્ટફોલિયો|पोर्टफोलियो|डेमो)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€™Â¼ <strong>Portfolio:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ Ã ÂªËœÃ ÂªÂ£Ã ÂªÂ¾ Ã ÂªÂªÃ Â«ÂÃ ÂªÂ°Ã Â«â‚¬Ã ÂªÂ®Ã ÂªÂ¿Ã ÂªÂ¯Ã ÂªÂ® Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ²Ã ÂªÂ¾Ã ÂªÂ¯Ã ÂªÂ¨Ã Â«ÂÃ ÂªÅ¸Ã Â«ÂÃ ÂªÂ¸ Ã ÂªÂ¸Ã ÂªÂ¾Ã ÂªÂ¥Ã Â«â€¡ Ã Âªâ€¢Ã ÂªÂ¾Ã ÂªÂ® Ã Âªâ€¢Ã ÂªÂ°Ã Â«ÂÃ ÂªÂ¯Ã Â«ÂÃ Âªâ€š Ã Âªâ€ºÃ Â«â€¡. <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã Âªâ€¦Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã ÂªÂ¾ Ã ÂªÂªÃ ÂªÂ¾Ã ÂªÂ¸Ã Â«ÂÃ ÂªÅ¸ Ã ÂªÂµÃ ÂªÂ°Ã Â«ÂÃ Âªâ€¢Ã ÂªÂ¨Ã Â«ÂÃ Âªâ€š Ã ÂªÂ¡Ã Â«â€¡Ã ÂªÂ®Ã Â«â€¹ Ã ÂªÅ“Ã Â«â€¹Ã ÂªÂµÃ ÂªÂ¾ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂ®Ã Â«â‚¬Ã ÂªÅ¸Ã ÂªÂ¿Ã Âªâ€šÃ Âªâ€” Ã ÂªÂ¬Ã Â«ÂÃ Âªâ€¢ Ã Âªâ€¢Ã ÂªÂ°Ã Â«â€¹.`,
-            hin: `Ã°Å¸â€™Â¼ <strong>Portfolio:</strong> Ã Â¤Â¹Ã Â¤Â®Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤â€¢Ã Â¤Ë† Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¥â‚¬Ã Â¤Â®Ã Â¤Â¿Ã Â¤Â¯Ã Â¤Â® Ã Â¤â€¢Ã Â¥ÂÃ Â¤Â²Ã Â¤Â¾Ã Â¤â€¡Ã Â¤â€šÃ Â¤Å¸Ã Â¥ÂÃ Â¤Â¸ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â¸Ã Â¤Â¾Ã Â¤Â¥ Ã Â¤â€¢Ã Â¤Â¾Ã Â¤Â® Ã Â¤â€¢Ã Â¤Â¿Ã Â¤Â¯Ã Â¤Â¾ Ã Â¤Â¹Ã Â¥Ë†Ã Â¥Â¤ <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â¹Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â°Ã Â¥â€¡ Ã Â¤ÂªÃ Â¤Â¾Ã Â¤Â¸Ã Â¥ÂÃ Â¤Å¸ Ã Â¤ÂµÃ Â¤Â°Ã Â¥ÂÃ Â¤â€¢ Ã Â¤â€¢Ã Â¤Â¾ Ã Â¤Â¡Ã Â¥â€¡Ã Â¤Â®Ã Â¥â€¹ Ã Â¤Â¦Ã Â¥â€¡Ã Â¤â€“Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â®Ã Â¥â‚¬Ã Â¤Å¸Ã Â¤Â¿Ã Â¤â€šÃ Â¤â€” Ã Â¤Â¬Ã Â¥ÂÃ Â¤â€¢ Ã Â¤â€¢Ã Â¤Â°Ã Â¥â€¡Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸â€™Â¼ <strong>Elite Portfolio:</strong> We've scaled multiple premium brands. To see case studies relevant to <strong>${brandName}</strong>, let's connect on a quick call.`
+            guj: `💼 <strong>Portfolio:</strong> અમે ઘણા પ્રીમિયમ ક્લાયન્ટ્સ સાથે કામ કર્યું છે. <strong>${brandName}</strong> માટે અમારા પાસ્ટ વર્કનું ડેમો જોવા માટે મીટિંગ બુક કરો.`,
+            hin: `💼 <strong>Portfolio:</strong> हमने कई प्रीमियम क्लाइंट्स के साथ काम किया है। <strong>${brandName}</strong> के लिए हमारे पास्ट वर्क का डेमो देखने के लिए मीटिंग बुक करें।`,
+            eng: `💼 <strong>Elite Portfolio:</strong> We've scaled multiple premium brands. To see case studies relevant to <strong>${brandName}</strong>, let's connect on a quick call.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€™Â» TECH STACK
-    if (/(react|node|php|python|tech|stack|technology|Ã ÂªÅ¸Ã Â«â€¡Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ¨Ã Â«â€¹Ã ÂªÂ²Ã Â«â€¹Ã ÂªÅ“Ã Â«â‚¬|Ã Â¤Â¤Ã Â¤â€¢Ã Â¤Â¨Ã Â¥â‚¬Ã Â¤â€¢|software|language)/i.test(lowerText)) {
+    // 💻 TECH STACK
+    if (/(react|node|php|python|tech|stack|technology|ટેક્નોલોજી|तकनीक|software|language)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€™Â» <strong>Technology:</strong> Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ React, Node.js, Python, Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Odoo Ã ÂªÅ“Ã Â«â€¡Ã ÂªÂµÃ Â«â‚¬ Ã ÂªÂ²Ã Â«â€¡Ã ÂªÅ¸Ã Â«â€¡Ã ÂªÂ¸Ã Â«ÂÃ ÂªÅ¸ Ã Âªâ€¦Ã ÂªÂ¨Ã Â«â€¡ Ã ÂªÂªÃ ÂªÂ¾Ã ÂªÂµÃ ÂªÂ°Ã ÂªÂ«Ã Â«ÂÃ ÂªÂ² Ã ÂªÅ¸Ã Â«â€¡Ã Âªâ€¢Ã Â«ÂÃ ÂªÂ¨Ã Â«â€¹Ã ÂªÂ²Ã Â«â€¹Ã ÂªÅ“Ã Â«â‚¬ Ã ÂªÂµÃ ÂªÂ¾Ã ÂªÂªÃ ÂªÂ°Ã Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸â€™Â» <strong>Technology:</strong> Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â React, Node.js, Python, Ã Â¤â€Ã Â¤Â° Odoo Ã Â¤Å“Ã Â¥Ë†Ã Â¤Â¸Ã Â¥â‚¬ Ã Â¤Â²Ã Â¥â€¡Ã Â¤Å¸Ã Â¥â€¡Ã Â¤Â¸Ã Â¥ÂÃ Â¤Å¸ Ã Â¤â€Ã Â¤Â° Ã Â¤ÂªÃ Â¤Â¾Ã Â¤ÂµÃ Â¤Â°Ã Â¤Â«Ã Â¥ÂÃ Â¤Â² Ã Â¤Â¤Ã Â¤â€¢Ã Â¤Â¨Ã Â¥â‚¬Ã Â¤â€¢ Ã Â¤â€¢Ã Â¤Â¾ Ã Â¤â€°Ã Â¤ÂªÃ Â¤Â¯Ã Â¥â€¹Ã Â¤â€” Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸â€™Â» <strong>Advanced Tech Stack:</strong> For <strong>${brandName}</strong>, we leverage modern, scalable stacks including React, Node.js, Python, and Odoo ERP.`
+            guj: `💻 <strong>Technology:</strong> અમે <strong>${brandName}</strong> માટે React, Node.js, Python, અને Odoo જેવી લેટેસ્ટ અને પાવરફુલ ટેક્નોલોજી વાપરીએ છીએ.`,
+            hin: `💻 <strong>Technology:</strong> हम <strong>${brandName}</strong> के लिए React, Node.js, Python, और Odoo जैसी लेटेस्ट और पावरफुल तकनीक का उपयोग करते हैं।`,
+            eng: `💻 <strong>Advanced Tech Stack:</strong> For <strong>${brandName}</strong>, we leverage modern, scalable stacks including React, Node.js, Python, and Odoo ERP.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â€ºÂ Ã¯Â¸Â SUPPORT & MAINTENANCE
-    if (/(support|maintenance|after|help|Ã ÂªÂ¸Ã ÂªÂªÃ Â«â€¹Ã ÂªÂ°Ã Â«ÂÃ ÂªÅ¸|Ã ÂªÂ¸Ã ÂªÂ¹Ã ÂªÂ¾Ã ÂªÂ¯|Ã Â¤Â¸Ã Â¤ÂªÃ Â¥â€¹Ã Â¤Â°Ã Â¥ÂÃ Â¤Å¸|Ã Â¤Â®Ã Â¤Â¦Ã Â¤Â¦)/i.test(lowerText)) {
+    // 🛠️ SUPPORT & MAINTENANCE
+    if (/(support|maintenance|after|help|સપોર્ટ|સહાય|सपोर्ट|मदद)/i.test(lowerText)) {
         const res = {
-            guj: `Ã°Å¸â€ºÂ Ã¯Â¸Â <strong>Support:</strong> Ã ÂªÂ¡Ã ÂªÂ¿Ã ÂªÂ²Ã ÂªÂ¿Ã ÂªÂµÃ ÂªÂ°Ã Â«â‚¬ Ã ÂªÂªÃ Âªâ€ºÃ Â«â‚¬ Ã ÂªÂªÃ ÂªÂ£ Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ <strong>${brandName}</strong> Ã ÂªÂ¨Ã Â«â€¡ 24/7 Ã ÂªÂªÃ Â«ÂÃ ÂªÂ°Ã Â«â‚¬Ã ÂªÂ®Ã ÂªÂ¿Ã ÂªÂ¯Ã ÂªÂ® Ã ÂªÅ¸Ã Â«â€¡Ã Âªâ€¢Ã ÂªÂ¨Ã ÂªÂ¿Ã Âªâ€¢Ã ÂªÂ² Ã ÂªÂ¸Ã ÂªÂªÃ Â«â€¹Ã ÂªÂ°Ã Â«ÂÃ ÂªÅ¸ Ã Âªâ€ Ã ÂªÂªÃ Â«â‚¬Ã ÂªÂ Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ.`,
-            hin: `Ã°Å¸â€ºÂ Ã¯Â¸Â <strong>Support:</strong> Ã Â¤Â¡Ã Â¤Â¿Ã Â¤Â²Ã Â¥â‚¬Ã Â¤ÂµÃ Â¤Â°Ã Â¥â‚¬ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â¬Ã Â¤Â¾Ã Â¤Â¦ Ã Â¤Â­Ã Â¥â‚¬ Ã Â¤Â¹Ã Â¤Â® <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¹ 24/7 Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¥â‚¬Ã Â¤Â®Ã Â¤Â¿Ã Â¤Â¯Ã Â¤Â® Ã Â¤Å¸Ã Â¥â€¡Ã Â¤â€¢Ã Â¥ÂÃ Â¤Â¨Ã Â¤Â¿Ã Â¤â€¢Ã Â¤Â² Ã Â¤Â¸Ã Â¤ÂªÃ Â¥â€¹Ã Â¤Â°Ã Â¥ÂÃ Â¤Å¸ Ã Â¤ÂªÃ Â¥ÂÃ Â¤Â°Ã Â¤Â¦Ã Â¤Â¾Ã Â¤Â¨ Ã Â¤â€¢Ã Â¤Â°Ã Â¤Â¤Ã Â¥â€¡ Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤`,
-            eng: `Ã°Å¸â€ºÂ Ã¯Â¸Â <strong>Elite Support:</strong> Post-deployment, we provide 24/7 premium technical support and maintenance to ensure <strong>${brandName}</strong> runs flawlessly.`
+            guj: `🛠️ <strong>Support:</strong> ડિલિવરી પછી પણ અમે <strong>${brandName}</strong> ને 24/7 પ્રીમિયમ ટેકનિકલ સપોર્ટ આપીએ છીએ.`,
+            hin: `🛠️ <strong>Support:</strong> डिलीवरी के बाद भी हम <strong>${brandName}</strong> को 24/7 प्रीमियम टेक्निकल सपोर्ट प्रदान करते हैं।`,
+            eng: `🛠️ <strong>Elite Support:</strong> Post-deployment, we provide 24/7 premium technical support and maintenance to ensure <strong>${brandName}</strong> runs flawlessly.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸â„¢Â APPRECIATION / SMALL TALK
-    if (/(thanks|thank you|good|awesome|great|nice|perfect|Ã Âªâ€ Ã ÂªÂ­Ã ÂªÂ¾Ã ÂªÂ°|Ã ÂªÂ¸Ã ÂªÂ°Ã ÂªÂ¸|Ã ÂªÂ§Ã ÂªÂ¨Ã Â«ÂÃ ÂªÂ¯Ã ÂªÂµÃ ÂªÂ¾Ã ÂªÂ¦|Ã Â¤Â§Ã Â¤Â¨Ã Â¥ÂÃ Â¤Â¯Ã Â¤ÂµÃ Â¤Â¾Ã Â¤Â¦|Ã Â¤â€¦Ã Â¤Å¡Ã Â¥ÂÃ Â¤â€ºÃ Â¤Â¾|Ã Â¤Â¬Ã Â¤Â¹Ã Â¥ÂÃ Â¤Â¤ Ã Â¤Â¬Ã Â¥ÂÃ Â¤Â¿Ã Â¤Â¯Ã Â¤Â¾)/i.test(lowerText)) {
+    // 🙏 APPRECIATION / SMALL TALK
+    if (/(thanks|thank you|good|awesome|great|nice|perfect|આભાર|સરસ|ધન્યવાદ|धन्यवाद|अच्छा|बहुत बढ़िया)/i.test(lowerText)) {
         const res = {
-            guj: `Ã ÂªÂ¤Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«â€¹ Ã Âªâ€ Ã ÂªÂ­Ã ÂªÂ¾Ã ÂªÂ°! <strong>${brandName}</strong> Ã ÂªÂ¨Ã Â«â€¡ Ã ÂªÅ¸Ã Â«â€¹Ã ÂªÅ¡ Ã ÂªÂªÃ ÂªÂ° Ã ÂªÂ²Ã ÂªË† Ã ÂªÅ“Ã ÂªÂµÃ ÂªÂ¾ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã Âªâ€¦Ã ÂªÂ®Ã Â«â€¡ Ã ÂªÂ¹Ã Âªâ€šÃ ÂªÂ®Ã Â«â€¡Ã ÂªÂ¶Ã ÂªÂ¾ Ã ÂªÂ¤Ã Â«Ë†Ã ÂªÂ¯Ã ÂªÂ¾Ã ÂªÂ° Ã Âªâ€ºÃ Â«â‚¬Ã ÂªÂ. Ã ÂªÂ¬Ã Â«â‚¬Ã ÂªÅ“Ã Â«ÂÃ Âªâ€š Ã Âªâ€¢Ã Â«â€¹Ã ÂªË† Ã Âªâ€¢Ã ÂªÂ¾Ã ÂªÂ® Ã ÂªÂ¹Ã Â«â€¹Ã ÂªÂ¯ Ã ÂªÂ¤Ã Â«â€¹ Ã ÂªÅ“Ã ÂªÂ£Ã ÂªÂ¾Ã ÂªÂµÃ ÂªÅ“Ã Â«â€¹.`,
-            hin: `Ã Â¤â€ Ã Â¤ÂªÃ Â¤â€¢Ã Â¤Â¾ Ã Â¤Â§Ã Â¤Â¨Ã Â¥ÂÃ Â¤Â¯Ã Â¤ÂµÃ Â¤Â¾Ã Â¤Â¦! <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¹ Ã Â¤Å¸Ã Â¥â€°Ã Â¤Âª Ã Â¤ÂªÃ Â¤Â° Ã Â¤Â²Ã Â¥â€¡ Ã Â¤Å“Ã Â¤Â¾Ã Â¤Â¨Ã Â¥â€¡ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â¹Ã Â¤Â® Ã Â¤Â¹Ã Â¤Â®Ã Â¥â€¡Ã Â¤Â¶Ã Â¤Â¾ Ã Â¤Â¤Ã Â¥Ë†Ã Â¤Â¯Ã Â¤Â¾Ã Â¤Â° Ã Â¤Â¹Ã Â¥Ë†Ã Â¤â€šÃ Â¥Â¤ Ã Â¤â€Ã Â¤Â° Ã Â¤â€¢Ã Â¥â€¹Ã Â¤Ë† Ã Â¤Â®Ã Â¤Â¦Ã Â¤Â¦ Ã Â¤Å¡Ã Â¤Â¾Ã Â¤Â¹Ã Â¤Â¿Ã Â¤Â Ã Â¤Â¤Ã Â¥â€¹ Ã Â¤Â¬Ã Â¤Â¤Ã Â¤Â¾Ã Â¤ÂÃ Â¤ÂÃ Â¥Â¤`,
+            guj: `તમારો આભાર! <strong>${brandName}</strong> ને ટોચ પર લઈ જવા માટે અમે હંમેશા તૈયાર છીએ. બીજું કોઈ કામ હોય તો જણાવજો.`,
+            hin: `आपका धन्यवाद! <strong>${brandName}</strong> को टॉप पर ले जाने के लिए हम हमेशा तैयार हैं। और कोई मदद चाहिए तो बताएँ।`,
             eng: `You're very welcome! We are committed to taking <strong>${brandName}</strong> to the top. Let me know if you need anything else.`
         };
         return res[lang];
     }
 
-    // Ã°Å¸Â§Â  FALLBACK
+    // 🧠 FALLBACK
     const fallback = {
-        guj: `Ã ÂªÂ®Ã Â«â€¡Ã Âªâ€š Ã ÂªÂ¤Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«â‚¬ Ã Âªâ€  Ã ÂªÂµÃ ÂªÂ¾Ã ÂªÂ¤ "${text}" Ã ÂªÂÃ ÂªÂ¡Ã ÂªÂ®Ã ÂªÂ¿Ã ÂªÂ¨ Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂ¨Ã Â«â€¹Ã Âªâ€šÃ ÂªÂ§Ã Â«â‚¬ Ã ÂªÂ²Ã Â«â‚¬Ã ÂªÂ§Ã Â«â‚¬ Ã Âªâ€ºÃ Â«â€¡. Ã ÂªÂ¤Ã Â«â€¡Ã Âªâ€œ <strong>${brandName}</strong> Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÅ¸Ã Â«â€¡ Ã ÂªÂ¤Ã ÂªÂ®Ã ÂªÂ¾Ã ÂªÂ°Ã Â«â€¹ Ã ÂªÂ¸Ã Âªâ€šÃ ÂªÂªÃ ÂªÂ°Ã Â«ÂÃ Âªâ€¢ Ã Âªâ€¢Ã ÂªÂ°Ã ÂªÂ¶Ã Â«â€¡.`,
-        hin: `Ã Â¤Â®Ã Â¥Ë†Ã Â¤â€šÃ Â¤Â¨Ã Â¥â€¡ Ã Â¤â€ Ã Â¤ÂªÃ Â¤â€¢Ã Â¥â‚¬ Ã Â¤Â¯Ã Â¤Â¹ Ã Â¤Â¬Ã Â¤Â¾Ã Â¤Â¤ "${text}" Ã Â¤ÂÃ Â¤Â¡Ã Â¤Â®Ã Â¤Â¿Ã Â¤Â¨ Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤Â¨Ã Â¥â€¹Ã Â¤Å¸ Ã Â¤â€¢Ã Â¤Â° Ã Â¤Â²Ã Â¥â‚¬ Ã Â¤Â¹Ã Â¥Ë†Ã Â¥Â¤ Ã Â¤ÂµÃ Â¥â€¡ <strong>${brandName}</strong> Ã Â¤â€¢Ã Â¥â€¡ Ã Â¤Â²Ã Â¤Â¿Ã Â¤Â Ã Â¤â€ Ã Â¤ÂªÃ Â¤Â¸Ã Â¥â€¡ Ã Â¤Â¸Ã Â¤â€šÃ Â¤ÂªÃ Â¤Â°Ã Â¥ÂÃ Â¤â€¢ Ã Â¤â€¢Ã Â¤Â°Ã Â¥â€¡Ã Â¤â€šÃ Â¤â€”Ã Â¥â€¡Ã Â¥Â¤`,
+        guj: `મેં તમારી આ વાત "${text}" એડમિન માટે નોંધી લીધી છે. તેઓ <strong>${brandName}</strong> માટે તમારો સંપર્ક કરશે.`,
+        hin: `मैंने आपकी यह बात "${text}" एडमिन के लिए नोट कर ली है। वे <strong>${brandName}</strong> के लिए आपसे संपर्क करेंगे।`,
         eng: `I've noted your inquiry regarding "${text}". I've logged this for our <strong>Elite Administration</strong> to review for <strong>${brandName}</strong>.`
     };
     return fallback[lang];
@@ -1049,8 +1044,7 @@ function submitVideoLink(e, index) {
     if (!currentBrand.chat) currentBrand.chat = [];
     currentBrand.chat.push({ sender: 'bot', text: `Automated System Alert: Client has submitted a Video Drive Link for review.`, time: Date.now() });
 
-    localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-        syncToSheetDB();
+    localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
     renderClientVideoTasks();
     alert("Video Link Successfully Submitted to Administration for review!");
 }
@@ -1106,7 +1100,7 @@ setInterval(() => {
     currentBrand.chat = currentBrand.chat.filter(msg => (now - msg.time) < expiry);
     
     if (currentBrand.chat.length !== originalLength) {
-        console.log("Ã°Å¸Â§Â¹ Background Cleanup: Removing expired messages...");
+        console.log("🧹 Background Cleanup: Removing expired messages...");
         if (currentBrand.chat.length === 0) {
             currentBrand.chat.push({ sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: now });
         }
@@ -1116,7 +1110,5 @@ setInterval(() => {
     
     }
 }, 60000); // Check every 60 seconds
-
-
 
 

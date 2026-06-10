@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -56,13 +56,13 @@
                     </div>
                     <div class="input-group">
                         <label>Password</label>
-                        <input type="password" id="newBrandPass" placeholder="ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢" required>
+                        <input type="password" id="newBrandPass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
                     </div>
                     <div class="input-group">
                         <label>Owner Profile Type</label>
                         <select id="newBrandGender">
-                            <option value="male">ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ¢â‚¬Â Male Owner</option>
-                            <option value="female">ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ¢â‚¬â€ Female Owner</option>
+                            <option value="male">ðŸ‘” Male Owner</option>
+                            <option value="female">ðŸ‘— Female Owner</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -83,8 +83,8 @@
                     <div class="input-group">
                         <label>Support Chat Access</label>
                         <select id="newBrandChat">
-                            <option value="yes">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Chat Enabled (Yes)</option>
-                            <option value="no">ÃƒÂ°Ã…Â¸Ã…Â¡Ã‚Â« Chat Disabled (No)</option>
+                            <option value="yes">âœ… Chat Enabled (Yes)</option>
+                            <option value="no">ðŸš« Chat Disabled (No)</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -136,7 +136,7 @@
                             <div class="input-group">
                                 <label>Recipient</label>
                                 <select id="broadcastRecipient">
-                                    <option value="all">ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â¢ All Brands (Global)</option>
+                                    <option value="all">ðŸ“¢ All Brands (Global)</option>
                                     <!-- Injected by JS -->
                                 </select>
                             </div>
@@ -266,10 +266,10 @@
                     <div class="input-group">
                         <label>Content Format (Auto-Label)</label>
                         <select id="scheduleFormat">
-                            <option value="auto">ÃƒÂ¢Ã…â€œÃ‚Â¨ Auto-Detect</option>
-                            <option value="post">ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â Standard Post</option>
-                            <option value="reel">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¬ Video / Reel</option>
-                            <option value="ad">ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â¢ Paid Ad</option>
+                            <option value="auto">âœ¨ Auto-Detect</option>
+                            <option value="post">ðŸ“ Standard Post</option>
+                            <option value="reel">ðŸŽ¬ Video / Reel</option>
+                            <option value="ad">ðŸ“¢ Paid Ad</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -382,7 +382,7 @@
 
 
     <script>
-        // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ ADMIN SECURITY GUARD (Immediate Check)
+        // âœ… ADMIN SECURITY GUARD (Immediate Check)
         if (localStorage.getItem('socialSphere_admin') !== 'true') {
             window.location.href = 'index.html';
         }
@@ -422,7 +422,7 @@
             storedBrands.__system_admin_hash__ = hashed;
             syncToSheetDB();
 
-            errorEl.textContent = "ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Admin Password Updated & Synced!";
+            errorEl.textContent = "âœ… Admin Password Updated & Synced!";
             errorEl.style.cssText = "color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 16px; display: block;";
             
             setTimeout(() => {
@@ -447,13 +447,13 @@
         // SHEETDB DATABASE SYNC ENGINE - MULTI-API FAILOVER
         // ==========================================
         const SHEETDB_API_URLS = [
-            "https://sheetdb.io/api/v1/bv1v9wrq0pziw",
-            "https://sheetdb.io/api/v1/vvutbhezp19tr"
+            "https://sheetdb.io/api/v1/bv1v9wrq0pziw", // ✅ Secondary API Connected (Working)
+            "https://sheetdb.io/api/v1/vvutbhezp19tr" // Primary API (Currently returning 401 on PATCH)
         ];
 
         // SheetDB Sync - Simple JSON Store (SheetDB = Single Source of Truth)
         async function syncToSheetDB() {
-            // Clean brands â€” only real brand keys, no metadata
+            // Clean brands — only real brand keys, no metadata
             const cleanBrands = {};
             for (const [k, v] of Object.entries(storedBrands)) {
                 if (!k.startsWith('_') && typeof v === 'object') cleanBrands[k] = v;
@@ -470,22 +470,22 @@
                         body: JSON.stringify({ data: { database_json: jsonStr } })
                     });
                     if (patchRes.ok) {
-                        console.log(`âœ… Admin: Synced to ${url}`);
+                        console.log(`✅ Admin: Synced to ${url}`);
                         return;
                     } else if (patchRes.status === 429) {
-                        console.warn(`âš ï¸ Admin: Rate limit on ${url}, trying next...`);
+                        console.warn(`⚠️ Admin: Rate limit on ${url}, trying next...`);
                         continue;
                     } else {
-                        // Row doesn't exist â€” create it
+                        // Row doesn't exist — create it
                         const postRes = await fetch(url, {
                             method: 'POST',
                             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
                             body: JSON.stringify({ data: [{ id: 1, database_json: jsonStr }] })
                         });
-                        if (postRes.ok) { console.log(`âœ… Admin: Created SheetDB row at ${url}`); return; }
+                        if (postRes.ok) { console.log(`✅ Admin: Created SheetDB row at ${url}`); return; }
                     }
                 } catch (error) {
-                    console.error(`âŒ Admin: Sync error [${url}]:`, error);
+                    console.error(`❌ Admin: Sync error [${url}]:`, error);
                 }
             }
         }
@@ -498,23 +498,23 @@
                     if (res.ok) {
                         const rows = await res.json();
                         if (rows && rows.length > 0 && rows[0].database_json) {
-                            // SheetDB has data â€” always use it as source of truth
+                            // SheetDB has data — always use it as source of truth
                             storedBrands = JSON.parse(rows[0].database_json) || {};
                             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-                            console.log(`âœ… Admin: Loaded from ${url} | Brands: ${Object.keys(storedBrands).join(', ')}`);
+                            console.log(`✅ Admin: Loaded from ${url} | Brands: ${Object.keys(storedBrands).join(', ')}`);
                             return true;
                         } else {
-                            // SheetDB empty â€” push local data up
-                            console.log(`ðŸ“¡ Admin: SheetDB empty, pushing local data to ${url}`);
+                            // SheetDB empty — push local data up
+                            console.log(`📡 Admin: SheetDB empty, pushing local data to ${url}`);
                             syncToSheetDB();
                             return true;
                         }
                     } else if (res.status === 429) {
-                        console.warn(`âš ï¸ Admin: Rate limit on load [${url}], trying next...`);
+                        console.warn(`⚠️ Admin: Rate limit on load [${url}], trying next...`);
                         continue;
                     }
                 } catch (error) {
-                    console.error(`âŒ Admin: Load error [${url}]:`, error);
+                    console.error(`❌ Admin: Load error [${url}]:`, error);
                 }
             }
             return false;
@@ -567,7 +567,7 @@
         function renderBrands() {
             brandListTable.innerHTML = '';
             selectBrand.innerHTML = '';
-            broadcastRecipient.innerHTML = '<option value="all">ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â¢ All Brands (Global)</option>';
+            broadcastRecipient.innerHTML = '<option value="all">ðŸ“¢ All Brands (Global)</option>';
             document.getElementById('videoTaskRecipient').innerHTML = '';
 
 
@@ -658,7 +658,7 @@
                     <td data-label="User ID">${id}</td>
                     <td data-label="Security">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-family: monospace; color: var(--text-gray); font-size: 0.8rem;">ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢</span>
+                            <span style="font-family: monospace; color: var(--text-gray); font-size: 0.8rem;">â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢</span>
                             <button onclick="changePassword('${id}')" class="btn-icon-small"><i data-lucide="key" style="width: 14px; height: 14px;"></i></button>
                         </div>
                     </td>
@@ -711,13 +711,13 @@
                 // Broadcast Dropdown
                 const opt2 = document.createElement('option');
                 opt2.value = id;
-                opt2.textContent = `ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¯ ${brand.name}`;
+                opt2.textContent = `ðŸŽ¯ ${brand.name}`;
                 broadcastRecipient.appendChild(opt2);
 
                 // Video Task Dropdown
                 const opt3 = document.createElement('option');
                 opt3.value = id;
-                opt3.textContent = `ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¬ ${brand.name}`;
+                opt3.textContent = `ðŸŽ¬ ${brand.name}`;
                 document.getElementById('videoTaskRecipient').appendChild(opt3);
             });
 
@@ -731,9 +731,7 @@
             if (window.lucide) {
                 lucide.createIcons();
             }
-            storedBrands._lastUpdated = Date.now();
-                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-                    syncToSheetDB();
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
 
             // Trigger dynamic filtering for the first loaded brand
             if (selectBrand.options.length > 0) {
@@ -787,11 +785,9 @@
 
             // Also send a notification
             if (!brand.messages) brand.messages = [];
-            brand.messages.push({ text: `ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¬ New Video Shoot Scheduled for ${dateStr}. Please check your roadmap.`, time: Date.now() });
+            brand.messages.push({ text: `ðŸŽ¬ New Video Shoot Scheduled for ${dateStr}. Please check your roadmap.`, time: Date.now() });
 
-            storedBrands._lastUpdated = Date.now();
-                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-                    syncToSheetDB();
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
             document.getElementById('videoTaskForm').reset();
             alert(`Video Assignment successfully scheduled for ${dateStr} for ${brand.name}!`);
             renderAdminVideoTasks();
@@ -894,9 +890,7 @@
                 alert(`Direct Message sent to ${storedBrands[target].name}`);
             }
             broadcastForm.reset();
-            storedBrands._lastUpdated = Date.now();
-                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-                    syncToSheetDB();
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
         });
 
         function toggleLock(id) {
@@ -1042,10 +1036,7 @@
                 };
             }
 
-            storedBrands._lastUpdated = Date.now(); // Ã°Å¸â€â€˜ stamp so this version wins over any stale cloud
-            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-            syncToSheetDB();
-
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
 
             // Reset Form State
             editingBrandId = null;
@@ -1160,11 +1151,11 @@
             }).length;
             const additionalAds = selectedTypes.filter(t => t === 'ad').length;
             if (currentPosts + additionalPosts > GLOBAL_POST_CAP) {
-                alert(`ÃƒÂ¢Ã‚ÂÃ…â€™ Monthly Post Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_POST_CAP} posts (including videos) per month. Currently scheduled: ${currentPosts}.`);
+                alert(`âŒ Monthly Post Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_POST_CAP} posts (including videos) per month. Currently scheduled: ${currentPosts}.`);
                 return;
             }
             if (currentAds + additionalAds > GLOBAL_AD_CAP) {
-                alert(`ÃƒÂ¢Ã‚ÂÃ…â€™ Monthly Ad Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_AD_CAP} ads per month. Currently scheduled: ${currentAds}.`);
+                alert(`âŒ Monthly Ad Limit Reached!\n\nYou can schedule a maximum of ${GLOBAL_AD_CAP} ads per month. Currently scheduled: ${currentAds}.`);
                 return;
             }
 
@@ -1191,37 +1182,37 @@
 
                 if (isBecomingVideo) {
                     if (planLimit.videos === 0) {
-                        alert(`ÃƒÂ¢Ã‚ÂÃ…â€™ Plan Restriction!\n\n"${currentPlan}" does not allow Videos/Reels on ${type.toUpperCase()}.`);
+                        alert(`âŒ Plan Restriction!\n\n"${currentPlan}" does not allow Videos/Reels on ${type.toUpperCase()}.`);
                         return;
                     }
                     // Only count as new if it wasn't already a video
                     const newCount = usedVideos + (existingEvent ? (wasVideo ? 0 : 1) : 1);
                     if (newCount > planLimit.videos) {
-                        alert(`ÃƒÂ¢Ã‚ÂÃ…â€™ Video Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedVideos}/${planLimit.videos} videos this month for this platform.`);
+                        alert(`âŒ Video Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedVideos}/${planLimit.videos} videos this month for this platform.`);
                         return;
                     }
                 }
 
                 if (isBecomingPost) {
                     if (planLimit.posts === 0) {
-                        alert(`ÃƒÂ¢Ã‚ÂÃ…â€™ Plan Restriction!\n\n"${currentPlan}" does not allow static Posts on ${type.toUpperCase()}.`);
+                        alert(`âŒ Plan Restriction!\n\n"${currentPlan}" does not allow static Posts on ${type.toUpperCase()}.`);
                         return;
                     }
                     const newCount = usedPosts + (existingEvent ? (wasPost ? 0 : 1) : 1);
                     if (newCount > planLimit.posts) {
-                        alert(`ÃƒÂ¢Ã‚ÂÃ…â€™ Post Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedPosts}/${planLimit.posts} posts this month for this platform.`);
+                        alert(`âŒ Post Limit Reached for ${type.toUpperCase()}!\n\nYou have used ${usedPosts}/${planLimit.posts} posts this month for this platform.`);
                         return;
                     }
                 }
 
                 if (isBecomingAd) {
                     if (planLimit.ads === 0) {
-                        alert(`ÃƒÂ¢Ã‚ÂÃ…â€™ Plan Restriction!\n\n"${currentPlan}" does not allow Ads on ${type.toUpperCase()}.`);
+                        alert(`âŒ Plan Restriction!\n\n"${currentPlan}" does not allow Ads on ${type.toUpperCase()}.`);
                         return;
                     }
                     const newCount = usedAds + (existingEvent ? (wasAd ? 0 : 1) : 1);
                     if (newCount > planLimit.ads) {
-                        alert(`ÃƒÂ¢Ã‚ÂÃ…â€™ Ad Limit Reached for ${type.toUpperCase()}!\n\nOnly ${planLimit.ads} ad run(s) allowed per platform.`);
+                        alert(`âŒ Ad Limit Reached for ${type.toUpperCase()}!\n\nOnly ${planLimit.ads} ad run(s) allowed per platform.`);
                         return;
                     }
                 }
@@ -1393,7 +1384,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
                 const index = brand.events.findIndex(e => e.id === evId);
                 if (index !== -1) {
                     brand.events.splice(index, 1);
-                    storedBrands._lastUpdated = Date.now(); // Ã°Å¸â€â€˜ stamp so cloud push wins
+                    storedBrands._lastUpdated = Date.now(); // 🔑 stamp so cloud push wins
                     localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
                     syncToSheetDB();
                     renderBrandRoadmap();
@@ -1425,12 +1416,12 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             ev.title = newTitle.trim() || ev.title;
             ev.desc = `Campaign: ${ev.title}. Updated via Admin Roadmap Manager.`;
 
-            storedBrands._lastUpdated = Date.now(); // Ã°Å¸â€â€˜ stamp so cloud push wins
+            storedBrands._lastUpdated = Date.now(); // 🔑 stamp so cloud push wins
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
             syncToSheetDB();
             renderBrandRoadmap();
             renderBrands();
-            alert("Ã¢Å“â€¦ Item updated successfully!");
+            alert("✅ Item updated successfully!");
         };
 
         // ==========================================
@@ -1540,9 +1531,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             const brand = storedBrands[currentAdminChatId];
             if (!brand.chat) brand.chat = [];
             brand.chat.push({ sender: 'admin', text: text, time: Date.now() });
-            storedBrands._lastUpdated = Date.now();
-                    localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-                    syncToSheetDB();
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
 
             input.value = '';
             renderAdminChat();
@@ -1736,7 +1725,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             });
 
             if (stateChanged) {
-                console.log("ÃƒÂ°Ã…Â¸Ã‚Â§Ã‚Â¹ Admin: Background cleanup completed.");
+                console.log("ðŸ§¹ Admin: Background cleanup completed.");
                 // Persist using LocalDataStore (encrypted) and sync to SheetDB
                 if (window.LocalDataStore) {
                     LocalDataStore.saveAll(storedBrands);
@@ -1754,5 +1743,3 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
 </body>
 
 </html>
-
-
