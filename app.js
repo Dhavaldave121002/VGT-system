@@ -584,7 +584,13 @@ function createDay(num, className, isCurrentMonth = false, monthOffset = 0) {
                 }
             }
 
-            eventDiv.innerHTML = `<i data-lucide="${getIconName(event.type)}" style="width: 12px; height: 12px;"></i> ${displayLabel}`;
+            eventDiv.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                    <i data-lucide="${getIconName(event.type)}" style="width: 12px; height: 12px; flex-shrink: 0;"></i>
+                    <span style="font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9;">${displayLabel}</span>
+                </div>
+                <div style="white-space: normal; line-height: 1.2; word-break: break-word;">${event.title}</div>
+            `;
             dayDiv.appendChild(eventDiv);
         });
     }
