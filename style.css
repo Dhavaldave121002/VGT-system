@@ -669,6 +669,7 @@ main {
 .calendar-scroll-wrapper {
     width: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -842,7 +843,8 @@ main {
     .current-month { font-size: 1.5rem; }
     
     .calendar-scroll-wrapper {
-        overflow-x: hidden; /* Try to fit everything perfectly */
+        overflow-x: hidden;
+        overflow-y: auto;
         padding: 0;
         margin: 0;
     }
