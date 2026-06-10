@@ -454,10 +454,16 @@
         async function syncToSheetDB() {
             storedBrands._lastUpdated = Date.now();
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+
+            // Strip metadata keys before pushing to cloud so they can't appear as ghost brand rows
+            const cloudPayload = Object.fromEntries(
+                Object.entries(storedBrands).filter(([k]) => !k.startsWith('_'))
+            );
+
             for (const url of SHEETDB_API_URLS) {
                 if (!url || url.includes('YOUR_NEW_API_ID')) continue;
                 try {
-                    const payload = { data: { database_json: JSON.stringify(storedBrands) } };
+                    const payload = { data: { database_json: JSON.stringify(cloudPayload) } };
                     const patchRes = await fetch(url + '/id/1', {
                         method: 'PATCH',
                         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
@@ -465,22 +471,22 @@
                     });
                     
                     if (patchRes.ok) {
-                        console.log(`âœ… Admin: Synced to ${url}`);
+                        console.log(`✅ Admin: Synced to ${url}`);
                         return;
                     } else if (patchRes.status === 429) {
-                        console.warn(`âš ï¸ Admin: Limit reached for ${url}, trying next...`);
+                        console.warn(`⚠️ Admin: Limit reached for ${url}, trying next...`);
                         continue;
                     } else if (patchRes.status === 400) {
                         // Row 1 doesn't exist, try POST
                         const postRes = await fetch(url, {
                             method: 'POST',
                             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ data: { id: 1, database_json: JSON.stringify(storedBrands) } })
+                            body: JSON.stringify({ data: { id: 1, database_json: JSON.stringify(cloudPayload) } })
                         });
                         if (postRes.ok) return;
                     }
                 } catch (error) {
-                    console.error(`âŒ Admin: Sync failed for ${url}:`, error);
+                    console.error(`❌ Admin: Sync failed for ${url}:`, error);
                 }
             }
         }
@@ -1390,13 +1396,9 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
                 const index = brand.events.findIndex(e => e.id === evId);
                 if (index !== -1) {
                     brand.events.splice(index, 1);
-                    // Persist using LocalDataStore (encrypted) and sync to SheetDB
-                if (window.LocalDataStore) {
-                    LocalDataStore.saveAll(storedBrands);
-                } else {
+                    storedBrands._lastUpdated = Date.now(); // 🔑 stamp so cloud push wins
                     localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
-                }
-                syncToSheetDB();
+                    syncToSheetDB();
                     renderBrandRoadmap();
                     renderBrands();
                 }
@@ -1426,10 +1428,12 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             ev.title = newTitle.trim() || ev.title;
             ev.desc = `Campaign: ${ev.title}. Updated via Admin Roadmap Manager.`;
 
-            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
+            storedBrands._lastUpdated = Date.now(); // 🔑 stamp so cloud push wins
+            localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands));
+            syncToSheetDB();
             renderBrandRoadmap();
             renderBrands();
-            alert("âœ… Item updated successfully!");
+            alert("✅ Item updated successfully!");
         };
 
         // ==========================================

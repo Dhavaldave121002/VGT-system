@@ -38,10 +38,15 @@ async function syncToSheetDB() {
     brands._lastUpdated = Date.now();
     syncToServer(); // 🚀 Also sync to Vercel Server JSON Storage concurrently
 
+    // Strip metadata keys before pushing to cloud
+    const cloudPayload = Object.fromEntries(
+        Object.entries(brands).filter(([k]) => !k.startsWith('_'))
+    );
+
     for (const url of SHEETDB_API_URLS) {
         if (!url || url.includes('YOUR_NEW_API_ID')) continue;
         try {
-            const payload = { data: { database_json: JSON.stringify(brands) } };
+            const payload = { data: { database_json: JSON.stringify(cloudPayload) } };
             // Try PATCH first
             const patchRes = await fetch(url + '/id/1', {
                 method: 'PATCH',
@@ -60,7 +65,7 @@ async function syncToSheetDB() {
                 await fetch(url, {
                     method: 'POST',
                     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: [{ id: 1, database_json: JSON.stringify(brands) }] })
+                    body: JSON.stringify({ data: [{ id: 1, database_json: JSON.stringify(cloudPayload) }] })
                 });
                 return;
             }
