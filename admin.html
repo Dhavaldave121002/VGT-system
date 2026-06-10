@@ -56,13 +56,13 @@
                     </div>
                     <div class="input-group">
                         <label>Password</label>
-                        <input type="password" id="newBrandPass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
+                        <input type="password" id="newBrandPass" placeholder="••••••••" required>
                     </div>
                     <div class="input-group">
                         <label>Owner Profile Type</label>
                         <select id="newBrandGender">
-                            <option value="male">ðŸ‘” Male Owner</option>
-                            <option value="female">ðŸ‘— Female Owner</option>
+                            <option value="male">👔 Male Owner</option>
+                            <option value="female">👗 Female Owner</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -92,8 +92,8 @@
                     <div class="input-group">
                         <label>Support Chat Access</label>
                         <select id="newBrandChat">
-                            <option value="yes">âœ… Chat Enabled (Yes)</option>
-                            <option value="no">ðŸš« Chat Disabled (No)</option>
+                            <option value="yes">✅ Chat Enabled (Yes)</option>
+                            <option value="no">🚫 Chat Disabled (No)</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -145,7 +145,7 @@
                             <div class="input-group">
                                 <label>Recipient</label>
                                 <select id="broadcastRecipient">
-                                    <option value="all">ðŸ“¢ All Brands (Global)</option>
+                                    <option value="all">📢 All Brands (Global)</option>
                                     <!-- Injected by JS -->
                                 </select>
                             </div>
@@ -275,10 +275,10 @@
                     <div class="input-group">
                         <label>Content Format (Auto-Label)</label>
                         <select id="scheduleFormat">
-                            <option value="auto">âœ¨ Auto-Detect</option>
-                            <option value="post">ðŸ“ Standard Post</option>
-                            <option value="reel">ðŸŽ¬ Video / Reel</option>
-                            <option value="ad">ðŸ“¢ Paid Ad</option>
+                            <option value="auto">✨ Auto-Detect</option>
+                            <option value="post">📝 Standard Post</option>
+                            <option value="reel">🎬 Video / Reel</option>
+                            <option value="ad">📢 Paid Ad</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -391,7 +391,7 @@
 
 
     <script>
-        // âœ… ADMIN SECURITY GUARD (Immediate Check)
+        // ✅ ADMIN SECURITY GUARD (Immediate Check)
         if (localStorage.getItem('socialSphere_admin') !== 'true') {
             window.location.href = 'index.html';
         }
@@ -431,7 +431,7 @@
             storedBrands.__system_admin_hash__ = hashed;
             syncToSheetDB();
 
-            errorEl.textContent = "âœ… Admin Password Updated & Synced!";
+            errorEl.textContent = "✅ Admin Password Updated & Synced!";
             errorEl.style.cssText = "color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 16px; display: block;";
             
             setTimeout(() => {
@@ -576,7 +576,7 @@
         function renderBrands() {
             brandListTable.innerHTML = '';
             selectBrand.innerHTML = '';
-            broadcastRecipient.innerHTML = '<option value="all">ðŸ“¢ All Brands (Global)</option>';
+            broadcastRecipient.innerHTML = '<option value="all">📢 All Brands (Global)</option>';
             document.getElementById('videoTaskRecipient').innerHTML = '';
 
 
@@ -667,7 +667,7 @@
                     <td data-label="User ID">${id}</td>
                     <td data-label="Security">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-family: monospace; color: var(--text-gray); font-size: 0.8rem;">â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢</span>
+                            <span style="font-family: monospace; color: var(--text-gray); font-size: 0.8rem;">••••••••</span>
                             <button onclick="changePassword('${id}')" class="btn-icon-small"><i data-lucide="key" style="width: 14px; height: 14px;"></i></button>
                         </div>
                     </td>
@@ -720,13 +720,13 @@
                 // Broadcast Dropdown
                 const opt2 = document.createElement('option');
                 opt2.value = id;
-                opt2.textContent = `ðŸŽ¯ ${brand.name}`;
+                opt2.textContent = `🎯 ${brand.name}`;
                 broadcastRecipient.appendChild(opt2);
 
                 // Video Task Dropdown
                 const opt3 = document.createElement('option');
                 opt3.value = id;
-                opt3.textContent = `ðŸŽ¬ ${brand.name}`;
+                opt3.textContent = `🎬 ${brand.name}`;
                 document.getElementById('videoTaskRecipient').appendChild(opt3);
             });
 
@@ -794,7 +794,7 @@
 
             // Also send a notification
             if (!brand.messages) brand.messages = [];
-            brand.messages.push({ text: `ðŸŽ¬ New Video Shoot Scheduled for ${dateStr}. Please check your roadmap.`, time: Date.now() });
+            brand.messages.push({ text: `🎬 New Video Shoot Scheduled for ${dateStr}. Please check your roadmap.`, time: Date.now() });
 
             localStorage.setItem('socialSphere_brands', JSON.stringify(storedBrands)); syncToSheetDB();
             document.getElementById('videoTaskForm').reset();
@@ -1734,7 +1734,7 @@ document.getElementById('resetScheduleBtn').addEventListener('click', () => {
             });
 
             if (stateChanged) {
-                console.log("ðŸ§¹ Admin: Background cleanup completed.");
+                console.log("🧹 Admin: Background cleanup completed.");
                 // Persist using LocalDataStore (encrypted) and sync to SheetDB
                 if (window.LocalDataStore) {
                     LocalDataStore.saveAll(storedBrands);
