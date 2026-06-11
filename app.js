@@ -515,6 +515,78 @@ function renderCalendar() {
     if (window.lucide) lucide.createIcons();
 }
 
+// Render Upcoming Schedule Panel
+function renderSchedule() {
+    const scheduleList = document.getElementById('scheduleList');
+    if (!scheduleList) return;
+    // Clear existing entries
+    scheduleList.innerHTML = '';
+    if (!currentBrand || !currentBrand.events) return;
+    const now = new Date();
+    // Gather upcoming events (including today)
+    const upcoming = currentBrand.events
+        .filter(e => {
+            const eventDate = new Date(e.year || now.getFullYear(), e.month !== undefined ? e.month : now.getMonth(), e.day);
+            // Only future dates (including today) and sort by date
+            return eventDate >= now;
+        })
+        .sort((a, b) => {
+            const dateA = new Date(a.year || now.getFullYear(), a.month !== undefined ? a.month : now.getMonth(), a.day);
+            const dateB = new Date(b.year || now.getFullYear(), b.month !== undefined ? b.month : now.getMonth(), b.day);
+            return dateA - dateB;
+        });
+    if (upcoming.length === 0) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.style.cssText = 'color: var(--text-gray); font-size: 0.85rem; opacity: 0.7;';
+        emptyDiv.textContent = 'No upcoming events.';
+        scheduleList.appendChild(emptyDiv);
+        return;
+    }
+    upcoming.forEach(event => {
+        const item = document.createElement('div');
+        item.style.cssText = 'background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); padding: 8px 12px; border-radius: 12px; display: flex; flex-direction: column; gap: 4px;';
+        const eventDate = new Date(event.year || now.getFullYear(), event.month !== undefined ? event.month : now.getMonth(), event.day);
+        const dateStr = eventDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        const label = event.type ? event.type.toUpperCase() : '';
+        item.innerHTML = `<span style="font-weight:600; color: var(--primary-light);">${dateStr} - ${label}</span><span style="font-size:0.85rem;">${event.title}</span>`;
+        scheduleList.appendChild(item);
+    });
+}
+
+// Hook renderSchedule into calendar rendering
+const originalRenderCalendar = renderCalendar;
+renderCalendar = function() {
+    originalRenderCalendar();
+    renderSchedule();
+};
+
+// Update add event form submission to refresh schedule
+document.getElementById('addEventForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const modal = document.getElementById('addEventModal');
+    const day = parseInt(modal.dataset.day);
+    const month = parseInt(modal.dataset.month);
+    const year = parseInt(modal.dataset.year);
+    const newEvent = {
+        day: day,
+        month: month,
+        year: year,
+        title: document.getElementById('eventTitle').value.trim(),
+        type: document.getElementById('eventType').value.trim(),
+        time: document.getElementById('eventTime').value.trim(),
+        desc: document.getElementById('eventDesc').value.trim()
+    };
+    if (!currentBrand.events) currentBrand.events = [];
+    currentBrand.events.push(newEvent);
+    if (window.LocalDataStore) LocalDataStore.saveAll(brands);
+    else localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+    syncToSheetDB();
+    renderCalendar();
+    renderSchedule();
+    closeAddEventModal();
+    alert('Event added successfully');
+});
+
 function createDay(num, className, isCurrentMonth = false, monthOffset = 0) {
     const dayDiv = document.createElement('div');
     dayDiv.className = `calendar-day ${className}`;
@@ -691,7 +763,7 @@ function renderChatMessages() {
     `;
 
     const now = Date.now();
-    const expiry = 24 * 60 * 60 * 1000; // 24 Hours in ms
+    // 24‑hour automatic chat message cleanup removed per user request
 
     if (!currentBrand.chat || currentBrand.chat.length === 0) {
         currentBrand.chat = [
@@ -699,18 +771,10 @@ function renderChatMessages() {
         ];
         localStorage.setItem('socialSphere_brands', JSON.stringify(brands)); syncToSheetDB();
     } else {
-        // Auto-cleanup: Keep messages only from last 24 hours
-        const originalLength = currentBrand.chat.length;
-        currentBrand.chat = currentBrand.chat.filter(msg => (now - msg.time) < expiry);
         
-        // Always ensure at least the welcome message if empty
+        // Ensure welcome message exists if chat is empty
         if (currentBrand.chat.length === 0) {
             currentBrand.chat.push({ sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: now });
-        }
-
-        if (currentBrand.chat.length !== originalLength) {
-            localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-            syncToSheetDB();
         }
     }
 
@@ -1095,25 +1159,28 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // REAL-TIME AUTO-RESET ENGINE (Background Sync)
 // ==========================================
-setInterval(() => {
-    if (!currentBrand || !currentBrand.chat) return;
+// 24‑hour auto‑removal disabled per user request. No automatic cleanup performed.
+// The background interval for message expiry has been disabled; messages will persist until manually removed by admin.
+// setInterval(() => {
+//     // Previously auto‑removed messages older than 24h.
+// }, 60000); // Interval retained for potential future use.
+
+// 24‑hour auto‑removal disabled per user request. No automatic cleanup performed.
+// The original background interval for message expiry has been removed.
+// Messages will now persist until manually removed by an admin.
+// setInterval(() => {
+//     // cleanup logic was here
+// }, 60000); // Interval retained for potential future use.
+//     // Previously auto‑removed messages older than 24h.
+    //     if (currentBrand.chat.length === 0) {
+    //         currentBrand.chat.push({ sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: Date.now() });
+    //     }
+    //     renderChatMessages();
+    //     localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
+    //     syncToSheetDB();
+    // }
     
-    const now = Date.now();
-    const expiry = 24 * 60 * 60 * 1000;
-    const originalLength = currentBrand.chat.length;
-    
-    currentBrand.chat = currentBrand.chat.filter(msg => (now - msg.time) < expiry);
-    
-    if (currentBrand.chat.length !== originalLength) {
-        console.log("🧹 Background Cleanup: Removing expired messages...");
-        if (currentBrand.chat.length === 0) {
-            currentBrand.chat.push({ sender: 'bot', text: "Welcome to Elite Support. I'm your AI Assistant. How can I help you today?", time: now });
-        }
-        renderChatMessages();
-        localStorage.setItem('socialSphere_brands', JSON.stringify(brands));
-        syncToSheetDB();
-    
-    }
-}, 60000); // Check every 60 seconds
+// 24‑hour auto‑removal disabled per user request. Messages will persist until manually removed by admin.
+// setInterval disabled - no automatic cleanup performed
 
 
