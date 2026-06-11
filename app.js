@@ -461,19 +461,19 @@ function showSkeletons() {
     `;
 }
 
-function logout() {
-    currentBrand = null;
-    currentBrandId = null;
-    
-    // ✅ Clear Session
+// Clear all session data and redirect to login
+function clearSession() {
+    // Remove both brand and admin flags
     localStorage.removeItem('socialSphere_currentBrandId');
     localStorage.removeItem('socialSphere_admin');
+    // Optionally clear any admin hash for security (but keep stored for future logins)
+    // Redirect to the main login page
+    window.location.href = 'index.html';
+}
 
-    dashboard.style.display = 'none';
-    document.getElementById('chatWidgetContainer').style.display = 'none';
-    loginScreen.style.display = 'flex';
-    loginScreen.style.opacity = '1';
-    loginForm.reset();
+function logout() {
+    // Clear all session data and redirect to login
+    clearSession();
 }
 
 async function changeOwnPassword() {
