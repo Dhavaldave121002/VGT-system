@@ -548,14 +548,13 @@ function createDay(num, className, isCurrentMonth = false, monthOffset = 0) {
     dayDiv.innerHTML = `<span class="day-num">${num}</span>`;
 
     if (isCurrentMonth && currentBrand && currentBrand.events) {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-
-        // Match day, month, and year (handle legacy data that only had day)
+        // Use the cell's actual month and year for accurate matching
+        const cellMonth = month; // month variable already set from cellDate earlier (line 525)
+        const cellYear = year;   // year variable from cellDate (line 523)
         const dayEvents = currentBrand.events.filter(e =>
             e.day === num &&
-            (e.month === undefined || e.month === month) &&
-            (e.year === undefined || e.year === year)
+            (e.month === undefined || e.month === cellMonth) &&
+            (e.year === undefined || e.year === cellYear)
         );
 
         dayEvents.forEach(event => {
