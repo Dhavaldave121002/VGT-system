@@ -602,6 +602,19 @@ main {
     max-height: 100%;
 }
 
+.schedule-panel {
+    width: 320px;
+    background: var(--bg-panel);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
+    border-radius: 32px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    max-height: 100%;
+}
+
 .sidebar-header {
     margin-bottom: 24px;
     padding-bottom: 20px;
@@ -813,9 +826,10 @@ main {
 
 @media (max-width: 1024px) {
     .dashboard { height: auto; padding: 20px; }
-    .dashboard-content { flex-direction: column; height: auto; overflow: visible; gap: 32px; }
-    .detail-sidebar { width: 100%; height: auto; margin-top: 0; order: 1; }
-    .calendar-card { order: 2; width: 100%; }
+    .dashboard-content { flex-direction: column; height: auto; overflow: visible; gap: 24px; }
+    .calendar-card { order: 1; width: 100%; }
+    .schedule-panel { order: 2; width: 100%; height: auto; }
+    .detail-sidebar { order: 3; width: 100%; height: auto; margin-top: 0; }
 }
 
 
@@ -968,6 +982,12 @@ main {
 }
 
 @media (max-width: 768px) {
+    .admin-dashboard-container {
+        padding-top: 20px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
     .admin-card-main {
         padding: 24px 16px;
     }
@@ -1024,8 +1044,8 @@ main {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 0.85rem;
     color: var(--text-white);
-    word-break: break-all; /* Prevent long strings like hashes from breaking layout */
-    max-width: 200px;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .admin-table tr:hover td {
@@ -1037,7 +1057,7 @@ main {
     display: flex;
     gap: 8px;
     justify-content: flex-end;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     min-width: 0;
 }
 
@@ -1116,6 +1136,12 @@ main {
         font-size: 0.65rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        flex-shrink: 0;
+        margin-right: 16px;
+    }
+    
+    .admin-table td:last-child::before {
+        display: none;
     }
     
     .table-actions {
@@ -1123,6 +1149,7 @@ main {
         justify-content: center;
         gap: 12px;
         min-width: auto;
+        flex-wrap: wrap;
     }
 
     .table-actions button {
@@ -1162,29 +1189,4 @@ main {
 
 
 
-/* Mobile drawer for detail sidebar */
-@media (max-width: 768px) {
-    .detail-sidebar {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        height: 100vh;
-        width: 85%;
-        max-width: 320px;
-        z-index: 2000;
-        transition: right 0.3s ease;
-        overflow-y: auto;
-        background: var(--bg-panel);
-        backdrop-filter: blur(20px);
-        border-left: 1px solid var(--border-glass);
-    }
-    .detail-sidebar.active { right: 0; }
-    .sidebar-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 1999;
-    }
-    .sidebar-overlay.active { display: block; }
-}
+/* Detail sidebar is stacked vertically on mobile, drawer removed for better accessibility */
