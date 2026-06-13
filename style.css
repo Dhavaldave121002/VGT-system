@@ -1020,14 +1020,14 @@ main {
 
 .admin-table {
     width: 100%;
-    min-width: 1000px; /* Force minimum width for desktop clarity */
+    min-width: 800px;
     border-collapse: separate;
     border-spacing: 0;
 }
 
 .admin-table th {
     background: rgba(255, 255, 255, 0.02);
-    padding: 16px 20px;
+    padding: 12px 10px;
     text-align: left;
     font-size: 0.7rem;
     font-weight: 700;
@@ -1039,7 +1039,7 @@ main {
 }
 
 .admin-table td {
-    padding: 16px 20px;
+    padding: 12px 10px;
     vertical-align: middle;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 0.85rem;
@@ -1048,9 +1048,11 @@ main {
     overflow-wrap: break-word;
 }
 
-.admin-table th:last-child,
-.admin-table td:last-child {
-    min-width: 250px;
+@media (min-width: 1201px) {
+    .admin-table th:last-child,
+    .admin-table td:last-child {
+        min-width: 140px;
+    }
 }
 
 .admin-table tr:hover td {
@@ -1062,7 +1064,7 @@ main {
     display: flex;
     gap: 8px;
     justify-content: flex-end;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     min-width: 0;
 }
 
