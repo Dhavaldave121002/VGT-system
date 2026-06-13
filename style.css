@@ -1048,6 +1048,11 @@ main {
     overflow-wrap: break-word;
 }
 
+.admin-table th:last-child,
+.admin-table td:last-child {
+    min-width: 250px;
+}
+
 .admin-table tr:hover td {
     background: rgba(255, 255, 255, 0.02);
 }
